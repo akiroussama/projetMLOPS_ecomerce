@@ -78,8 +78,8 @@ target/
 # Jupyter NB Checkpoints
 .ipynb_checkpoints/
 
-# exclude data from source control by default
-/data/
+#no exclude data from source control by default
+#/data/
 
 # Mac OS-specific storage files
 .DS_Store
@@ -96,3 +96,4 @@ target/
 
 # Artifacts
 # /models/
+/models

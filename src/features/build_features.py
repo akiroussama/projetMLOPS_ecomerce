@@ -1,130 +1,97 @@
+import os
 import pandas as pd
+import numpy as np
+import logging
+import pickle
 import nltk
 from bs4 import BeautifulSoup
 import re
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
-import pickle
-import math
+from sklearn.feature_extraction.text import TfidfVectorizer
 
+# je telecharge ressources nltk
+nltk.download("punkt", quiet=True)
+nltk.download("stopwords", quiet=True)
+nltk.download("wordnet", quiet=True)
 
-class DataImporter:
-    def __init__(self, filepath="data/preprocessed"):
-        self.filepath = filepath
+class TextFeatureEngineer:
+    def __init__(self, max_features=5000):
+        self.lemmatizer = WordNetLemmatizer()
+        self.stop_words = set(stopwords.words("french"))
+        # on init tfidf
+        self.vectorizer = TfidfVectorizer(max_features=max_features)
+        
+    def clean_text(self, text):
+        if pd.isna(text):
+            return ""
+        # je retire html
+        text = BeautifulSoup(text, "html.parser").get_text()
+        # je garde que lettres
+        text = re.sub(r"[^a-zA-Z]", " ", text)
+        words = word_tokenize(text.lower())
+        # on filtre stop words
+        filtered_words = [self.lemmatizer.lemmatize(w) for w in words if w not in self.stop_words]
+        return " ".join(filtered_words)
 
-    def load_data(self):
-        data = pd.read_csv(f"{self.filepath}/X_train_update.csv")
-        data["description"] = data["designation"] + str(data["description"])
-        data = data.drop(["Unnamed: 0", "designation"], axis=1)
-
-        target = pd.read_csv(f"{self.filepath}/Y_train_CVw08PX.csv")
-        target = target.drop(["Unnamed: 0"], axis=1)
-        modalite_mapping = {
-            modalite: i for i, modalite in enumerate(target["prdtypecode"].unique())
-        }
-        target["prdtypecode"] = target["prdtypecode"].replace(modalite_mapping)
-
-        with open("models/mapper.pkl", "wb") as fichier:
-            pickle.dump(modalite_mapping, fichier)
-
-        df = pd.concat([data, target], axis=1)
-
+    def prepare_df(self, df):
+        # nous combinons titre et desc
+        df['text_full'] = df['designation'].fillna('') + " " + df['description'].fillna('')
+        df['text_clean'] = df['text_full'].apply(self.clean_text)
         return df
 
-    def split_train_test(self, df, samples_per_class=600):
+    def fit_transform(self, df):
+        df_prep = self.prepare_df(df)
+        # j'entraine et transforme le train
+        X_tf = self.vectorizer.fit_transform(df_prep['text_clean'])
+        return X_tf
 
-        grouped_data = df.groupby("prdtypecode")
+    def transform(self, df):
+        df_prep = self.prepare_df(df)
+        # je transforme uniqment (val ou test)
+        X_tf = self.vectorizer.transform(df_prep['text_clean'])
+        return X_tf
+        
+    def save_vectorizer(self, path):
+        # on save le modele pour api
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, 'wb') as f:
+            pickle.dump(self.vectorizer, f)
 
-        X_train_samples = []
-        X_test_samples = []
-
-        for _, group in grouped_data:
-            samples = group.sample(n=samples_per_class, random_state=42)
-            X_train_samples.append(samples)
-
-            remaining_samples = group.drop(samples.index)
-            X_test_samples.append(remaining_samples)
-
-        X_train = pd.concat(X_train_samples)
-        X_test = pd.concat(X_test_samples)
-
-        X_train = X_train.sample(frac=1, random_state=42).reset_index(drop=True)
-        X_test = X_test.sample(frac=1, random_state=42).reset_index(drop=True)
-
-        y_train = X_train["prdtypecode"]
-        X_train = X_train.drop(["prdtypecode"], axis=1)
-
-        y_test = X_test["prdtypecode"]
-        X_test = X_test.drop(["prdtypecode"], axis=1)
-
-        val_samples_per_class = 50
-
-        grouped_data_test = pd.concat([X_test, y_test], axis=1).groupby("prdtypecode")
-
-        X_val_samples = []
-        y_val_samples = []
-
-        for _, group in grouped_data_test:
-            samples = group.sample(n=val_samples_per_class, random_state=42)
-            X_val_samples.append(samples[["description", "productid", "imageid"]])
-            y_val_samples.append(samples["prdtypecode"])
-
-        X_val = pd.concat(X_val_samples)
-        y_val = pd.concat(y_val_samples)
-
-        X_val = X_val.sample(frac=1, random_state=42).reset_index(drop=True)
-        y_val = y_val.sample(frac=1, random_state=42).reset_index(drop=True)
-
-        return X_train, X_val, X_test, y_train, y_val, y_test
-
-
-class ImagePreprocessor:
-    def __init__(self, filepath="data/preprocessed/image_train"):
-        self.filepath = filepath
-
-    def preprocess_images_in_df(self, df):
-        df["image_path"] = (
-            f"{self.filepath}/image_"
-            + df["imageid"].astype(str)
-            + "_product_"
-            + df["productid"].astype(str)
-            + ".jpg"
-        )
-
-
-class TextPreprocessor:
-    def __init__(self):
-        nltk.download("punkt")
-        nltk.download("stopwords")
-        nltk.download("wordnet")
-        self.lemmatizer = WordNetLemmatizer()
-        self.stop_words = set(
-            stopwords.words("french")
-        )  # Vous pouvez choisir une autre langue si nécessaire
-
-    def preprocess_text(self, text):
-
-        if isinstance(text, float) and math.isnan(text):
-            return ""
-        # Supprimer les balises HTML
-        text = BeautifulSoup(text, "html.parser").get_text()
-
-        # Supprimer les caractères non alphabétiques
-        text = re.sub(r"[^a-zA-Z]", " ", text)
-
-        # Tokenization
-        words = word_tokenize(text.lower())
-
-        # Suppression des stopwords et lemmatisation
-        filtered_words = [
-            self.lemmatizer.lemmatize(word)
-            for word in words
-            if word not in self.stop_words
-        ]
-
-        return " ".join(filtered_words[:10])
-
-    def preprocess_text_in_df(self, df, columns):
-        for column in columns:
-            df[column] = df[column].apply(self.preprocess_text)
+if __name__ == '__main__':
+    log_fmt = '%(asctime)s %(name)s %(levelname)s %(message)s'
+    logging.basicConfig(level=logging.INFO, format=log_fmt)
+    logger = logging.getLogger(__name__)
+    
+    logger.info('debut creation features texte')
+    
+    input_dir = 'data/preprocessed'
+    output_dir = 'data/preprocessed'
+    model_dir = 'models'
+    
+    # je lis donnees de la mission 3
+    df_train = pd.read_csv(os.path.join(input_dir, 'X_train_clean.csv'))
+    df_val = pd.read_csv(os.path.join(input_dir, 'X_val_clean.csv'))
+    df_test = pd.read_csv(os.path.join(input_dir, 'X_test_clean.csv'))
+    
+    engineer = TextFeatureEngineer()
+    
+    # on applique transformation math
+    logger.info('fit transform sur train')
+    X_train_tf = engineer.fit_transform(df_train)
+    
+    logger.info('transform sur val et test')
+    X_val_tf = engineer.transform(df_val)
+    X_test_tf = engineer.transform(df_test)
+    
+    # on sauvegarde les matrices numpy
+    import scipy.sparse
+    scipy.sparse.save_npz(os.path.join(output_dir, 'X_train_tf.npz'), X_train_tf)
+    scipy.sparse.save_npz(os.path.join(output_dir, 'X_val_tf.npz'), X_val_tf)
+    scipy.sparse.save_npz(os.path.join(output_dir, 'X_test_tf.npz'), X_test_tf)
+    
+    # je sauvegarde mon pipeline pour l'api
+    engineer.save_vectorizer(os.path.join(model_dir, 'tfidf_vectorizer.pkl'))
+    
+    logger.info('features sauvegardees avec succes')
