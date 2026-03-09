@@ -69,7 +69,14 @@ def load_assets() -> None:
     global lstm_model, vgg16_model, tokenizer, mapper, best_weights
 
     if LSTM_MODEL_PATH.exists():
-        lstm_model = tf.keras.models.load_model(LSTM_MODEL_PATH)
+        try:
+            lstm_model = tf.keras.models.load_model(LSTM_MODEL_PATH)
+        except ValueError as e:
+            if "time_major" in str(e):
+                print(f"Warning: LSTM model loading failed due to TensorFlow version incompatibility: {e}")
+                lstm_model = None
+            else:
+                raise
 
     if VGG16_MODEL_PATH.exists():
         vgg16_model = tf.keras.models.load_model(VGG16_MODEL_PATH)
