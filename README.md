@@ -78,6 +78,71 @@ Once you have downloaded the github repo, open the anaconda powershell on the ro
                                         
                                          The predictions are saved in data/preprocessed as 'predictions.json'
 
+## FastAPI service
+
+The project now exposes a FastAPI application for online inference.
+
+1. Install dependencies:
+
+   `pip install -r requirements.txt`
+
+2. Place the serialized inference artifacts in the `models/` folder.
+
+   Expected defaults:
+   - `models/baseline_model.pkl` or `models/classifier.pkl` or `models/model.pkl`
+   - `models/tfidf_vectorizer.pkl` (optional if the model is already a pipeline)
+   - `models/label_mapping.json` (optional)
+
+3. Start the API from the repository root:
+
+   `uvicorn src.api.app:app --host 0.0.0.0 --port 8000 --reload`
+
+4. Check the service:
+
+   - `GET /health`
+   - `POST /predict`
+
+Authentication:
+
+- `GET /health` is public
+- `POST /predict` requires `Authorization: Bearer <token>`
+- The server token must be provided through the `API_AUTH_TOKEN` environment variable
+
+Tests and coverage:
+
+- Run the API test suite with coverage from the repository root: `pytest`
+- The project now enforces a minimum coverage threshold of `90%` on `src/api`
+- Coverage is configured in `pytest.ini`
+
+Example request body:
+
+```json
+{
+  "designation": "robe ete femme",
+  "description": "robe rouge legere en coton",
+  "productid": 1001,
+  "imageid": 2002
+}
+```
+
+Validation rules for `POST /predict`:
+- `designation`: required string, trimmed, 1 to 512 characters
+- `description`: optional string, trimmed, up to 10000 characters, defaults to `""`
+- `productid`: optional integer, must be greater than or equal to `0`
+- `imageid`: optional integer, must be greater than or equal to `0`
+- Any unexpected field is rejected
+
+Error responses are normalized:
+- `401 AUTHENTICATION_REQUIRED` when the Bearer token is missing
+- `401 INVALID_AUTH_SCHEME` when the authorization scheme is not `Bearer`
+- `403 INVALID_TOKEN` when the token is present but invalid
+- `422 VALIDATION_ERROR` for invalid payloads
+- `503 AUTH_NOT_CONFIGURED` when the server token is missing
+- `503 MODEL_NOT_READY` when artifacts are missing or not loaded
+- `500 PREDICTION_FAILED` or `500 INTERNAL_SERVER_ERROR` for technical failures
+
+If the model artifacts are missing, `/health` returns a `degraded` status and `/predict` returns `503` with an explicit error message instead of retraining the model.
+
 > You can download the trained models loaded here : https://drive.google.com/drive/folders/1fjWd-NKTE-RZxYOOElrkTdOw2fGftf5M?usp=drive_link and insert them in the models folder
 > 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
