@@ -6,24 +6,34 @@ import tensorflow as tf
 
 
 data_importer = DataImporter()
-df = data_importer.load_data()
-X_train, X_val, _, y_train, y_val, _ = data_importer.split_train_test(df)
+df_train, df_test = data_importer.load_data()
+
+# Use only first 100 samples for quick testing
+df_train = df_train.head(100)
+
+X_train, X_val, _, y_train, y_val, _ = data_importer.split_train_test(df_train)
+
+print(f"Using {len(X_train)} training samples and {len(X_val)} validation samples")
 
 # Preprocess text and images
 text_preprocessor = TextPreprocessor()
 image_preprocessor = ImagePreprocessor()
+
+print("Preprocessing text...")
 text_preprocessor.preprocess_text_in_df(X_train, columns=["description"])
 text_preprocessor.preprocess_text_in_df(X_val, columns=["description"])
+
+print("Preprocessing images...")
 image_preprocessor.preprocess_images_in_df(X_train)
 image_preprocessor.preprocess_images_in_df(X_val)
 
 # Train LSTM model
-print("Training LSTM Model")
+print("Training LSTM Model...")
 text_lstm_model = TextLSTMModel()
 text_lstm_model.preprocess_and_fit(X_train, y_train, X_val, y_val)
 print("Finished training LSTM")
 
-print("Training VGG")
+print("Training VGG...")
 # Train VGG16 model
 image_vgg16_model = ImageVGG16Model()
 image_vgg16_model.preprocess_and_fit(X_train, y_train, X_val, y_val)
