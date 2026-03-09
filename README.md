@@ -143,6 +143,8 @@ Error responses are normalized:
 
 If the model artifacts are missing, `/health` returns a `degraded` status and `/predict` returns `503` with an explicit error message instead of retraining the model.
 
+Url drive johan: https://drive.google.com/drive/folders/1vYf7JAkDylxW53viUhayQODOK_1kuzc9
+
 > You can download the trained models loaded here : https://drive.google.com/drive/folders/1fjWd-NKTE-RZxYOOElrkTdOw2fGftf5M?usp=drive_link and insert them in the models folder
 > 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
