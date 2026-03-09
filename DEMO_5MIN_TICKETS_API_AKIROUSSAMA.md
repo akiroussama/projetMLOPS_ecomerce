@@ -193,3 +193,7 @@ Le risque majeur est `#26`, car il depend de `#24`. Donc pour toi, l'action impo
 ## Phrase de cloture pour ton point oral
 
 "Cette semaine j'ai ferme la chaine API CP1-CP2. La semaine du 9 au 13 mars 2026, mon objectif est de transformer cette API en service conteneurise, puis de l'integrer dans une stack Compose pour ouvrir le checkpoint 3." 
+
+## Pitch 90 secondes
+
+"Sur mon scope, j'ai traite la chaine API du projet sur quatre tickets. D'abord, j'ai cree une vraie API FastAPI avec deux endpoints: `/health` pour verifier l'etat du service, et `/predict` pour exposer l'inference sans reentrainement. Ensuite, j'ai durci le contrat d'entree avec une validation stricte du payload: les champs sont controles, les champs inattendus sont refuses, et les erreurs ont maintenant un format stable avec un code, un message et un detail exploitable. Apres ca, j'ai securise la route de prediction avec une authentification Bearer simple basee sur une variable d'environnement, tout en laissant `/health` public pour la supervision. Enfin, j'ai ajoute une vraie suite de tests automatises sur l'API et le service, avec un seuil de couverture a 90%, et on est actuellement a presque 99% sur `src/api`. Donc le resultat concret, c'est qu'on a maintenant une brique API propre, securisee et testable, qui est prete pour le checkpoint suivant: la conteneurisation et l'integration dans la stack Compose avec Airflow et MLflow." 
