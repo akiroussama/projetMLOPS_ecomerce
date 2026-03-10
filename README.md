@@ -149,3 +149,23 @@ Url drive johan: https://drive.google.com/drive/folders/1vYf7JAkDylxW53viUhayQOD
 > 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
 python make_dataset.py "../../data/raw" "../../data/preprocessed"
+
+
+### 🐳 Lancer l'API avec Docker (Mise en production)
+
+L'API est entièrement conteneurisée. Pour la démarrer sur n'importe quel environnement :
+
+1. Assurez-vous d'avoir rapatrié le modèle final via DVC :
+   ```bash
+   dvc pull
+
+2.Construisez l'image Docker en local :
+
+Bash
+docker build -t api-rakuten:latest .
+
+3.Lancez le conteneur en injectant le token de sécurité (à demander à l'équipe) :
+
+Bash
+docker run -p 8000:8000 -e API_AUTH_TOKEN="<VOTRE_TOKEN_ICI>" api-rakuten:latest
+L'API sera alors accessible sur http://localhost:8000/docs.
