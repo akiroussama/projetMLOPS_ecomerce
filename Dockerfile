@@ -22,7 +22,7 @@ COPY models/artifacts/model.pkl /app/models/model.pkl
 EXPOSE 8000
 
 # variable env pr token
-ENV API_AUTH_TOKEN="super-secret-token"
+
 
 # start api
 CMD ["uvicorn", "src.api.app:app", "--host", "0.0.0.0", "--port", "8000"]
