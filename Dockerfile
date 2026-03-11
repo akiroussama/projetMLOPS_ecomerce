@@ -17,7 +17,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # copie code et modeles
 COPY src/ /app/src/
 COPY models/artifacts/model.pkl /app/models/model.pkl
-COPY models/label_mapping.json /app/models/label_mapping.json
 
 # port api
 EXPOSE 8000

@@ -1,0 +1,10 @@
+.git
+.github
+__pycache__
+*.pyc
+.pytest_cache
+.coverage
+data/raw/*
+!data/raw/*.dvc
+notebooks
+tests

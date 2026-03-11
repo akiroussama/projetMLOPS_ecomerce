@@ -143,27 +143,29 @@ Error responses are normalized:
 
 If the model artifacts are missing, `/health` returns a `degraded` status and `/predict` returns `503` with an explicit error message instead of retraining the model.
 
+Url drive johan: https://drive.google.com/drive/folders/1vYf7JAkDylxW53viUhayQODOK_1kuzc9
+
 > You can download the trained models loaded here : https://drive.google.com/drive/folders/1fjWd-NKTE-RZxYOOElrkTdOw2fGftf5M?usp=drive_link and insert them in the models folder
 > 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
 python make_dataset.py "../../data/raw" "../../data/preprocessed"
-## Run API locally
 
-Start API server
 
-uvicorn src.api.main:app --reload
+### 🐳 Lancer l'API avec Docker (Mise en production)
 
-Swagger documentation
+L'API est entièrement conteneurisée. Pour la démarrer sur n'importe quel environnement :
 
-http://127.0.0.1:8000/docs
+1. Assurez-vous d'avoir rapatrié le modèle final via DVC :
+   ```bash
+   dvc pull
 
-Health test
+2.Construisez l'image Docker en local :
 
-curl http://127.0.0.1:8000/health
+Bash
+docker build -t api-rakuten:latest .
 
-Predict test
+3.Lancez le conteneur en injectant le token de sécurité (à demander à l'équipe) :
 
-curl -X POST http://127.0.0.1:8000/predict \
--H "Content-Type: application/json" \
--d '{"text":"smartphone samsung"}'
-
+Bash
+docker run -p 8000:8000 -e API_AUTH_TOKEN="<VOTRE_TOKEN_ICI>" api-rakuten:latest
+L'API sera alors accessible sur http://localhost:8000/docs.
