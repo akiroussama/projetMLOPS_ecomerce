@@ -1,4 +1,4 @@
 [core]
     remote = remote_storage
 ['remote "remote_storage"']
-    url = G:\Mon Drive\datascientest_projet\dvc_remote
+    url = gdrive://1vYf7JAkDylxW53viUhayQODOK_1kuzc9
