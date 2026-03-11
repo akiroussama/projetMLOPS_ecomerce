@@ -1,485 +1,174 @@
-# Rakuten Product Classification — Production-Ready MLOps Pipeline
+Rakuten Ecommerce Classification
+==============================
 
-![Python](https://img.shields.io/badge/python-3.10-blue)
-![FastAPI](https://img.shields.io/badge/API-FastAPI-green)
-![Docker](https://img.shields.io/badge/docker-ready-blue)
-![DVC](https://img.shields.io/badge/data%20versioning-DVC-purple)
-![ML](https://img.shields.io/badge/Machine%20Learning-Scikit--Learn-orange)
-![Tests](https://img.shields.io/badge/tests-pytest-yellow)
-![Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)
+This project is a starting Pack for MLOps projects based on the subject "Rakuten Product Classification". It's not perfect so feel free to make some modifications on it.
 
-An end-to-end MLOps pipeline for multimodal e-commerce product classification using text and image data.
+Project Organization
+------------
 
-This repository demonstrates a production-ready machine learning system, including:
-- data versioning
-- feature engineering
-- model training
-- inference pipeline
-- REST API
-- containerized deployment
-- automated testing
+    ├── LICENSE
+    ├── README.md          <- The top-level README for developers using this project.
+    ├── .dvc/              <- DVC configuration for data and model versioning.
+    ├── data
+    │   ├── external       <- Data from third party sources -> the external data you want to make a prediction on
+    │   ├── preprocessed   <- The final, canonical data sets for modeling.
+    |   |  ├── image_train <- Where you put the images of the train set
+    |   |  ├── image_test  <- Where you put the images of the predict set
+    |   |  ├── X_train_update.csv <- Tabular training data
+    |   |  ├── X_test_update.csv  <- Tabular testing data
+    │   └── raw            <- The original, immutable data dump.
+    |   |  ├── image_train <- Original train images
+    |   |  ├── image_test  <- Original predict images
+    │
+    ├── logs               <- Logs from training and predicting
+    │
+    ├── models             <- Trained and serialized models or label mappings
+    │   ├── artifacts/     <- model_final.joblib (The primary Scikit-Learn Pipeline)
+    │   └── label_mapping.json <- Mapping between prdtypecode and category names
+    │
+    ├── notebooks          <- Jupyter notebooks for data exploration and experimentation.
+    │
+    ├── requirements.txt   <- The requirements file for reproducing the analysis environment.
+    │
+    ├── src                <- Source code for use in this project.
+    │   ├── __init__.py    <- Makes src a Python module
+    │   ├── main.py        <- Scripts to train models 
+    │   ├── predict.py     <- Scripts to make prediction on the files in ../data/preprocessed
+    │   │
+    │   ├── api            <- FastAPI implementation
+    │   │   └── main.py    <- Main API script (Production and Test compatible)
+    │   │
+    │   ├── data           <- Scripts to download or generate data
+    │   │   ├── check_structure.py    
+    │   │   ├── import_raw_data.py 
+    │   │   └── make_dataset.py
+    │   │
+    │   ├── features       <- Scripts to turn raw data into features for modeling
+    │   │   └── build_features.py
+    │   │
+    │   ├── models                
+    │   │   └── train_model.py
+    │   └── config         <- Describe the parameters used in train_model.py and predict.py
 
-The project is based on the Rakuten product classification challenge.
+--------
 
-======================================================================
-SYSTEM ARCHITECTURE
-======================================================================
+Once you have downloaded the github repo, open the anaconda powershell on the root of the project and follow those instructions :
 
-```mermaid
-flowchart LR
+> `conda create -n "Rakuten-project" python=3.10`    <- It will create your conda environement
 
-A[Raw Dataset] --> B[Data Processing]
-B --> C[Feature Engineering]
-C --> D[Model Training]
-D --> E[Serialized Model]
-E --> F[FastAPI Service]
-F --> G[Prediction API]
-G --> H[Client Application]
-```
+> `conda activate Rakuten-project`       <- It will activate your environment
 
-======================================================================
-MLOPS PIPELINE
-======================================================================
+> `conda install pip`                    <- May be optionnal
 
-```mermaid
-flowchart TD
+> `pip install -r requirements.txt`      <- It will install the required packages
 
-A[Raw Data] --> B[Data Versioning DVC]
-B --> C[Data Cleaning]
-C --> D[Feature Engineering]
-D --> E[Model Training]
-E --> F[Model Serialization]
-F --> G[Inference API]
-G --> H[Monitoring]
-```
+> `pip install dvc-gdrive`               <- Install DVC Google Drive support
 
-======================================================================
-PROJECT STRUCTURE
-======================================================================
+> `dvc pull`                             <- Download models and data from remote storage
 
-.
-├── .dvc/                      # Data Version Control configuration
-├── data
-│   ├── raw                    # Original dataset
-│   ├── preprocessed           # Cleaned datasets
-│   └── external               # External inference data
-│
-├── logs                       # Training / inference logs
-│
-├── models
-│   ├── artifacts              # Serialized pipelines
-│   │   └── model_final.joblib
-│   └── label_mapping.json
-│
-├── notebooks                  # Exploration and experiments
-│
-├── src
-│   ├── main.py                # Training entrypoint
-│   ├── predict.py             # Prediction script
-│   │
-│   ├── api
-│   │   └── main.py            # FastAPI application
-│   │
-│   ├── data
-│   │   ├── import_raw_data.py
-│   │   ├── check_structure.py
-│   │   └── make_dataset.py
-│   │
-│   ├── features
-│   │   └── build_features.py
-│   │
-│   ├── models
-│   │   └── train_model.py
-│   │
-│   └── config
-│
-├── tests
-│
-├── requirements.txt
-└── README.md
+> `python src/data/import_raw_data.py`   <- It will import the tabular data on data/raw/
 
-======================================================================
-INSTALLATION
-======================================================================
+> Upload the image data folder set directly on local from https://challengedata.ens.fr/participants/challenges/35/, you should save the folders image_train and image_test respecting the following structure
 
-Clone the repository:
+    ├── data
+    │   └── raw           
+    |   |  ├── image_train 
+    |   |  ├── image_test 
 
-```bash
-git clone <repo_url>
-cd rakuten-mlops
-```
+> `python src/data/make_dataset.py data/raw data/preprocessed`      <- It will copy the raw dataset and paste it on data/preprocessed/
 
-Create the environment:
+> `python src/main.py`                   <- It will train the models on the dataset and save them in models.
 
-```bash
-conda create -n Rakuten-project python=3.10
-conda activate Rakuten-project
-```
+> `python src/predict.py`                <- It will use the trained models to make a prediction on the desired data.
+>
+    Exemple : python src/predict.py --dataset_path "data/preprocessed/X_test_update.csv" --images_path "data/preprocessed/image_test"
+                                        
+                                         The predictions are saved in data/preprocessed as 'predictions.json'
 
-Install dependencies:
+## FastAPI service
 
-```bash
-pip install -r requirements.txt
-```
+The project now exposes a FastAPI application for online inference.
 
-Install DVC Google Drive plugin:
+1. Install dependencies:
 
-```bash
-pip install dvc-gdrive
-```
+   `pip install -r requirements.txt`
 
-======================================================================
-DOWNLOAD MODELS
-======================================================================
+2. Place the serialized inference artifacts in the `models/` folder.
 
-```bash
-dvc pull
-```
+   Expected defaults:
+   - `models/artifacts/model_final.joblib` (Scikit-Learn Pipeline)
+   - `models/label_mapping.json` (Category mapping)
 
-======================================================================
-DATASET SETUP
-======================================================================
+3. Start the API from the repository root:
 
-Download the dataset:
-https://challengedata.ens.fr/participants/challenges/35/
+   `uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload`
 
-Place the images inside:
+4. Check the service:
 
-data/raw
-├── image_train
-└── image_test
+   - `GET /health`
+   - `POST /predict`
 
-======================================================================
-DATA PREPARATION
-======================================================================
+Authentication:
 
-Run:
+- `GET /health` is public
+- `POST /predict` requires `Authorization: Bearer <token>` (If security is enabled)
+- The server token must be provided through the `API_AUTH_TOKEN` environment variable
 
-```bash
-python src/data/make_dataset.py data/raw data/preprocessed
-```
+Tests and coverage:
 
-This step:
-- copies raw data
-- generates processed dataset
-- prepares training features
+- Run the API test suite with coverage from the repository root: `pytest`
+- The project now enforces a minimum coverage threshold of `90%` on `src/api`
+- Coverage is configured in `pytest.ini`
 
-======================================================================
-MODEL TRAINING
-======================================================================
-
-Train the model:
-
-```bash
-python src/main.py
-```
-
-The trained pipeline will be saved in:
-
-models/artifacts/model_final.joblib
-
-======================================================================
-PREDICTION
-======================================================================
-
-Run prediction:
-
-```bash
-python src/predict.py
-```
-
-Example:
-
-```bash
-python src/predict.py \
---dataset_path data/preprocessed/X_test_update.csv \
---images_path data/preprocessed/image_test
-```
-
-Predictions are stored in:
-
-data/preprocessed/predictions.json
-
-======================================================================
-API INFERENCE
-======================================================================
-
-The project exposes a FastAPI inference service.
-
-Start the server:
-
-```bash
-uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload
-```
-
-Open documentation:
-
-http://localhost:8000/docs
-
-======================================================================
-API ENDPOINTS
-======================================================================
-
-Health
-------
-GET /health
-
-Returns API status.
-
-Predict
--------
-POST /predict
-
-Requires authentication:
-
-Authorization: Bearer <token>
-
-Token must be set with:
-
-API_AUTH_TOKEN
-
-======================================================================
-EXAMPLE REQUEST
-======================================================================
+Example request body:
 
 ```json
 {
-  "text": "Console Sony PS5 avec manette DualSense",
-  "image_path": "optional/path/to/image.jpg"
+  "text": "Lot de 4 chaises scandinaves pour salle à manger",
+  "image_path": "string"
 }
-```
+Validation rules for POST /predict:
 
-======================================================================
-VALIDATION RULES
-======================================================================
+text: required string for text classification (Scikit-Learn)
 
-| Field      | Requirement                      |
-|------------|----------------------------------|
-| text       | required                         |
-| model_type | optional ("lstm" or "vgg16")     |
-| image_path | required for image model         |
+model_type: optional string ("lstm" or "vgg16"), defaults to "lstm"
 
-======================================================================
-ERROR HANDLING
-======================================================================
+image_path: required if classification is image-based
 
-| Status | Description          |
-|--------|----------------------|
-| 422    | validation error     |
-| 503    | model not loaded     |
-| 500    | internal server error|
+Any unexpected field is handled by standard FastAPI validation
 
-======================================================================
-TESTING
-======================================================================
+Error responses are normalized:
 
-Run tests:
+401 AUTHENTICATION_REQUIRED when the Bearer token is missing
 
-```bash
-pytest
-```
+422 VALIDATION_ERROR for invalid payloads or missing required fields
 
-Coverage requirement:
+503 MODEL_NOT_READY when artifacts are missing or not loaded
 
-90% minimum on src/api
+500 INTERNAL_SERVER_ERROR for technical failures during prediction
 
-======================================================================
-DOCKER DEPLOYMENT
-======================================================================
+Url drive johan: https://drive.google.com/drive/folders/1vYf7JAkDylxW53viUhayQODOK_1kuzc9
 
-Pull models:
+You can download the trained models loaded here : https://drive.google.com/drive/folders/1fjWd-NKTE-RZxYOOElrkTdOw2fGftf5M?usp=drive_link and insert them in the models folder
 
-```bash
+<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+
+🐳 Lancer l'API avec Docker (Mise en production)
+L'API est entièrement conteneurisée. Pour la démarrer sur n'importe quel environnement :
+
+Assurez-vous d'avoir rapatrié le modèle final via DVC :
+
+Bash
 dvc pull
-```
+Construisez l'image Docker en local :
 
-Build image:
+Bash
+docker build -t rakuten-api:latest .
+Lancez le conteneur :
 
-```bash
-docker build -t rakuten-api .
-```
+Bash
+docker run -p 8000:8000 rakuten-api:latest
+L'API sera alors accessible sur http://localhost:8000/docs.
 
-Run container:
-
-```bash
-docker run -p 8000:8000 rakuten-api
-```
-
-Access API:
-
-http://localhost:8000/docs
-
-======================================================================
-CI/CD (RECOMMENDED)
-======================================================================
-
-Typical CI pipeline:
-
-GitHub Actions
-1. Install dependencies
-2. Run linting
-3. Run unit tests
-4. Validate coverage
-5. Build Docker image
-6. Push container
-
-Create this file:
-
-.github/workflows/ci.yml
-
-With the following content:
-
-```yaml
-name: ML Pipeline CI
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.10
-
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-
-      - name: Run tests
-        run: |
-          pytest
-
-      - name: Check coverage
-        run: |
-          pytest --cov=src
-```
-
-======================================================================
-CI BADGE
-======================================================================
-
-Add this badge at the top of your README:
-
-```md
-![CI](https://github.com/USER/REPO/actions/workflows/ci.yml/badge.svg)
-```
-
-======================================================================
-API DEMO
-======================================================================
-
-Add this section to your README:
-
-```md
-# API Demo
-
-Example of real-time prediction using the FastAPI interface.
-
-![API Demo](demo/api_demo.gif)
-```
-
-To create the GIF:
-1. Start the API:
-   uvicorn src.api.main:app --reload
-2. Open:
-   http://localhost:8000/docs
-3. Record your screen with:
-   - ScreenToGif
-   - Kap
-   - LiceCap
-4. Export the file as:
-   demo/api_demo.gif
-
-======================================================================
-MACHINE LEARNING ARCHITECTURE
-======================================================================
-
-```mermaid
-flowchart LR
-
-A[Raw Dataset] --> B[Data Versioning DVC]
-B --> C[Data Processing]
-C --> D[Feature Engineering]
-D --> E[Model Training]
-E --> F[Model Serialization]
-F --> G[Model Registry / Artifacts]
-G --> H[FastAPI Inference Service]
-H --> I[Prediction API]
-I --> J[Client Application]
-```
-
-This diagram shows:
-- data management
-- training pipeline
-- model deployment
-- API inference
-
-======================================================================
-FUTURE IMPROVEMENTS
-======================================================================
-
-Possible enhancements:
-- MLflow experiment tracking
-- model registry
-- drift detection
-- monitoring with Prometheus
-- distributed training
-- GPU inference
-
-======================================================================
-PRETRAINED MODELS
-======================================================================
-
-Download models:
-https://drive.google.com/drive/folders/1fjWd-NKTE-RZxYOOElrkTdOw2fGftf5M
-
-Place them inside:
-models/
-
-======================================================================
-ADDITIONAL RESOURCES
-======================================================================
-
-Drive folder:
-https://drive.google.com/drive/folders/1vYf7JAkDylxW53viUhayQODOK_1kuzc9
-
-Dataset:
-https://challengedata.ens.fr
-
-Project template:
-https://drivendata.github.io/cookiecutter-data-science/
-
-======================================================================
-IDEAL FINAL REPOSITORY STRUCTURE
-======================================================================
-
-rakuten-mlops
-│
-├── data
-├── models
-├── notebooks
-├── src
-│
-├── tests
-│
-├── demo
-│   └── api_demo.gif
-│
-├── .github
-│   └── workflows
-│       └── ci.yml
-│
-├── Dockerfile
-├── requirements.txt
-├── README.md
-└── pytest.ini
+Note on Data Preparation: To correctly set up the data structure, run:
+python src/data/make_dataset.py data/raw data/preprocessed
