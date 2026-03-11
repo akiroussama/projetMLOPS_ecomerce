@@ -22,3 +22,4 @@ seaborn
 tqdm
 requests
 python-dotenv
+httpx
