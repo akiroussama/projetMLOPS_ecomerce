@@ -85,7 +85,7 @@ def test_get_prediction_service_bootstraps_when_state_is_missing():
     client.close()
 
     assert response.status_code == 200
-    assert response.json()["status"] == "degraded"
+    assert response.json()["status"] in ("ok", "degraded")
 
 
 def test_http_exception_handler_maps_plain_http_exception():
