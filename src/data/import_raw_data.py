@@ -1,74 +1,114 @@
-import requests
-import os
+from __future__ import annotations
+
+import argparse
 import logging
-from check_structure import check_existing_file, check_existing_folder
+from pathlib import Path
+from typing import Iterable
+from urllib.parse import urljoin
+
+import requests
 
 
-def import_raw_data(raw_data_relative_path, filenames, bucket_folder_url):
-    """import filenames from bucket_folder_url in raw_data_relative_path"""
-    if check_existing_folder(raw_data_relative_path):
-        os.makedirs(raw_data_relative_path)
-    # download all the files
-    for filename in filenames:
-        input_file = os.path.join(bucket_folder_url, filename)
-        output_file = os.path.join(raw_data_relative_path, filename)
-        if check_existing_file(output_file):
-            object_url = input_file
-            print(f"downloading {input_file} as {os.path.basename(output_file)}")
-            response = requests.get(object_url)
-            if response.status_code == 200:
-                # Process the response content as needed
-                content = (
-                    response.content
-                )  # Utilisez response.content pour les fichiers binaires
-                with open(output_file, "wb") as file:
-                    file.write(content)
-            else:
-                print(f"Error accessing the object {input_file}:", response.status_code)
-
-    # Téléchargez le dossier 'img_train'
-    img_train_folder_url = os.path.join(bucket_folder_url, "image_train/")
-    img_train_local_path = os.path.join(raw_data_relative_path, "image_train/")
-    if check_existing_folder(img_train_local_path):
-        os.makedirs(img_train_local_path)
-
-    try:
-        response = requests.get(img_train_folder_url)
-        if response.status_code == 200:
-            file_list = response.text.splitlines()
-            for img_url in file_list:
-                img_filename = os.path.basename(img_url)
-                output_file = os.path.join(img_train_local_path, img_filename)
-                if check_existing_file(output_file):
-                    print(f"downloading {img_url} as {img_filename}")
-                    img_response = requests.get(img_url)
-                    if img_response.status_code == 200:
-                        with open(output_file, "wb") as img_file:
-                            img_file.write(img_response.content)
-                    else:
-                        print(f"Error downloading {img_url}:", img_response.status_code)
-        else:
-            print(
-                f"Error accessing the object list {img_train_folder_url}:",
-                response.status_code,
-            )
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
+DEFAULT_FILENAMES = (
+    "X_test_update.csv",
+    "X_train_update.csv",
+    "Y_train_CVw08PX.csv",
+)
+DEFAULT_BUCKET_URL = (
+    "https://mlops-project-db.s3.eu-west-1.amazonaws.com/classification_e-commerce/"
+)
 
 
-def main(
-    raw_data_relative_path="./data/raw",
-    filenames=["X_test_update.csv", "X_train_update.csv", "Y_train_CVw08PX.csv"],
-    bucket_folder_url="https://mlops-project-db.s3.eu-west-1.amazonaws.com/classification_e-commerce/",
-):
-    """Upload data from AWS s3 in ./data/raw"""
-    import_raw_data(raw_data_relative_path, filenames, bucket_folder_url)
+def import_raw_data(
+    raw_data_relative_path: str | Path = "data/raw",
+    filenames: Iterable[str] = DEFAULT_FILENAMES,
+    bucket_folder_url: str = DEFAULT_BUCKET_URL,
+    *,
+    skip_existing: bool = True,
+    timeout: int = 60,
+) -> dict[str, int]:
+    """Download the tabular raw data used by the baseline training pipeline."""
+
+    output_dir = Path(raw_data_relative_path)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
     logger = logging.getLogger(__name__)
-    logger.info("making raw data set")
+    downloaded = 0
+    skipped = 0
+
+    with requests.Session() as session:
+        for filename in filenames:
+            destination = output_dir / filename
+
+            if skip_existing and destination.exists():
+                skipped += 1
+                logger.info("skip existing raw file: %s", destination.name)
+                continue
+
+            file_url = urljoin(bucket_folder_url.rstrip("/") + "/", filename)
+            logger.info("download raw file: %s", file_url)
+            response = session.get(file_url, timeout=timeout)
+            response.raise_for_status()
+            destination.write_bytes(response.content)
+            downloaded += 1
+
+    return {"downloaded": downloaded, "skipped": skipped}
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Download the raw CSV files used by the Rakuten baseline pipeline."
+    )
+    parser.add_argument(
+        "--output-dir",
+        default="data/raw",
+        help="Directory where the raw CSV files will be stored.",
+    )
+    parser.add_argument(
+        "--bucket-url",
+        default=DEFAULT_BUCKET_URL,
+        help="Base URL hosting the raw CSV files.",
+    )
+    parser.add_argument(
+        "--filename",
+        action="append",
+        dest="filenames",
+        help="Filename to download. Repeat the flag to override the default file list.",
+    )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Re-download files even when they already exist locally.",
+    )
+    parser.add_argument(
+        "--timeout",
+        type=int,
+        default=60,
+        help="HTTP timeout in seconds for each file download.",
+    )
+    return parser
+
+
+def main(argv: list[str] | None = None) -> dict[str, int]:
+    args = build_parser().parse_args(argv)
+    summary = import_raw_data(
+        raw_data_relative_path=args.output_dir,
+        filenames=args.filenames or DEFAULT_FILENAMES,
+        bucket_folder_url=args.bucket_url,
+        skip_existing=not args.force,
+        timeout=args.timeout,
+    )
+    logging.getLogger(__name__).info(
+        "raw data ready: %s downloaded, %s skipped",
+        summary["downloaded"],
+        summary["skipped"],
+    )
+    return summary
 
 
 if __name__ == "__main__":
-    log_fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    logging.basicConfig(level=logging.INFO, format=log_fmt)
-
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    )
     main()

@@ -97,3 +97,6 @@ target/
 # Artifacts
 # /models/
 /models
+/orchestration/logs/
+/mlruns/
+/.tmp_pytest/
