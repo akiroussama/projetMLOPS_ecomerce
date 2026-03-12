@@ -1,130 +1,174 @@
-# Projet MLOps E-commerce
+Rakuten Ecommerce Classification
+==============================
 
-Baseline MLOps orientee soutenance pour la classification de produits e-commerce.
+This project is a starting Pack for MLOps projects based on the subject "Rakuten Product Classification". It's not perfect so feel free to make some modifications on it.
 
-Le perimetre obligatoire couvre :
+Project Organization
+------------
 
-- pipeline de donnees automatisable ;
-- feature engineering texte ;
-- entrainement d'un modele baseline ;
-- API FastAPI d'inference sans reentrainement ;
-- suivi des runs avec MLflow ;
-- orchestration Airflow ;
-- conteneurisation des composants via Docker Compose.
+    ├── LICENSE
+    ├── README.md          <- The top-level README for developers using this project.
+    ├── .dvc/              <- DVC configuration for data and model versioning.
+    ├── data
+    │   ├── external       <- Data from third party sources -> the external data you want to make a prediction on
+    │   ├── preprocessed   <- The final, canonical data sets for modeling.
+    |   |  ├── image_train <- Where you put the images of the train set
+    |   |  ├── image_test  <- Where you put the images of the predict set
+    |   |  ├── X_train_update.csv <- Tabular training data
+    |   |  ├── X_test_update.csv  <- Tabular testing data
+    │   └── raw            <- The original, immutable data dump.
+    |   |  ├── image_train <- Original train images
+    |   |  ├── image_test  <- Original predict images
+    │
+    ├── logs               <- Logs from training and predicting
+    │
+    ├── models             <- Trained and serialized models or label mappings
+    │   ├── artifacts/     <- model_final.joblib (The primary Scikit-Learn Pipeline)
+    │   └── label_mapping.json <- Mapping between prdtypecode and category names
+    │
+    ├── notebooks          <- Jupyter notebooks for data exploration and experimentation.
+    │
+    ├── requirements.txt   <- The requirements file for reproducing the analysis environment.
+    │
+    ├── src                <- Source code for use in this project.
+    │   ├── __init__.py    <- Makes src a Python module
+    │   ├── main.py        <- Scripts to train models 
+    │   ├── predict.py     <- Scripts to make prediction on the files in ../data/preprocessed
+    │   │
+    │   ├── api            <- FastAPI implementation
+    │   │   └── main.py    <- Main API script (Production and Test compatible)
+    │   │
+    │   ├── data           <- Scripts to download or generate data
+    │   │   ├── check_structure.py    
+    │   │   ├── import_raw_data.py 
+    │   │   └── make_dataset.py
+    │   │
+    │   ├── features       <- Scripts to turn raw data into features for modeling
+    │   │   └── build_features.py
+    │   │
+    │   ├── models                
+    │   │   └── train_model.py
+    │   └── config         <- Describe the parameters used in train_model.py and predict.py
 
-## Architecture
+--------
 
-- `src/data/import_raw_data.py` : telecharge les CSV bruts depuis le bucket S3.
-- `src/data/make_dataset.py` : nettoie les donnees et cree le split train/validation.
-- `src/features/build_features.py` : construit les matrices TF-IDF et le vectorizer serialize.
-- `src/models/train_model.py` : entraine le baseline `SGDClassifier`, calcule les metriques et log les runs dans MLflow.
-- `src/api/app.py` : expose `GET /health` et `POST /predict`.
-- `orchestration/dags/retraining_pipeline.py` : DAG Airflow de retraining hebdomadaire.
-- `docker-compose.yml` : assemble `api`, `mlflow`, `airflow` et `postgres`.
+Once you have downloaded the github repo, open the anaconda powershell on the root of the project and follow those instructions :
 
-## Pipeline locale
+> `conda create -n "Rakuten-project" python=3.10`    <- It will create your conda environement
 
-Depuis la racine du repo :
+> `conda activate Rakuten-project`       <- It will activate your environment
 
-```bash
-python -m src.main
-```
+> `conda install pip`                    <- May be optionnal
 
-La commande :
+> `pip install -r requirements.txt`      <- It will install the required packages
 
-1. telecharge les CSV bruts dans `data/raw`
-2. prepare les fichiers propres dans `data/preprocessed`
-3. cree les features TF-IDF
-4. entraine le modele et ecrit les artefacts dans `models/`
-5. ecrit les rapports d'evaluation dans `reports/`
+> `pip install dvc-gdrive`               <- Install DVC Google Drive support
 
-Options utiles :
+> `dvc pull`                             <- Download models and data from remote storage
 
-```bash
-python -m src.main --skip-download
-python -m src.main --tracking-uri http://localhost:5000
-```
+> `python src/data/import_raw_data.py`   <- It will import the tabular data on data/raw/
 
-## API FastAPI
+> Upload the image data folder set directly on local from https://challengedata.ens.fr/participants/challenges/35/, you should save the folders image_train and image_test respecting the following structure
 
-L'API charge les artefacts deja entraines depuis `models/` et ne reentraine jamais au demarrage.
+    ├── data
+    │   └── raw           
+    |   |  ├── image_train 
+    |   |  ├── image_test 
 
-Lancement local :
+> `python src/data/make_dataset.py data/raw data/preprocessed`      <- It will copy the raw dataset and paste it on data/preprocessed/
 
-```bash
-set API_AUTH_TOKEN=change-me
-uvicorn src.api.app:app --host 0.0.0.0 --port 8000
-```
+> `python src/main.py`                   <- It will train the models on the dataset and save them in models.
 
-Endpoints :
+> `python src/predict.py`                <- It will use the trained models to make a prediction on the desired data.
+>
+    Exemple : python src/predict.py --dataset_path "data/preprocessed/X_test_update.csv" --images_path "data/preprocessed/image_test"
+                                        
+                                         The predictions are saved in data/preprocessed as 'predictions.json'
 
-- `GET /health`
-- `POST /predict`
+## FastAPI service
 
-Exemple de payload :
+The project now exposes a FastAPI application for online inference.
+
+1. Install dependencies:
+
+   `pip install -r requirements.txt`
+
+2. Place the serialized inference artifacts in the `models/` folder.
+
+   Expected defaults:
+   - `models/artifacts/model_final.joblib` (Scikit-Learn Pipeline)
+   - `models/label_mapping.json` (Category mapping)
+
+3. Start the API from the repository root:
+
+   `uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload`
+
+4. Check the service:
+
+   - `GET /health`
+   - `POST /predict`
+
+Authentication:
+
+- `GET /health` is public
+- `POST /predict` requires `Authorization: Bearer <token>` (If security is enabled)
+- The server token must be provided through the `API_AUTH_TOKEN` environment variable
+
+Tests and coverage:
+
+- Run the API test suite with coverage from the repository root: `pytest`
+- The project now enforces a minimum coverage threshold of `90%` on `src/api`
+- Coverage is configured in `pytest.ini`
+
+Example request body:
 
 ```json
 {
-  "designation": "robe ete femme",
-  "description": "robe rouge legere en coton",
-  "productid": 1001,
-  "imageid": 2002
+  "text": "Lot de 4 chaises scandinaves pour salle à manger",
+  "image_path": "string"
 }
-```
+Validation rules for POST /predict:
 
-## Stack Docker obligatoire
+text: required string for text classification (Scikit-Learn)
 
-1. creer un fichier `.env` a partir de `.env.example`
-2. initialiser Airflow :
+model_type: optional string ("lstm" or "vgg16"), defaults to "lstm"
 
-```bash
-docker compose up airflow-init
-```
+image_path: required if classification is image-based
 
-3. lancer la stack :
+Any unexpected field is handled by standard FastAPI validation
 
-```bash
-docker compose up -d api mlflow airflow-webserver airflow-scheduler
-```
+Error responses are normalized:
 
-Services exposes :
+401 AUTHENTICATION_REQUIRED when the Bearer token is missing
 
-- API : `http://localhost:8000/docs`
-- MLflow : `http://localhost:5000`
-- Airflow : `http://localhost:8080` avec `airflow / airflow`
+422 VALIDATION_ERROR for invalid payloads or missing required fields
 
-Pour executer manuellement un entrainement dans le conteneur dedie :
+503 MODEL_NOT_READY when artifacts are missing or not loaded
 
-```bash
-docker compose run --rm trainer python -m src.main --skip-download
-```
+500 INTERNAL_SERVER_ERROR for technical failures during prediction
 
-## Airflow
+Url drive johan: https://drive.google.com/drive/folders/1vYf7JAkDylxW53viUhayQODOK_1kuzc9
 
-Le DAG `rakuten_weekly_retraining` automatise :
+You can download the trained models loaded here : https://drive.google.com/drive/folders/1fjWd-NKTE-RZxYOOElrkTdOw2fGftf5M?usp=drive_link and insert them in the models folder
 
-1. le telechargement des donnees brutes
-2. la preparation des donnees
-3. la reconstruction des features
-4. le reentrainement du modele
-5. la verification des artefacts consommes par l'API
+<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
 
-Planification par defaut : tous les lundis a `02:00`.
+🐳 Lancer l'API avec Docker (Mise en production)
+L'API est entièrement conteneurisée. Pour la démarrer sur n'importe quel environnement :
 
-## MLflow
+Assurez-vous d'avoir rapatrié le modèle final via DVC :
 
-Le script d'entrainement logge :
+Bash
+dvc pull
+Construisez l'image Docker en local :
 
-- les hyperparametres du baseline ;
-- les metriques de validation ;
-- le modele serialize ;
-- le vectorizer ;
-- les rapports JSON de performance.
+Bash
+docker build -t rakuten-api:latest .
+Lancez le conteneur :
 
-## Tests
+Bash
+docker run -p 8000:8000 rakuten-api:latest
+L'API sera alors accessible sur http://localhost:8000/docs.
 
-```bash
-pytest
-```
-
-Les tests couvrent l'API et un smoke test du pipeline baseline jusqu'aux artefacts compatibles avec l'API.
+Note on Data Preparation: To correctly set up the data structure, run:
+python src/data/make_dataset.py data/raw data/preprocessed

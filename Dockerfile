@@ -1,20 +1,27 @@
-
+# img python legere
 FROM python:3.10-slim
 
+# rep de travail
 WORKDIR /app
 
-COPY requirements-api.txt /tmp/requirements-api.txt
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r /tmp/requirements-api.txt
+# maj pip
+RUN pip install --no-cache-dir --upgrade pip
 
+# copie reqs
+COPY requirements.txt .
+
+# inst deps
+RUN pip install --no-cache-dir -r requirements.txt
+
+# copie tout le dossier models (inclut artifacts et label_mapping.json)
+# plus besoin de copies individuelles, le dossier src s'occupe du reste
+COPY models/ /app/models/
+
+# copie code source
 COPY src/ /app/src/
-COPY setup.py README.md /app/
 
-RUN mkdir -p /app/models
-
-ENV PYTHONPATH=/app
-ENV MODEL_DIR=/app/models
-
+# port api
 EXPOSE 8000
 
-CMD ["uvicorn", "src.api.app:app", "--host", "0.0.0.0", "--port", "8000"]
+# start api
+CMD ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8000"]

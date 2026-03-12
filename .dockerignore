@@ -4,7 +4,13 @@ __pycache__
 *.pyc
 .pytest_cache
 .coverage
+.dvc
+.dvcignore
 data/raw/*
 !data/raw/*.dvc
-notebooks
-tests
+data/preprocessed/*
+notebooks/
+tests/
+test_mass.py
+client_secret_*.json
+*.jpeg
