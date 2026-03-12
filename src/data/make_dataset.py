@@ -12,7 +12,6 @@ import html
 import os
 from pathlib import Path
 from bs4 import BeautifulSoup
-from sklearn.model_selection import train_test_split
 
 def strip_html(text):
     text = "" if text is None else str(text)
