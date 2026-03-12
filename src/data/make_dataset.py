@@ -1,3 +1,10 @@
+'''
+Make Dataset
+
+Example usage:
+python3 src/data/make_dataset.py data/raw data/preprocessed
+'''
+
 import click
 import pandas as pd
 import re
@@ -32,26 +39,45 @@ def main(input_filepath, output_filepath):
     
     # on charge les fichiers sources
     raw_path = Path(input_filepath)
+    preprocessed_path = Path(output_filepath)
+    print("raw_path:", raw_path)
+    print("preprocessed_path:", preprocessed_path)
+
+    # Fichiers bruts
+    X_train_path = raw_path / "X_train_update.csv"
+    y_train_path = raw_path / "Y_train_CVw08PX.csv"
+
+    # Fichier déjà traduit
     transl_path = raw_path / "Rak_train_translations.csv"
     
-    y = pd.read_csv(raw_path / "Y_train_CVw08PX.csv", index_col=0)
+    # Labels
+    y = pd.read_csv(y_train_path, index_col=0).iloc[:, 0]
     
     if transl_path.exists():
+        print(f"Using translations: {transl_path}")
         df = pd.read_csv(transl_path, index_col=0)
-        df["product_txt"] = df["product_txt_transl"].fillna("").astype(str)
+        if "product_txt_transl" not in df.columns:
+            raise ValueError("Rak_train_translations.csv doit contenir la colonne 'product_txt_transl'")
     else:
-        x_train = pd.read_csv(raw_path / "X_train_update.csv", index_col=0)
-        df = pd.DataFrame(index=x_train.index)
-        df["product_txt"] = build_product_txt(x_train)
+        print("No translations file found. Building product_txt from raw.")
+        df = pd.read_csv(X_train_path, index_col=0)
+        df["product_txt"] = build_product_txt(df)
 
+    #on rajoute le label
     df["prdtypecode"] = y.reindex(df.index)
+    df["prdtypecode"] = df["prdtypecode"].astype(int)
+    missing_pdtcd = df["prdtypecode"].isna().sum()
+    if missing_pdtcd > 0:
+        raise ValueError(f"Error: {missing_pdtcd} labels manquants après alignement (index mismatch).")
+
+    # Nettoyage final anti-NaN
+    df["product_txt"] = df["product_txt"].fillna("").astype(str)
     
-    # split train/val
-    train_df, val_df = train_test_split(df, test_size=0.2, random_state=42, stratify=df["prdtypecode"])
-    
-    train_df.to_csv(os.path.join(output_filepath, "train_clean.csv"))
-    val_df.to_csv(os.path.join(output_filepath, "val_clean.csv"))
-    print("✅ Ticket 12: splits generes")
+    # Clean CSV path
+    out_path = preprocessed_path / "train_clean.csv"
+    df[["product_txt", "prdtypecode"]].to_csv(out_path)
+    print(f"Dataset: {len(df)} lignes")
+    print(f"Saved: {out_path}")
 
 if __name__ == "__main__":
     main()
