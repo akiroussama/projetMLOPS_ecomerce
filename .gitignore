@@ -97,3 +97,4 @@ target/
 # Artifacts
 # /models/
 /models
+venv/
