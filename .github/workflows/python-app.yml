@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main, master]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 permissions:
   contents: read
   packages: write
@@ -48,4 +51,4 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name == 'push' }}
-          tags: ghcr.io/${{ github.repository }}/api:latest
+          tags: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}/api:latest
