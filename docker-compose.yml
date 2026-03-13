@@ -64,6 +64,24 @@ services:
       mlflow:
         condition: service_started
 
+  bootstrap:
+    profiles: ["bootstrap"]
+    build:
+      context: .
+      dockerfile: docker/trainer/Dockerfile
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      PYTHONPATH: /app
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./reports:/app/reports
+      - ./scripts:/app/scripts
+    depends_on:
+      mlflow:
+        condition: service_started
+    command: ["bash", "scripts/bootstrap.sh"]
+
   api:
     build:
       context: .
