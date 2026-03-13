@@ -8,7 +8,7 @@ import streamlit as st
 
 st.set_page_config(
     page_title="Contexte | Rakuten MLOps",
-    page_icon="\ud83d\uded2",
+    page_icon="R",
     layout="wide",
 )
 

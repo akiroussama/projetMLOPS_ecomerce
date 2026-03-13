@@ -15,7 +15,7 @@ import streamlit as st
 
 st.set_page_config(
     page_title="Predictions | Rakuten MLOps",
-    page_icon="\ud83d\uded2",
+    page_icon="R",
     layout="wide",
 )
 

@@ -12,7 +12,7 @@ import streamlit as st
 # ---------------------------------------------------------------------------
 st.set_page_config(
     page_title="Rakuten MLOps",
-    page_icon="\ud83d\uded2",
+    page_icon="R",
     layout="wide",
     initial_sidebar_state="expanded",
 )
