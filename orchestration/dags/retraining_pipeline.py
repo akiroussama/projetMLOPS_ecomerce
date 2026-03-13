@@ -91,4 +91,16 @@ with DAG(
         env=COMMON_ENV,
     )
 
-    download_raw_data >> prepare_dataset >> build_features >> train_model >> verify_artifacts
+    generate_drift_report = BashOperator(
+        task_id="generate_drift_report",
+        bash_command=(
+            "python -m src.monitoring.drift_report "
+            "--reference-path data/preprocessed/X_train_clean.csv "
+            "--current-path data/preprocessed/X_val_clean.csv "
+            "--output-dir reports/drift"
+        ),
+        cwd=PROJECT_ROOT,
+        env=COMMON_ENV,
+    )
+
+    download_raw_data >> prepare_dataset >> build_features >> train_model >> verify_artifacts >> generate_drift_report
