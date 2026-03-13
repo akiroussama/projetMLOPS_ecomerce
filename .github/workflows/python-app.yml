@@ -51,4 +51,4 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name == 'push' }}
-          tags: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}/api:latest
+          tags: ghcr.io/${{ github.repository_owner }}/projetmlops-ecomerce-api:latest
