@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soutenance MLOps — Classification Rakuten</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --rakuten-red: #bf0000;
+            --rakuten-dark: #8b0000;
+            --accent-blue: #2563eb;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-purple: #7c3aed;
+            --accent-cyan: #06b6d4;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --border-light: #e2e8f0;
+            --glass-border: rgba(191, 0, 0, 0.08);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.08);
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 100;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 0.75rem; }
+
+        .logo-icon {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, var(--rakuten-red), var(--rakuten-dark));
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Outfit'; font-weight: 900; font-size: 1.1rem; color: white;
+        }
+
+        .header-center { text-align: center; }
+        .logo { font-family: 'Outfit'; font-weight: 700; font-size: 1.1rem; color: var(--text-main); }
+        .logo-sub { display: block; font-size: 0.7rem; font-weight: 400; color: var(--text-muted); letter-spacing: 0.5px; }
+
+        .header-right { display: flex; align-items: center; }
+        .institution-badge { display: flex; align-items: center; gap: 0.5rem; }
+        .institution-info { text-align: right; }
+        .institution-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .institution-name { font-family: 'Outfit'; font-weight: 700; font-size: 0.85rem; color: var(--rakuten-red); }
+
+        /* Slides */
+        .slide {
+            position: absolute;
+            top: 50px; left: 0; right: 0; bottom: 0;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0;
+            transform: translateX(60px);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            padding: 1.5rem 3rem;
+        }
+
+        .slide.active {
+            opacity: 1; transform: translateX(0); pointer-events: all;
+        }
+
+        .slide.prev {
+            opacity: 0; transform: translateX(-60px);
+        }
+
+        .content-single, .content-full {
+            width: 100%; max-width: 1100px;
+        }
+
+        .content-full { max-width: 1200px; }
+
+        /* Slide Header */
+        .slide-header {
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid var(--glass-border);
+        }
+
+        .slide-title {
+            font-family: 'Outfit';
+            font-weight: 800;
+            font-size: 1.8rem;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+        }
+
+        .section-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(191, 0, 0, 0.08);
+            color: var(--rakuten-red);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.5px;
+        }
+        .section-badge.data { background: rgba(37, 99, 235, 0.08); color: var(--accent-blue); }
+        .section-badge.model { background: rgba(16, 185, 129, 0.08); color: var(--accent-green); }
+        .section-badge.results { background: rgba(124, 58, 237, 0.08); color: var(--accent-purple); }
+        .section-badge.monitoring { background: rgba(245, 158, 11, 0.08); color: var(--accent-orange); }
+
+        /* Hero */
+        .hero-title {
+            font-family: 'Outfit';
+            font-weight: 900;
+            font-size: 3rem;
+            line-height: 1.1;
+            color: var(--text-main);
+            letter-spacing: -0.03em;
+        }
+
+        .hero-title .accent {
+            background: linear-gradient(135deg, var(--rakuten-red), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 1rem auto;
+            line-height: 1.6;
+        }
+
+        /* Grids */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 14px;
+            padding: 1.2rem;
+            transition: all 0.2s ease;
+        }
+        .card:hover { border-color: var(--rakuten-red); box-shadow: var(--shadow-md); }
+        .card-icon { font-size: 2rem; margin-bottom: 0.6rem; }
+        .card-title { font-family: 'Outfit'; font-weight: 700; font-size: 1.15rem; margin-bottom: 0.4rem; }
+        .card-text { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
+
+        /* Metric Cards */
+        .metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 14px;
+            padding: 1.2rem;
+            text-align: center;
+        }
+        .metric-value {
+            font-family: 'Fira Code';
+            font-weight: 700;
+            font-size: 2rem;
+            color: var(--rakuten-red);
+        }
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+        .metric-card.success { border-color: var(--accent-green); }
+        .metric-card.success .metric-value { color: var(--accent-green); }
+        .metric-card.warning { border-color: var(--accent-orange); }
+        .metric-card.warning .metric-value { color: var(--accent-orange); }
+
+        /* Info / Success / Warning Boxes */
+        .info-box, .success-box, .warning-box {
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .info-box {
+            background: rgba(37, 99, 235, 0.05);
+            border-left: 4px solid var(--accent-blue);
+        }
+        .info-box-title {
+            font-family: 'Outfit'; font-weight: 700; font-size: 1rem;
+            color: var(--accent-blue); margin-bottom: 0.4rem;
+            display: flex; align-items: center; gap: 0.4rem;
+        }
+        .success-box {
+            background: rgba(16, 185, 129, 0.05);
+            border-left: 4px solid var(--accent-green);
+        }
+        .success-box-title {
+            font-family: 'Outfit'; font-weight: 700; font-size: 1rem;
+            color: var(--accent-green); margin-bottom: 0.4rem;
+            display: flex; align-items: center; gap: 0.4rem;
+        }
+        .warning-box {
+            background: rgba(245, 158, 11, 0.05);
+            border-left: 4px solid var(--accent-orange);
+        }
+        .warning-box-title {
+            font-family: 'Outfit'; font-weight: 700; font-size: 1rem;
+            color: var(--accent-orange); margin-bottom: 0.4rem;
+            display: flex; align-items: center; gap: 0.4rem;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+        th, td {
+            padding: 0.6rem 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+        }
+        th {
+            font-family: 'Outfit';
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        td.highlight { color: var(--rakuten-red); font-weight: 600; }
+
+        /* TOC */
+        .toc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 2rem; }
+        .toc-entry {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 0.7rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .toc-entry:hover { background: rgba(191, 0, 0, 0.05); }
+        .toc-num {
+            font-family: 'Fira Code'; font-weight: 700; font-size: 1.3rem;
+            color: var(--rakuten-red); min-width: 2rem;
+        }
+        .toc-content { display: flex; flex-direction: column; flex: 1; }
+        .toc-title { font-family: 'Outfit'; font-weight: 600; font-size: 1.05rem; }
+        .toc-page { font-size: 0.8rem; color: var(--text-muted); }
+
+        .slide.active .toc-entry {
+            animation: tocSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+        .slide.active .toc-entry:nth-child(1) { animation-delay: 0.05s; }
+        .slide.active .toc-entry:nth-child(2) { animation-delay: 0.1s; }
+        .slide.active .toc-entry:nth-child(3) { animation-delay: 0.15s; }
+        .slide.active .toc-entry:nth-child(4) { animation-delay: 0.2s; }
+        .slide.active .toc-entry:nth-child(5) { animation-delay: 0.25s; }
+
+        @keyframes tocSlideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Tags */
+        .tag {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin: 0.15rem;
+        }
+        .tag-blue { background: rgba(37, 99, 235, 0.1); color: var(--accent-blue); }
+        .tag-green { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); }
+        .tag-orange { background: rgba(245, 158, 11, 0.1); color: var(--accent-orange); }
+        .tag-red { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        .tag-purple { background: rgba(124, 58, 237, 0.1); color: var(--accent-purple); }
+
+        /* Feature List */
+        .feature-list { list-style: none; padding: 0; }
+        .feature-list li {
+            padding: 0.55rem 0;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex; align-items: center; gap: 0.8rem;
+            font-size: 1.1rem;
+        }
+        .feature-list li:last-child { border-bottom: none; }
+        .feature-list li::before {
+            content: '\2192'; color: var(--accent-green); font-weight: bold; font-size: 1.3rem;
+        }
+
+        /* Dataflow */
+        .dataflow-container {
+            display: flex; align-items: center; justify-content: center;
+            gap: 0.9rem; margin: 1.6rem 0; flex-wrap: wrap;
+        }
+        .dataflow-box {
+            padding: 0.9rem 1.1rem; background: white;
+            border: 2px solid var(--rakuten-red); border-radius: 10px;
+            text-align: center; min-width: 120px; font-size: 1.1rem; font-weight: 600;
+        }
+        .dataflow-box.highlight-box {
+            border-color: var(--accent-green);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1));
+        }
+        .dataflow-arrow { font-size: 1.65rem; color: var(--accent-orange); }
+
+        /* Screenshot */
+        .screenshot-container {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid var(--border-light);
+            box-shadow: var(--shadow-lg);
+            max-height: 380px;
+        }
+        .screenshot-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+        }
+        .screenshot-container.small { max-height: 280px; }
+        .screenshot-container.tiny { max-height: 220px; }
+
+        /* Progress bar */
+        .progress-bar {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            height: 3px; background: rgba(191,0,0,0.1); z-index: 200;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--rakuten-red), var(--accent-purple));
+            transition: width 0.4s ease;
+        }
+
+        /* Slide counter */
+        .slide-counter {
+            font-family: 'Fira Code'; font-size: 0.85rem; color: var(--text-muted);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+            display: flex; align-items: center; gap: 1.2rem; z-index: 200;
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);
+            padding: 0.6rem 1.5rem; border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.15);
+        }
+        .nav-btn {
+            background: transparent; border: none; cursor: pointer;
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--rakuten-red); transition: all 0.2s ease; font-size: 1.2rem;
+        }
+        .nav-btn:hover { background: rgba(191,0,0,0.08); transform: scale(1.1); }
+        .nav-separator { width: 1px; height: 20px; background: rgba(191,0,0,0.15); }
+
+        /* Code */
+        code {
+            font-family: 'Fira Code', monospace;
+            background: rgba(191,0,0,0.08);
+            padding: 0.15rem 0.35rem;
+            border-radius: 4px;
+            font-size: 0.85em;
+            color: var(--rakuten-red);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .slide.active .card {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+        .slide.active .card:nth-child(1) { animation-delay: 0.1s; }
+        .slide.active .card:nth-child(2) { animation-delay: 0.2s; }
+        .slide.active .card:nth-child(3) { animation-delay: 0.3s; }
+        .slide.active .card:nth-child(4) { animation-delay: 0.35s; }
+        .slide.active table {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+            animation-delay: 0.15s;
+        }
+        .slide.active .info-box,
+        .slide.active .success-box,
+        .slide.active .warning-box {
+            animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+            animation-delay: 0.3s;
+        }
+        .slide.active .slide-header {
+            animation: slideInLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+        .slide.active .metric-card {
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+        .slide.active .screenshot-container {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+            animation-delay: 0.2s;
+        }
+
+        .text-center { text-align: center; }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+
+        @media print {
+            .slide { page-break-after: always; min-height: auto; padding: 1rem; }
+            nav { display: none; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="header-left">
+            <div class="logo-icon">R</div>
+        </div>
+        <div class="header-center">
+            <div class="logo">
+                Projet MLOps — Rakuten
+                <span class="logo-sub">Industrialisation d'un Pipeline ML</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="institution-badge">
+                <div class="institution-info">
+                    <div class="institution-label">Formation</div>
+                    <div class="institution-name">DataScientest</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main id="slides-container">
+
+        <!-- ===================== SLIDE 0: COVER ===================== -->
+        <div class="slide active">
+            <div class="content-full text-center">
+                <h1 class="hero-title">Pipeline <span class="accent">MLOps</span><br>
+                    <span style="font-size: 0.5em; font-weight: 500;">Classification de Produits E-Commerce — Rakuten France</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Industrialisation complète d'un modèle ML : de l'entraînement à la production,
+                    avec orchestration, monitoring et interface utilisateur.
+                </p>
+
+                <div class="grid-4 mt-2">
+                    <div class="metric-card">
+                        <div class="metric-value">8+</div>
+                        <div class="metric-label">Services Docker</div>
+                    </div>
+                    <div class="metric-card success">
+                        <div class="metric-value">76.2%</div>
+                        <div class="metric-label">Accuracy Baseline</div>
+                    </div>
+                    <div class="metric-card warning">
+                        <div class="metric-value">27</div>
+                        <div class="metric-label">Categories</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">5</div>
+                        <div class="metric-label">Phases MLOps</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem; font-size: 1rem;">
+                    <span style="font-weight: 600; color: var(--text-main);">Johan Frachon</span>
+                    <span style="color: var(--rakuten-red);">&#8226;</span>
+                    <span style="font-weight: 600; color: var(--text-main);">Liviu Andronic</span>
+                    <span style="color: var(--rakuten-red);">&#8226;</span>
+                    <span style="font-weight: 600; color: var(--text-main);">Hery M. Ralaimanantsoa</span>
+                    <span style="color: var(--rakuten-red);">&#8226;</span>
+                    <span style="font-weight: 600; color: var(--text-main);">Oussama Akir</span>
+                </div>
+
+                <div style="margin-top: 1rem; color: var(--text-muted); font-size: 1rem;">
+                    <strong>Mentor : Antoine Fradin</strong> — Mars 2026
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 1: SOMMAIRE ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header" style="border-bottom: none; margin-bottom: 0.8rem;">
+                    <h2 class="slide-title" style="font-size: 2.2rem; letter-spacing: -0.03em;">
+                        <span style="color: var(--rakuten-red);">&mdash;</span> Sommaire
+                    </h2>
+                </div>
+
+                <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 1.5rem; font-style: italic;">
+                    Pipeline MLOps complet en 5 phases
+                </p>
+
+                <div class="toc-grid">
+                    <div>
+                        <div class="toc-entry" onclick="goToSlide(2)">
+                            <div class="toc-num">P1</div>
+                            <div class="toc-content">
+                                <span class="toc-title">Fondations & Conteneurisation</span>
+                                <span class="toc-page">Donnees, Modele, API, Docker</span>
+                            </div>
+                        </div>
+                        <div class="toc-entry" onclick="goToSlide(6)">
+                            <div class="toc-num">P2</div>
+                            <div class="toc-content">
+                                <span class="toc-title">Microservices & Versioning</span>
+                                <span class="toc-page">MLflow, Securite, Architecture</span>
+                            </div>
+                        </div>
+                        <div class="toc-entry" onclick="goToSlide(9)">
+                            <div class="toc-num">P3</div>
+                            <div class="toc-content">
+                                <span class="toc-title">Orchestration & Deploiement</span>
+                                <span class="toc-page">Airflow, Docker Compose</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="toc-entry" onclick="goToSlide(11)">
+                            <div class="toc-num">P4</div>
+                            <div class="toc-content">
+                                <span class="toc-title">Monitoring & Maintenance</span>
+                                <span class="toc-page">CI/CD, Prometheus, Grafana</span>
+                            </div>
+                        </div>
+                        <div class="toc-entry" onclick="goToSlide(14)">
+                            <div class="toc-num">P5</div>
+                            <div class="toc-content">
+                                <span class="toc-title">Application Streamlit</span>
+                                <span class="toc-page">Interface, Predictions, Data Explorer</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 2rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); font-size: 0.95rem;">
+                        <span style="width: 12px; height: 12px; background: var(--rakuten-red); border-radius: 50%;"></span>
+                        20 min presentation
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); font-size: 0.95rem;">
+                        <span style="width: 12px; height: 12px; background: var(--accent-green); border-radius: 50%;"></span>
+                        Demo live
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); font-size: 0.95rem;">
+                        <span style="width: 12px; height: 12px; background: var(--accent-blue); border-radius: 50%;"></span>
+                        10 min Q&A
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 2: PHASE 1 — CONTEXTE ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">Phase 1</span>
+                    <h2 class="slide-title">Contexte & Donnees Rakuten</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <div class="warning-box">
+                            <div class="warning-box-title">Objectif</div>
+                            <p>Classifier automatiquement des produits e-commerce parmi <strong>27 categories</strong> (<code>prdtypecode</code>) a partir du texte : titre + description.</p>
+                        </div>
+
+                        <div class="card" style="padding: 0.7rem 1rem; margin-top: 0.5rem;">
+                            <div class="card-title" style="font-size: 1.1rem; margin-bottom: 0.2rem;">Du projet DS au MLOps</div>
+                            <ul class="feature-list" style="font-size: 0.95rem;">
+                                <li style="padding: 0.15rem 0; font-size: 0.95rem;">Notebooks Jupyter &#8594; Scripts modulaires</li>
+                                <li style="padding: 0.15rem 0; font-size: 0.95rem;">Modeles en local &#8594; API FastAPI</li>
+                                <li style="padding: 0.15rem 0; font-size: 0.95rem;">Pas de versioning &#8594; MLflow tracking</li>
+                                <li style="padding: 0.15rem 0; font-size: 0.95rem;">Execution manuelle &#8594; Airflow orchestration</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="grid-2" style="gap: 0.8rem;">
+                            <div class="metric-card">
+                                <div class="metric-value">84 916</div>
+                                <div class="metric-label">Produits Train</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">67 932</div>
+                                <div class="metric-label">Training Set</div>
+                            </div>
+                            <div class="metric-card success">
+                                <div class="metric-value">27</div>
+                                <div class="metric-label">Categories</div>
+                            </div>
+                            <div class="metric-card warning">
+                                <div class="metric-value">~35%</div>
+                                <div class="metric-label">Descriptions NaN</div>
+                            </div>
+                        </div>
+
+                        <div class="info-box mt-1">
+                            <div class="info-box-title">Source des donnees</div>
+                            <p>Challenge Rakuten France — donnees publiques hebergees sur <strong>Amazon S3</strong>. Features : <code>designation</code>, <code>description</code>, <code>productid</code>, <code>imageid</code>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 3: PHASE 1 — MODELE BASELINE ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">Phase 1</span>
+                    <h2 class="slide-title">Modele Baseline — TF-IDF + SGDClassifier</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <div class="card">
+                            <div class="card-title">Pipeline d'entrainement</div>
+                            <div class="dataflow-container" style="justify-content: flex-start; margin: 0.8rem 0;">
+                                <div class="dataflow-box" style="font-size: 0.95rem;">Texte brut</div>
+                                <span class="dataflow-arrow">&#8594;</span>
+                                <div class="dataflow-box" style="font-size: 0.95rem;">normalize_text</div>
+                                <span class="dataflow-arrow">&#8594;</span>
+                                <div class="dataflow-box highlight-box" style="font-size: 0.95rem;">TF-IDF</div>
+                                <span class="dataflow-arrow">&#8594;</span>
+                                <div class="dataflow-box" style="font-size: 0.95rem; border-color: var(--accent-green);">SGD</div>
+                            </div>
+                            <div class="mt-1">
+                                <span class="tag tag-blue">5000 features</span>
+                                <span class="tag tag-purple">unigrams + bigrams</span>
+                                <span class="tag tag-green">class_weight='balanced'</span>
+                            </div>
+                        </div>
+
+                        <div class="success-box mt-1">
+                            <div class="success-box-title">Choix justifie</div>
+                            <p>Le modele <strong>texte-only TF-IDF + SGD</strong> offre le meilleur compromis performance/simplicite pour la mise en production MLOps. Inference &lt; 10ms sur CPU.</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="grid-2" style="gap: 0.8rem;">
+                            <div class="metric-card success">
+                                <div class="metric-value">76.2%</div>
+                                <div class="metric-label">Val Accuracy</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">73.9%</div>
+                                <div class="metric-label">Macro F1-Score</div>
+                            </div>
+                        </div>
+
+                        <table class="mt-1">
+                            <tr>
+                                <th>Artefact</th>
+                                <th>Fichier</th>
+                            </tr>
+                            <tr>
+                                <td>Modele</td>
+                                <td><code>baseline_model.pkl</code></td>
+                            </tr>
+                            <tr>
+                                <td>Vectorizer</td>
+                                <td><code>tfidf_vectorizer.pkl</code></td>
+                            </tr>
+                            <tr>
+                                <td>Labels</td>
+                                <td><code>label_mapping.json</code></td>
+                            </tr>
+                        </table>
+
+                        <div class="info-box mt-1">
+                            <div class="info-box-title">Artefacts serialises</div>
+                            <p>3 fichiers pickle/JSON charges au demarrage de l'API. Compatibilite pickle geree via un <strong>patch __main__</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 4: PHASE 1 — API FASTAPI ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">Phase 1</span>
+                    <h2 class="slide-title">API FastAPI — Prediction Service</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <div class="card">
+                            <div class="card-title">Endpoints</div>
+                            <table>
+                                <tr>
+                                    <th>Route</th>
+                                    <th>Methode</th>
+                                    <th>Description</th>
+                                </tr>
+                                <tr>
+                                    <td><code>/health</code></td>
+                                    <td>GET</td>
+                                    <td>Health check + status modele</td>
+                                </tr>
+                                <tr>
+                                    <td><code>/predict</code></td>
+                                    <td>POST</td>
+                                    <td>Prediction (Bearer token)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>/metrics</code></td>
+                                    <td>GET</td>
+                                    <td>Metriques Prometheus</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="info-box mt-1">
+                            <div class="info-box-title">Architecture modulaire</div>
+                            <p>Separation <code>app.py</code> (routes) / <code>service.py</code> (logique) / <code>schemas.py</code> (validation). Instrumentee avec <code>prometheus-fastapi-instrumentator</code>.</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="card">
+                            <div class="card-title">Requete & Reponse</div>
+                            <div style="background: #1e293b; border-radius: 8px; padding: 0.8rem; margin-top: 0.5rem; overflow-x: auto;">
+<pre style="color: #e2e8f0; font-family: 'Fira Code'; font-size: 0.75rem; margin: 0; white-space: pre;">POST /predict
+Authorization: Bearer &lt;token&gt;
+{
+  "designation": "iPhone 15 Pro Max",
+  "description": "256GB Noir Titane",
+  "productid": 12345,
+  "imageid": 67890
+}
+
+Response:
+{
+  "predicted_label": "Telephones",
+  "predicted_code": 2583,
+  "confidence": 0.942,
+  "model_name": "SGDClassifier"
+}</pre>
+                            </div>
+                        </div>
+
+                        <div class="success-box mt-1">
+                            <div class="success-box-title">Securite</div>
+                            <p><strong>Bearer token</strong> sur <code>/predict</code>. Variable d'environnement <code>API_AUTH_TOKEN</code>. Health check public.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 5: PHASE 1 — DOCKER ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">Phase 1</span>
+                    <h2 class="slide-title">Conteneurisation Docker</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <div class="card">
+                            <div class="card-title">Dockerfile API</div>
+                            <div style="background: #1e293b; border-radius: 8px; padding: 0.8rem; margin-top: 0.5rem;">
+<pre style="color: #e2e8f0; font-family: 'Fira Code'; font-size: 0.75rem; margin: 0; white-space: pre;">FROM python:3.10-slim
+WORKDIR /app
+
+# Dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Artefacts montes en volume
+RUN mkdir -p /app/models
+
+# Code source
+COPY src/ /app/src/
+
+EXPOSE 8000
+CMD ["uvicorn", "src.api.app:app",
+     "--host", "0.0.0.0", "--port", "8000"]</pre>
+                            </div>
+                        </div>
+
+                        <div class="info-box mt-1">
+                            <div class="info-box-title">Image legere</div>
+                            <p><code>python:3.10-slim</code> pour minimiser la taille. Les artefacts modele sont montes en <strong>volume Docker</strong>, pas inclus dans l'image.</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="card">
+                            <div class="card-title">Dockerfiles specialises</div>
+                            <table>
+                                <tr>
+                                    <th>Service</th>
+                                    <th>Base Image</th>
+                                    <th>Role</th>
+                                </tr>
+                                <tr>
+                                    <td><code>Dockerfile</code></td>
+                                    <td>python:3.10-slim</td>
+                                    <td>API FastAPI</td>
+                                </tr>
+                                <tr>
+                                    <td><code>docker/trainer/</code></td>
+                                    <td>python:3.10-slim</td>
+                                    <td>Training + Bootstrap</td>
+                                </tr>
+                                <tr>
+                                    <td><code>docker/mlflow/</code></td>
+                                    <td>python:3.10-slim</td>
+                                    <td>MLflow Server</td>
+                                </tr>
+                                <tr>
+                                    <td><code>docker/airflow/</code></td>
+                                    <td>apache/airflow</td>
+                                    <td>Orchestrateur</td>
+                                </tr>
+                                <tr>
+                                    <td><code>docker/streamlit/</code></td>
+                                    <td>python:3.10-slim</td>
+                                    <td>Interface UI</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="warning-box mt-1">
+                            <div class="warning-box-title">Bootstrap automatique</div>
+                            <p>Le service <code>bootstrap</code> telecharge les donnees S3, pretraite, et entraine le modele initial automatiquement au premier demarrage.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 6: PHASE 2 — ARCHITECTURE MICROSERVICES ===================== -->
+        <div class="slide">
+            <div class="content-full">
+                <div class="slide-header">
+                    <span class="section-badge data">Phase 2</span>
+                    <h2 class="slide-title">Architecture Microservices</h2>
+                </div>
+
+                <div style="text-align: center; margin: 0.5rem 0;">
+                    <svg viewBox="0 0 900 300" style="max-width: 95%; height: auto;">
+                        <defs>
+                            <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#64748b"/></marker>
+                            <marker id="arrRed" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#bf0000"/></marker>
+                        </defs>
+
+                        <!-- User -->
+                        <rect x="10" y="110" width="90" height="60" rx="10" fill="#f3f4f6" stroke="#94a3b8" stroke-width="2"/>
+                        <text x="55" y="135" text-anchor="middle" font-size="22">&#128100;</text>
+                        <text x="55" y="158" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b">Utilisateur</text>
+
+                        <!-- Arrow to Streamlit -->
+                        <line x1="102" y1="140" x2="140" y2="140" stroke="#64748b" stroke-width="2" marker-end="url(#arr)"/>
+
+                        <!-- Streamlit -->
+                        <rect x="145" y="100" width="110" height="80" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                        <text x="200" y="130" text-anchor="middle" font-size="13" font-weight="700" fill="#d97706">Streamlit</text>
+                        <text x="200" y="148" text-anchor="middle" font-size="10" fill="#92400e">:8501</text>
+                        <text x="200" y="165" text-anchor="middle" font-size="9" fill="#64748b">UI + Predictions</text>
+
+                        <!-- Arrow Streamlit to API -->
+                        <line x1="257" y1="140" x2="295" y2="140" stroke="#bf0000" stroke-width="2.5" marker-end="url(#arrRed)"/>
+
+                        <!-- API -->
+                        <rect x="300" y="90" width="120" height="100" rx="10" fill="#fef2f2" stroke="#bf0000" stroke-width="2.5"/>
+                        <text x="360" y="118" text-anchor="middle" font-size="14" font-weight="800" fill="#bf0000">FastAPI</text>
+                        <text x="360" y="138" text-anchor="middle" font-size="10" fill="#991b1b">:8000 (ext 8200)</text>
+                        <text x="360" y="155" text-anchor="middle" font-size="9" fill="#64748b">/predict /health</text>
+                        <text x="360" y="170" text-anchor="middle" font-size="9" fill="#64748b">/metrics</text>
+
+                        <!-- Arrow API to Models volume -->
+                        <line x1="360" y1="192" x2="360" y2="235" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                        <!-- Models Volume -->
+                        <rect x="315" y="240" width="90" height="45" rx="6" fill="#e0e7ff" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="5,3"/>
+                        <text x="360" y="260" text-anchor="middle" font-size="10" font-weight="600" fill="#4338ca">models/</text>
+                        <text x="360" y="275" text-anchor="middle" font-size="8" fill="#64748b">Volume partage</text>
+
+                        <!-- Arrow API to Prometheus -->
+                        <line x1="422" y1="115" x2="470" y2="65" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                        <!-- Prometheus -->
+                        <rect x="475" y="30" width="110" height="65" rx="10" fill="#fff7ed" stroke="#f97316" stroke-width="2"/>
+                        <text x="530" y="55" text-anchor="middle" font-size="13" font-weight="700" fill="#ea580c">Prometheus</text>
+                        <text x="530" y="72" text-anchor="middle" font-size="10" fill="#9a3412">:9090</text>
+                        <text x="530" y="86" text-anchor="middle" font-size="9" fill="#64748b">Scrape /metrics</text>
+
+                        <!-- Arrow Prometheus to Grafana -->
+                        <line x1="587" y1="62" x2="630" y2="62" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                        <!-- Grafana -->
+                        <rect x="635" y="30" width="100" height="65" rx="10" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+                        <text x="685" y="55" text-anchor="middle" font-size="13" font-weight="700" fill="#059669">Grafana</text>
+                        <text x="685" y="72" text-anchor="middle" font-size="10" fill="#047857">:3000</text>
+                        <text x="685" y="86" text-anchor="middle" font-size="9" fill="#64748b">Dashboards</text>
+
+                        <!-- Arrow to MLflow -->
+                        <line x1="422" y1="160" x2="470" y2="180" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                        <!-- MLflow -->
+                        <rect x="475" y="155" width="110" height="65" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+                        <text x="530" y="180" text-anchor="middle" font-size="13" font-weight="700" fill="#2563eb">MLflow</text>
+                        <text x="530" y="197" text-anchor="middle" font-size="10" fill="#1e40af">:5000</text>
+                        <text x="530" y="211" text-anchor="middle" font-size="9" fill="#64748b">Tracking Server</text>
+
+                        <!-- Arrow Airflow to MLflow -->
+                        <line x1="710" y1="190" x2="587" y2="190" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                        <!-- Airflow -->
+                        <rect x="715" y="140" width="120" height="100" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+                        <text x="775" y="170" text-anchor="middle" font-size="13" font-weight="700" fill="#6d28d9">Airflow</text>
+                        <text x="775" y="188" text-anchor="middle" font-size="10" fill="#5b21b6">:8080 (ext 8280)</text>
+                        <text x="775" y="205" text-anchor="middle" font-size="9" fill="#64748b">Scheduler</text>
+                        <text x="775" y="220" text-anchor="middle" font-size="9" fill="#64748b">Webserver</text>
+
+                        <!-- Postgres -->
+                        <rect x="740" y="255" width="80" height="40" rx="6" fill="#e0e7ff" stroke="#6366f1" stroke-width="1.5"/>
+                        <text x="780" y="275" text-anchor="middle" font-size="10" font-weight="600" fill="#4338ca">Postgres</text>
+                        <text x="780" y="288" text-anchor="middle" font-size="8" fill="#64748b">Airflow DB</text>
+
+                        <!-- Arrow Airflow to Postgres -->
+                        <line x1="775" y1="242" x2="780" y2="253" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+                    </svg>
+                </div>
+
+                <div class="grid-3" style="margin-top: 0.5rem;">
+                    <div class="info-box" style="text-align: center;">
+                        <div class="info-box-title" style="justify-content: center;">Docker Compose</div>
+                        <p>8+ services orchestres. Un seul <code>docker compose up</code> pour tout demarrer.</p>
+                    </div>
+                    <div class="success-box" style="text-align: center;">
+                        <div class="success-box-title" style="justify-content: center;">Volumes partages</div>
+                        <p>Artefacts modele accessibles par API, Trainer, et Airflow via le volume <code>./models</code>.</p>
+                    </div>
+                    <div class="warning-box" style="text-align: center;">
+                        <div class="warning-box-title" style="justify-content: center;">Health Checks</div>
+                        <p>L'API a un health check Docker natif. Streamlit demarre seulement quand l'API est saine.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 7: PHASE 2 — MLFLOW ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge data">Phase 2</span>
+                    <h2 class="slide-title">MLflow — Tracking & Versioning</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <div class="card">
+                            <div class="card-title">Metriques trackees</div>
+                            <table>
+                                <tr>
+                                    <th>Metrique</th>
+                                    <th>Valeur</th>
+                                </tr>
+                                <tr>
+                                    <td><code>val_accuracy</code></td>
+                                    <td class="highlight">0.762</td>
+                                </tr>
+                                <tr>
+                                    <td><code>val_macro_f1</code></td>
+                                    <td class="highlight">0.739</td>
+                                </tr>
+                                <tr>
+                                    <td><code>train_samples</code></td>
+                                    <td>67 932</td>
+                                </tr>
+                                <tr>
+                                    <td><code>val_samples</code></td>
+                                    <td>16 984</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="success-box mt-1">
+                            <div class="success-box-title">Experiment tracking</div>
+                            <p>Chaque run (bootstrap + Airflow re-entrainement) est trace dans l'experiment <code>rakuten-text-baseline</code>. Parametres, metriques et artefacts versiones.</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="screenshot-container">
+                            <img src="../docs/screenshots/12-mlflow-ui.png" alt="MLflow UI montrant les runs d'entrainement">
+                        </div>
+                        <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">
+                            MLflow UI — 3 runs : 1 bootstrap + 2 re-entrainements Airflow
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 8: PHASE 2 — SECURITE ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge data">Phase 2</span>
+                    <h2 class="slide-title">Securite & Bonnes Pratiques</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <div class="card">
+                            <div class="card-icon">&#128274;</div>
+                            <div class="card-title">Authentification API</div>
+                            <div class="card-text">
+                                <ul class="feature-list" style="font-size: 0.95rem;">
+                                    <li style="padding: 0.25rem 0;">Bearer token sur <code>/predict</code></li>
+                                    <li style="padding: 0.25rem 0;">Token configurable via <code>API_AUTH_TOKEN</code></li>
+                                    <li style="padding: 0.25rem 0;">Health check public (pas de token)</li>
+                                    <li style="padding: 0.25rem 0;">Erreur 401 si token invalide</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="card">
+                            <div class="card-icon">&#128736;</div>
+                            <div class="card-title">Bonnes pratiques MLOps</div>
+                            <div class="card-text">
+                                <ul class="feature-list" style="font-size: 0.95rem;">
+                                    <li style="padding: 0.25rem 0;">Variables d'environnement (pas de secrets en dur)</li>
+                                    <li style="padding: 0.25rem 0;">Validation Pydantic (schemas stricts)</li>
+                                    <li style="padding: 0.25rem 0;">Logs structures et error handling</li>
+                                    <li style="padding: 0.25rem 0;">Tests unitaires + integration</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-3 mt-1">
+                    <div class="metric-card success">
+                        <div class="metric-value" style="font-size: 1.8rem;">Pydantic</div>
+                        <div class="metric-label">Validation schemas</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" style="font-size: 1.8rem;">Bearer</div>
+                        <div class="metric-label">Auth token</div>
+                    </div>
+                    <div class="metric-card warning">
+                        <div class="metric-value" style="font-size: 1.8rem;">.env</div>
+                        <div class="metric-label">Secrets separes</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 9: PHASE 3 — AIRFLOW ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge model">Phase 3</span>
+                    <h2 class="slide-title">Orchestration Airflow</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <div class="card">
+                            <div class="card-title">DAG : rakuten_weekly_retraining</div>
+                            <div class="dataflow-container" style="flex-direction: column; gap: 0.4rem; margin: 0.5rem 0;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <div class="dataflow-box" style="font-size: 0.85rem; min-width: 160px;">download_raw_data</div>
+                                </div>
+                                <span class="dataflow-arrow" style="font-size: 1.2rem;">&#8595;</span>
+                                <div class="dataflow-box" style="font-size: 0.85rem; min-width: 160px;">prepare_dataset</div>
+                                <span class="dataflow-arrow" style="font-size: 1.2rem;">&#8595;</span>
+                                <div class="dataflow-box" style="font-size: 0.85rem; min-width: 160px;">build_features</div>
+                                <span class="dataflow-arrow" style="font-size: 1.2rem;">&#8595;</span>
+                                <div class="dataflow-box highlight-box" style="font-size: 0.85rem; min-width: 160px;">train_model</div>
+                                <span class="dataflow-arrow" style="font-size: 1.2rem;">&#8595;</span>
+                                <div class="dataflow-box" style="font-size: 0.85rem; min-width: 160px;">verify_artifacts</div>
+                                <span class="dataflow-arrow" style="font-size: 1.2rem;">&#8595;</span>
+                                <div class="dataflow-box" style="font-size: 0.85rem; min-width: 160px; border-color: var(--accent-purple);">generate_drift_report</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="screenshot-container small">
+                            <img src="../docs/screenshots/14-airflow-dag-grid.png" alt="Airflow DAG Grid View">
+                        </div>
+                        <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem;">
+                            Airflow Grid View — 6 taches avec statuts
+                        </p>
+
+                        <div class="info-box mt-1">
+                            <div class="info-box-title">Schedule</div>
+                            <p>Re-entrainement hebdomadaire : <code>0 2 * * 1</code> (lundi a 2h). Chaque run tracke les metriques dans MLflow automatiquement.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 10: PHASE 3 — AIRFLOW DETAIL ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge model">Phase 3</span>
+                    <h2 class="slide-title">Airflow — DAG & Deploiement</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <div class="screenshot-container">
+                            <img src="../docs/screenshots/13-airflow-dags.png" alt="Airflow DAGs list">
+                        </div>
+                        <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem;">
+                            Liste des DAGs — Historique des executions
+                        </p>
+                    </div>
+
+                    <div>
+                        <div class="card">
+                            <div class="card-title">Infrastructure Airflow</div>
+                            <table>
+                                <tr>
+                                    <th>Composant</th>
+                                    <th>Role</th>
+                                </tr>
+                                <tr>
+                                    <td><code>airflow-init</code></td>
+                                    <td>Migration DB + creation admin</td>
+                                </tr>
+                                <tr>
+                                    <td><code>airflow-webserver</code></td>
+                                    <td>UI web (:8280)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>airflow-scheduler</code></td>
+                                    <td>Planification des DAGs</td>
+                                </tr>
+                                <tr>
+                                    <td><code>postgres</code></td>
+                                    <td>Base metadonnees Airflow</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="success-box mt-1">
+                            <div class="success-box-title">LocalExecutor</div>
+                            <p>Executeur local (pas Celery) suffisant pour notre pipeline. <strong>YAML commun</strong> (<code>x-airflow-common</code>) pour factoriser la config entre init, webserver et scheduler.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 11: PHASE 4 — CI/CD ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge monitoring">Phase 4</span>
+                    <h2 class="slide-title">CI/CD — GitHub Actions</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <div class="screenshot-container">
+                            <img src="../docs/screenshots/05-github-actions-ci.png" alt="GitHub Actions CI Pipeline">
+                        </div>
+                        <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem;">
+                            GitHub Actions — Pipeline CI
+                        </p>
+                    </div>
+
+                    <div>
+                        <div class="card">
+                            <div class="card-title">Pipeline CI</div>
+                            <ul class="feature-list">
+                                <li style="padding: 0.3rem 0;">Linting & formatage (flake8, black)</li>
+                                <li style="padding: 0.3rem 0;">Tests unitaires (pytest)</li>
+                                <li style="padding: 0.3rem 0;">Tests d'integration API</li>
+                                <li style="padding: 0.3rem 0;">Verification des imports</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-box mt-1">
+                            <div class="info-box-title">Declenchement</div>
+                            <p>Le pipeline se declenche sur chaque <strong>push</strong> et <strong>pull request</strong> vers <code>main</code>. Bloque le merge si les tests echouent.</p>
+                        </div>
+
+                        <div class="warning-box mt-1">
+                            <div class="warning-box-title">Amelioration prevue</div>
+                            <p>CD : deploiement automatique Docker sur push vers main (build, tag, push vers registry).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 12: PHASE 4 — PROMETHEUS ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge monitoring">Phase 4</span>
+                    <h2 class="slide-title">Monitoring — Prometheus</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <div class="screenshot-container small">
+                            <img src="../docs/screenshots/11-prometheus-targets.png" alt="Prometheus Targets">
+                        </div>
+                        <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem;">
+                            Prometheus — Target FastAPI UP, scrape 7ms
+                        </p>
+
+                        <div class="screenshot-container small mt-1">
+                            <img src="../docs/screenshots/11b-prometheus-query.png" alt="Prometheus Query">
+                        </div>
+                        <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem;">
+                            Requete PromQL : <code>rate(http_requests_total[1m])</code>
+                        </p>
+                    </div>
+
+                    <div>
+                        <div class="card">
+                            <div class="card-title">Metriques collectees</div>
+                            <table>
+                                <tr>
+                                    <th>Metrique</th>
+                                    <th>Type</th>
+                                </tr>
+                                <tr>
+                                    <td><code>http_requests_total</code></td>
+                                    <td>Counter</td>
+                                </tr>
+                                <tr>
+                                    <td><code>http_request_duration_seconds</code></td>
+                                    <td>Histogram</td>
+                                </tr>
+                                <tr>
+                                    <td><code>http_requests_in_progress</code></td>
+                                    <td>Gauge</td>
+                                </tr>
+                                <tr>
+                                    <td><code>http_response_size_bytes</code></td>
+                                    <td>Histogram</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="success-box mt-1">
+                            <div class="success-box-title">Instrumentation automatique</div>
+                            <p><code>prometheus-fastapi-instrumentator</code> instrumente automatiquement toutes les routes FastAPI. Zero code metier a modifier.</p>
+                        </div>
+
+                        <div class="info-box mt-1">
+                            <div class="info-box-title">Scrape interval</div>
+                            <p>Prometheus scrape le endpoint <code>/metrics</code> de l'API toutes les <strong>15 secondes</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 13: PHASE 4 — GRAFANA ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge monitoring">Phase 4</span>
+                    <h2 class="slide-title">Monitoring — Grafana Dashboard</h2>
+                </div>
+
+                <div class="screenshot-container" style="max-height: 400px;">
+                    <img src="../docs/screenshots/10-grafana-dashboard.png" alt="Grafana Dashboard avec 4 panneaux">
+                </div>
+                <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">
+                    Grafana — 4 panneaux : Requetes/s, Latence P95, Codes de statut, Requetes en cours
+                </p>
+
+                <div class="grid-4 mt-1">
+                    <div class="metric-card success">
+                        <div class="metric-value" style="font-size: 1.6rem;">99%</div>
+                        <div class="metric-label">Taux 2xx</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" style="font-size: 1.6rem;">&lt;50ms</div>
+                        <div class="metric-label">Latence P95</div>
+                    </div>
+                    <div class="metric-card warning">
+                        <div class="metric-value" style="font-size: 1.6rem;">~1%</div>
+                        <div class="metric-label">Taux 4xx</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" style="font-size: 1.6rem;">3</div>
+                        <div class="metric-label">Endpoints traces</div>
+                    </div>
+                </div>
+
+                <div class="info-box mt-1">
+                    <div class="info-box-title">Provisioning automatique</div>
+                    <p>Dashboard et datasource Prometheus provisiones au demarrage via fichiers YAML dans <code>docker/monitoring/grafana/provisioning/</code>. Zero configuration manuelle.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 14: PHASE 5 — STREAMLIT ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge results">Phase 5</span>
+                    <h2 class="slide-title">Application Streamlit</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <div class="screenshot-container">
+                            <img src="../docs/screenshots/15-streamlit-contexte-live.png" alt="Streamlit Contexte Live">
+                        </div>
+                        <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem;">
+                            Page Contexte — API OK, SGDClassifier charge
+                        </p>
+                    </div>
+
+                    <div>
+                        <div class="card">
+                            <div class="card-title">Pages de l'application</div>
+                            <table>
+                                <tr>
+                                    <th>Page</th>
+                                    <th>Description</th>
+                                </tr>
+                                <tr>
+                                    <td class="highlight">Accueil</td>
+                                    <td>Vue d'ensemble du projet</td>
+                                </tr>
+                                <tr>
+                                    <td class="highlight">Contexte</td>
+                                    <td>Status API, modele, categories</td>
+                                </tr>
+                                <tr>
+                                    <td class="highlight">Data Explorer</td>
+                                    <td>Visualisation du dataset</td>
+                                </tr>
+                                <tr>
+                                    <td class="highlight">Predictions</td>
+                                    <td>Formulaire de prediction live</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="success-box mt-1">
+                            <div class="success-box-title">Integration API</div>
+                            <p>Streamlit communique avec l'API via <code>API_URL</code> et <code>API_AUTH_TOKEN</code>. Les predictions sont faites en temps reel via <code>/predict</code>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 15: STREAMLIT SCREENSHOTS ===================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge results">Phase 5</span>
+                    <h2 class="slide-title">Streamlit — Pages en detail</h2>
+                </div>
+
+                <div class="grid-2" style="gap: 1rem;">
+                    <div>
+                        <div class="screenshot-container tiny">
+                            <img src="../docs/screenshots/08-streamlit-data-explorer-docker.png" alt="Streamlit Data Explorer">
+                        </div>
+                        <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem;">
+                            Data Explorer — Distribution des categories
+                        </p>
+                    </div>
+
+                    <div>
+                        <div class="screenshot-container tiny">
+                            <img src="../docs/screenshots/09-streamlit-predictions-docker.png" alt="Streamlit Predictions">
+                        </div>
+                        <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem;">
+                            Predictions — Formulaire et resultat
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid-3 mt-2">
+                    <div class="metric-card success">
+                        <div class="metric-value" style="font-size: 1.6rem;">4</div>
+                        <div class="metric-label">Pages multi-vues</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" style="font-size: 1.6rem;">&lt;1s</div>
+                        <div class="metric-label">Temps de prediction</div>
+                    </div>
+                    <div class="metric-card warning">
+                        <div class="metric-value" style="font-size: 1.6rem;">27</div>
+                        <div class="metric-label">Categories affichees</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 16: DEMO LIVE ===================== -->
+        <div class="slide">
+            <div class="content-full text-center">
+                <h1 class="hero-title" style="font-size: 2.5rem;">Demo <span class="accent">Live</span></h1>
+
+                <p class="hero-subtitle">
+                    Demonstration du pipeline complet en fonctionnement
+                </p>
+
+                <div class="grid-3 mt-2" style="max-width: 900px; margin-left: auto; margin-right: auto;">
+                    <div class="card text-center">
+                        <div class="card-icon" style="margin: 0 auto 0.5rem;">1&#x20E3;</div>
+                        <div class="card-title">API + Streamlit</div>
+                        <div class="card-text">Prediction live via Streamlit &#8594; FastAPI &#8594; Reponse en &lt;1s</div>
+                    </div>
+                    <div class="card text-center">
+                        <div class="card-icon" style="margin: 0 auto 0.5rem;">2&#x20E3;</div>
+                        <div class="card-title">MLflow</div>
+                        <div class="card-text">Historique des runs, metriques, comparaison de modeles</div>
+                    </div>
+                    <div class="card text-center">
+                        <div class="card-icon" style="margin: 0 auto 0.5rem;">3&#x20E3;</div>
+                        <div class="card-title">Grafana</div>
+                        <div class="card-text">Dashboard temps reel, impact des requetes sur les metriques</div>
+                    </div>
+                </div>
+
+                <div class="info-box mt-2" style="max-width: 700px; margin-left: auto; margin-right: auto;">
+                    <div class="info-box-title" style="justify-content: center;">Commande de demarrage</div>
+                    <p style="text-align: center;"><code>docker compose up -d</code> — Tous les services demarrent en ~2 minutes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== SLIDE 17: CONCLUSION ===================== -->
+        <div class="slide">
+            <div class="content-full text-center">
+                <h1 class="hero-title" style="font-size: 2.5rem;">Conclusion & Perspectives</h1>
+
+                <div class="grid-3 mt-2">
+                    <div class="metric-card success">
+                        <div class="metric-value">76.2%</div>
+                        <div class="metric-label">Accuracy Baseline</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">8+</div>
+                        <div class="metric-label">Services Docker</div>
+                    </div>
+                    <div class="metric-card warning">
+                        <div class="metric-value">5/5</div>
+                        <div class="metric-label">Phases completees</div>
+                    </div>
+                </div>
+
+                <div class="grid-3 mt-2" style="max-width: 900px; margin-left: auto; margin-right: auto;">
+                    <div class="card text-center">
+                        <div class="card-icon" style="margin: 0 auto 0.5rem;">&#9989;</div>
+                        <div class="card-title">Realise</div>
+                        <div class="card-text">Pipeline MLOps complet : API securisee, MLflow, Airflow, Prometheus/Grafana, Streamlit, CI/CD</div>
+                    </div>
+                    <div class="card text-center">
+                        <div class="card-icon" style="margin: 0 auto 0.5rem;">&#128161;</div>
+                        <div class="card-title">Apprentissages</div>
+                        <div class="card-text">Docker Compose multi-services, orchestration, monitoring, serialisation pickle</div>
+                    </div>
+                    <div class="card text-center">
+                        <div class="card-icon" style="margin: 0 auto 0.5rem;">&#128640;</div>
+                        <div class="card-title">Perspectives</div>
+                        <div class="card-text">Deploiement cloud (AWS/GCP), A/B testing, drift detection avancee, CD automatise</div>
+                    </div>
+                </div>
+
+                <div class="success-box mt-2" style="max-width: 700px; margin-left: auto; margin-right: auto;">
+                    <div class="success-box-title" style="justify-content: center;">Ameliorations envisagees</div>
+                    <p>
+                        <span class="tag tag-green">Modele Deep Learning</span>
+                        <span class="tag tag-blue">Kubernetes</span>
+                        <span class="tag tag-purple">Feature Store</span>
+                        <span class="tag tag-orange">Evidently AI</span>
+                    </p>
+                </div>
+
+                <p style="margin-top: 2rem; color: var(--text-muted); font-size: 1.1rem;">
+                    <strong style="color: var(--rakuten-red);">Merci !</strong> &mdash; Questions ?
+                </p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Navigation -->
+    <nav>
+        <button class="nav-btn" onclick="prevSlide()" title="Precedent">&#8592;</button>
+        <div class="nav-separator"></div>
+        <span class="slide-counter"><span id="current-slide">1</span> / <span id="total-slides">18</span></span>
+        <div class="nav-separator"></div>
+        <button class="nav-btn" onclick="nextSlide()" title="Suivant">&#8594;</button>
+    </nav>
+
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let currentSlide = 0;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'prev');
+                if (index === currentSlide) slide.classList.add('active');
+                else if (index < currentSlide) slide.classList.add('prev');
+            });
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            document.getElementById('progress-fill').style.width = ((currentSlide + 1) / totalSlides * 100) + '%';
+        }
+
+        function nextSlide() { if (currentSlide < totalSlides - 1) { currentSlide++; updateSlide(); } }
+        function prevSlide() { if (currentSlide > 0) { currentSlide--; updateSlide(); } }
+        function goToSlide(index) { if (index >= 0 && index < totalSlides) { currentSlide = index; updateSlide(); } }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+            else if (e.key === 'Home') { e.preventDefault(); goToSlide(0); }
+            else if (e.key === 'End') { e.preventDefault(); goToSlide(totalSlides - 1); }
+        });
+
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+        document.addEventListener('touchend', (e) => {
+            const diff = touchStartX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 50) { diff > 0 ? nextSlide() : prevSlide(); }
+        });
+
+        updateSlide();
+    </script>
+</body>
+
+</html>

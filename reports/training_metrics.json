@@ -1,0 +1,7 @@
+{
+  "val_accuracy": 0.762423,
+  "val_macro_f1": 0.739409,
+  "train_samples": 67932.0,
+  "validation_samples": 16984.0,
+  "feature_count": 5000.0
+}

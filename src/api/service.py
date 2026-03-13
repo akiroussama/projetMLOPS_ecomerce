@@ -9,6 +9,26 @@ import numpy as np
 
 from .schemas import PredictRequest
 
+# ---------------------------------------------------------------------------
+# Pickle compatibility: the TF-IDF vectorizer was pickled with
+# ``preprocessor=normalize_text`` from build_features.  If that module was
+# executed as ``__main__`` when the pickle was created, the reference stored
+# inside the file points to ``__main__.normalize_text``.  We patch __main__
+# so ``pickle.load`` can resolve the symbol regardless of how it was saved.
+# ---------------------------------------------------------------------------
+try:
+    from ..features.build_features import normalize_text as _normalize_text
+except Exception:
+    try:
+        from src.features.build_features import normalize_text as _normalize_text
+    except Exception:
+        _normalize_text = None
+
+if _normalize_text is not None:
+    import __main__ as _main_module
+    if not hasattr(_main_module, "normalize_text"):
+        _main_module.normalize_text = _normalize_text
+
 
 class ModelNotReadyError(RuntimeError):
     pass
