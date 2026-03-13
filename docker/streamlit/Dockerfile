@@ -3,6 +3,6 @@ WORKDIR /app
 COPY requirements-ui.txt .
 RUN pip install --no-cache-dir -r requirements-ui.txt
 COPY src/ui/ /app/src/ui/
-COPY data/preprocessed/ /app/data/preprocessed/
+RUN mkdir -p /app/data/preprocessed
 EXPOSE 8501
 CMD ["streamlit", "run", "src/ui/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
