@@ -13,9 +13,8 @@ COPY requirements.txt .
 # inst deps
 RUN pip install --no-cache-dir -r requirements.txt
 
-# cree le dossier models (les artefacts sont montes en volume via
-# docker-compose ou generes par le service bootstrap)
-RUN mkdir -p /app/models
+# ON RECOPIE LES MODELES (indispensable pour que le conteneur soit intelligent)
+COPY models/ /app/models/
 
 # copie code source
 COPY src/ /app/src/
@@ -23,5 +22,5 @@ COPY src/ /app/src/
 # port api
 EXPOSE 8000
 
-# start api
-CMD ["uvicorn", "src.api.app:app", "--host", "0.0.0.0", "--port", "8000"]
+# ON POINTE SUR main.py (celui qui a nos fix de compatibilité)
+CMD ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
