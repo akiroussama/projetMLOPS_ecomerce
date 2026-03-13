@@ -13,9 +13,9 @@ COPY requirements.txt .
 # inst deps
 RUN pip install --no-cache-dir -r requirements.txt
 
-# copie tout le dossier models (inclut artifacts et label_mapping.json)
-# plus besoin de copies individuelles, le dossier src s'occupe du reste
-COPY models/ /app/models/
+# cree le dossier models (les artefacts sont montes en volume via
+# docker-compose ou generes par le service bootstrap)
+RUN mkdir -p /app/models
 
 # copie code source
 COPY src/ /app/src/
