@@ -5,11 +5,8 @@ Explore training data: category distribution, product examples, descriptive stat
 """
 
 import os
-import sys
-
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 import streamlit as st
 
 st.set_page_config(
@@ -155,7 +152,7 @@ def _generate_demo_data() -> pd.DataFrame:
     rows = []
     for _ in range(500):
         cat = random.choice(categories)
-        desigs = sample_designations.get(cat, [f"Produit categorie {cat} - Article #{random.randint(1000,9999)}"])
+        desigs = sample_designations.get(cat, [f"Produit categorie {cat} - Article #{random.randint(1000, 9999)}"])
         desig = random.choice(desigs)
         desc = f"Description detaillee du produit. Categorie {cat}. " * random.randint(1, 4)
         rows.append({

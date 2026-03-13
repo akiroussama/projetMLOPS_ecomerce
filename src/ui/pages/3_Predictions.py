@@ -62,33 +62,51 @@ CATEGORY_LABELS = {
 QUICK_EXAMPLES = [
     {
         "name": "Livre",
-        "designation": "Le Petit Prince - Antoine de Saint-Exupery Edition collector",
-        "description": "Magnifique edition collector du classique de la litterature francaise. Couverture rigide, illustrations originales. Parfait pour offrir ou collectionner.",
+        "designation": "Le Petit Prince - Antoine de Saint-Exupery",
+        "description": (
+            "Magnifique edition collector du classique de la "
+            "litterature francaise. Couverture rigide."
+        ),
     },
     {
         "name": "Jeu PS5",
         "designation": "FIFA 24 Edition Standard PS5",
-        "description": "Le jeu de football ultime sur PlayStation 5. HyperMotion V, mode carriere renove, Ultimate Team. Version physique avec boite.",
+        "description": (
+            "Le jeu de football ultime sur PlayStation 5. "
+            "HyperMotion V, mode carriere renove."
+        ),
     },
     {
         "name": "Figurine",
         "designation": "Figurine Pop! Marvel Spider-Man No Way Home",
-        "description": "Figurine Funko Pop en vinyle de Spider-Man dans le film No Way Home. Taille environ 10cm. Emballage d'origine. Parfait pour les collectionneurs.",
+        "description": (
+            "Figurine Funko Pop en vinyle de Spider-Man. "
+            "Taille environ 10cm. Emballage d'origine."
+        ),
     },
     {
         "name": "Canape",
-        "designation": "Canape d'angle convertible en tissu gris 4 places",
-        "description": "Grand canape d'angle avec fonction couchage. Tissu gris anthracite, structure en bois massif, coussins dehoussables. Livraison gratuite.",
+        "designation": "Canape d'angle convertible tissu gris 4 places",
+        "description": (
+            "Grand canape d'angle avec fonction couchage. "
+            "Tissu gris anthracite, coussins dehoussables."
+        ),
     },
     {
         "name": "Perceuse",
-        "designation": "Perceuse visseuse sans fil Bosch Professional 18V",
-        "description": "Perceuse visseuse Bosch GSR 18V-60 avec 2 batteries 4.0Ah, chargeur rapide et coffret L-BOXX. Couple max 60Nm, mandrin 13mm.",
+        "designation": "Perceuse visseuse sans fil Bosch Pro 18V",
+        "description": (
+            "Perceuse visseuse Bosch GSR 18V-60 avec 2 batteries "
+            "4.0Ah, chargeur rapide et coffret L-BOXX."
+        ),
     },
     {
         "name": "Carte Pokemon",
-        "designation": "Display 36 boosters Pokemon Ecarlate et Violet EV3.5",
-        "description": "Boite complete de 36 boosters Pokemon de l'extension Ecarlate et Violet 151. Chaque booster contient 10 cartes. Version francaise officielle.",
+        "designation": "Display 36 boosters Pokemon EV3.5",
+        "description": (
+            "Boite complete de 36 boosters Pokemon extension "
+            "Ecarlate et Violet 151. Version francaise."
+        ),
     },
 ]
 

@@ -173,7 +173,8 @@ st.markdown('<hr style="border:none; height:1px; background:#e0e0e0; margin:2rem
 # ---------------------------------------------------------------------------
 st.markdown("## Metriques Cles du Modele")
 
-import sys, os
+import sys  # noqa: E402
+import os  # noqa: E402
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 try:
