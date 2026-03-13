@@ -3,30 +3,64 @@ import joblib
 import numpy as np
 import os
 from pathlib import Path
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.pipeline import FeatureUnion, Pipeline
+from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC
+from sklearn.metrics import f1_score, recall_score
+import sys
+sys.path.append('src/features/')
+import build_features
+import mlflow
+
 
 def main():
-    root = Path("data/preprocessed")
-    train = pd.read_csv(root / "train_clean.csv", index_col=0)
-    
-    x_train = train["product_txt"].fillna("").astype(str)
-    y_train = train["prdtypecode"].astype(int)
+    # Define mlflow tracking_uri
+    mlflow.set_tracking_uri("http://127.0.0.1:8080")
+    # Define experiment name, run name and artifact_path name
+    rakuten_experiment = mlflow.set_experiment("Rakuten Models")
+    RUN_NAME = "SVC-C0.5"
+    ARTIFACT_PATH = "rf_rakuten"
 
-    # construction du pipeline mika
-    word_vec = TfidfVectorizer(ngram_range=(1, 2), max_features=120000, dtype=np.float32)
-    char_vec = TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 5), max_features=160000, dtype=np.float32)
-    
-    feats = FeatureUnion([("word", word_vec), ("char", char_vec)])
-    model = Pipeline([("feats", feats), ("clf", LinearSVC(C=0.5))])
+    X_train, X_val, y_train, y_val, feats = build_features.main(preprocessed_path = "data/preprocessed")
 
-    print("🏋️ Entrainement du modele final...")
-    model.fit(x_train, y_train)
+    params = {
+        "C": 0.5
+    }
+
+    clf = LinearSVC(**params)
+
+    model = Pipeline([
+        ("feats", feats),
+        ("clf", clf),
+    ])
+
+    # Train model
+    print("Entrainement du modele final...")
+    model.fit(X_train, y_train)
     
+    # Evaluate model
+    print("Evaluate model...")
+    y_pred = model.predict(X_val)
+    mod_f1_score = f1_score(y_val, y_pred, average='weighted')
+    mod_recall_score = recall_score(y_val, y_pred, average='weighted')
+    metrics = {"f1_score": mod_f1_score, "recall_score": mod_recall_score}
+    print(metrics)
+
+    # Store information in tracking server
+    print("Storing information in MLflow tracking server...")
+    with mlflow.start_run(run_name=RUN_NAME) as run:
+        mlflow.log_params(params)
+        mlflow.log_metrics(metrics)
+        mlflow.sklearn.log_model(
+            sk_model=model, 
+            input_example=pd.DataFrame(X_val), 
+            artifact_path=ARTIFACT_PATH
+        )
+
+    print(f"Finished MLflow run ({RUN_NAME}).")
+
     os.makedirs("models/artifacts", exist_ok=True)
     joblib.dump(model, "models/artifacts/model_final.joblib")
-    print("✅ Ticket 14: modele sauvegarde")
+    print("Model saved as joblib.")
 
 if __name__ == "__main__":
     main()

@@ -5,10 +5,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.pipeline import FeatureUnion
 
 
-def main():
+def main(preprocessed_path = "data/preprocessed"):
     ##load data prepared by make_dataset
-    preprocessed_path = "data/preprocessed"
-    print("preprocessed_path:", preprocessed_path)
+    print("Using preprocessed_path:", preprocessed_path)
     path_train_clean = f"{preprocessed_path}/train_clean.csv"
 
     if not os.path.exists(path_train_clean):
@@ -26,6 +25,8 @@ def main():
     X_train, X_val, y_train, y_val = train_test_split(
         X, y, test_size=0.2, random_state=42, stratify=y
     )
+    for i in (X_train, X_val, y_train, y_val): 
+        print(i.shape)
 
 
     # =========================
@@ -54,13 +55,9 @@ def main():
         ("char", char_vec),
     ])
 
-    print("Vectorizing (fit once)...")
-    X_train_vec = feats.fit_transform(X_train)
-    X_val_vec = feats.transform(X_val)
-
     print("Vectorization done")
 
-    return (X_train_vec, X_val_vec)
+    return (X_train, X_val, y_train, y_val, feats)
 
 
 if __name__ == "__main__":
