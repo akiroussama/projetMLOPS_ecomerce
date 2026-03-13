@@ -4,6 +4,7 @@ import uvicorn
 from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from .schemas import ErrorDetail, ErrorResponse, HealthResponse, PredictRequest, PredictResponse
 from .security import require_prediction_token
@@ -173,6 +174,8 @@ def create_app() -> FastAPI:
             ) from exc
 
         return PredictResponse(**prediction)
+
+    Instrumentator().instrument(application).expose(application)
 
     return application
 
