@@ -106,6 +106,21 @@ services:
       timeout: 5s
       retries: 5
 
+  streamlit:
+    build:
+      context: .
+      dockerfile: docker/streamlit/Dockerfile
+    environment:
+      API_URL: http://api:8000
+      API_AUTH_TOKEN: ${API_AUTH_TOKEN:-change-me}
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data/preprocessed:/app/data/preprocessed
+    depends_on:
+      api:
+        condition: service_healthy
+
   airflow-init:
     <<: *airflow-common
     command: >
