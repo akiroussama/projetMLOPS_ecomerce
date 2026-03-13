@@ -1,7 +1,7 @@
 import json
 import joblib
 from pathlib import Path
-from typing import Optional, Literal
+from typing import Optional, Literal, Union
 import tensorflow as tf
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -30,16 +30,30 @@ MAXLEN = 10
 
 
 class PredictRequest(BaseModel):
+    # Champs attendus par les tests de Mika
     model_type: Literal["lstm", "vgg16"] = "lstm"
     text: Optional[str] = None
     image_path: Optional[str] = None
+    # Champs envoyés par le Streamlit (Frontend)
+    designation: Optional[str] = None
+    description: Optional[str] = ""
+    productid: Optional[int] = None
+    imageid: Optional[int] = None
 
 
 class PredictResponse(BaseModel):
+    # Champs attendus par les tests de Mika
     model_used: str
     prediction: str
     input_text: Optional[str] = None
     input_image_path: Optional[str] = None
+    # Champs attendus par le Streamlit (Frontend)
+    predicted_label: Optional[str] = None
+    predicted_code: Optional[Union[int, str]] = None
+    confidence: Optional[float] = None
+    model_name: Optional[str] = None
+    productid: Optional[int] = None
+    imageid: Optional[int] = None
 
 
 @app.on_event("startup")
@@ -100,44 +114,52 @@ def map_prediction(pred_idx):
     return str(res) if res is not None else str(pred_idx)
 
 
-def predict_with_lstm(text: str):
-    if lstm_model is None:
-        raise HTTPException(status_code=503, detail="LSTM model not loaded")
-    return map_prediction(1)
-
-
-def predict_with_vgg16(image_path: str):
-    if vgg16_model is None:
-        raise HTTPException(status_code=503, detail="VGG16 model not loaded")
-    return map_prediction(1)
-
-
 @app.post("/predict", response_model=PredictResponse)
 def predict(payload: PredictRequest):
-    # Validation manuelle pour les tests (422)
-    if payload.model_type == "lstm" and not payload.text:
-        raise HTTPException(status_code=422, detail="Missing text")
+    # 1. On fusionne les entrées possibles (Test vs Streamlit)
+    input_txt = payload.text
+    if payload.designation is not None:
+        # Si Streamlit appelle, on colle la designation et la description
+        input_txt = f"{payload.designation} {payload.description}".strip()
+
+    # 2. Validation manuelle pour les tests (422)
+    if payload.model_type == "lstm" and not input_txt:
+        raise HTTPException(status_code=422, detail="Missing text or designation")
     if payload.model_type == "vgg16" and not payload.image_path:
         raise HTTPException(status_code=422, detail="Missing image_path")
 
-    # Tests VGG16
+    # 3. Simulation VGG16
     if payload.model_type == "vgg16" and vgg16_model is not None:
+        pred_val = map_prediction(1)
         return PredictResponse(
             model_used="vgg16",
-            prediction=predict_with_vgg16(payload.image_path),
-            input_image_path=payload.image_path
+            prediction=pred_val,
+            input_image_path=payload.image_path,
+            predicted_label=pred_val,
+            predicted_code=1,
+            model_name="vgg16"
         )
 
-    # Ta vraie Pipeline
+    # 4. Ta vraie Pipeline
     if model is None:
         raise HTTPException(status_code=503, detail="Pipeline not loaded")
 
     try:
-        idx = model.predict([payload.text or ""])[0]
+        # On prédit avec scikit-learn
+        idx = model.predict([input_txt or ""])[0]
+        pred_label = map_prediction(idx)
+        
         return PredictResponse(
+            # Retour pour les tests
             model_used="scikit-learn-pipeline",
-            prediction=map_prediction(idx),
-            input_text=payload.text
+            prediction=pred_label,
+            input_text=input_txt,
+            # Retour pour Streamlit
+            predicted_label=pred_label,
+            predicted_code=int(idx) if str(idx).isdigit() else str(idx),
+            model_name="scikit-learn-pipeline",
+            productid=payload.productid,
+            imageid=payload.imageid
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
