@@ -1,0 +1,16 @@
+artifact_uri: /home/ubuntu/git/projetMLOPS_ecomerce/mlruns/115356879471472188/e095f1760a0343a4b219cd6810a8db45/artifacts
+deleted_time: 1773410468366
+end_time: 1773410098468
+entry_point_name: ''
+experiment_id: '115356879471472188'
+lifecycle_stage: deleted
+run_id: e095f1760a0343a4b219cd6810a8db45
+run_name: unruly-crow-462
+run_uuid: e095f1760a0343a4b219cd6810a8db45
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773409890139
+status: 3
+tags: []
+user_id: ubuntu

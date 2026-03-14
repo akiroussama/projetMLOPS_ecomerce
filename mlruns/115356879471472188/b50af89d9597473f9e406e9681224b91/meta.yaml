@@ -1,0 +1,15 @@
+artifact_uri: /home/ubuntu/git/projetMLOPS_ecomerce/mlruns/115356879471472188/b50af89d9597473f9e406e9681224b91/artifacts
+end_time: 1773468706975
+entry_point_name: ''
+experiment_id: '115356879471472188'
+lifecycle_stage: active
+run_id: b50af89d9597473f9e406e9681224b91
+run_name: SVC-C0.5
+run_uuid: b50af89d9597473f9e406e9681224b91
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1773468689078
+status: 3
+tags: []
+user_id: ubuntu
