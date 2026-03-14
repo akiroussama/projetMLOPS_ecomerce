@@ -10,13 +10,21 @@ import sys
 import mlflow
 
 
-def train_model(X_train=None, X_val=None, y_train=None, y_val=None, feats=None):
+def train_model(X_train=None, X_val=None, y_train=None, y_val=None, feats=None, 
+                tracking_uri = "http://127.0.0.1:8080",
+                experiment_name = "Rakuten Models", 
+                run_name = "SVC-C0.5",
+                artifact_path = "rf_rakuten"):
     # Define mlflow tracking_uri
-    mlflow.set_tracking_uri("http://127.0.0.1:8080")
+    # Requires running local MLflow server
+    # mlflow server --host 0.0.0.0 --port 8080 --backend-store-uri ./mlruns --default-artifact-root ./mlruns --serve-artifacts
+    TRACKING_URI = tracking_uri
+    EXPERIMENT_NAME = experiment_name 
+    mlflow.set_tracking_uri(TRACKING_URI)
     # Define experiment name, run name and artifact_path name
-    rakuten_experiment = mlflow.set_experiment("Rakuten Models")
-    RUN_NAME = "SVC-C0.5"
-    ARTIFACT_PATH = "rf_rakuten"
+    rakuten_experiment = mlflow.set_experiment(EXPERIMENT_NAME)
+    RUN_NAME = run_name
+    ARTIFACT_PATH = artifact_path
 
     if any(e is None for e in [X_train, X_val, y_train, y_val, feats]):
         sys.path.append('src/features/')

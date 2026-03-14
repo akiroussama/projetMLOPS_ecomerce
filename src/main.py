@@ -15,7 +15,11 @@ def train_pipeline(preprocessed_path = "data/preprocessed"):
 
     # Train model
     print('Training Model...')
-    train_model(X_train, X_val, y_train, y_val, feats)
+    train_model(X_train, X_val, y_train, y_val, feats, 
+                tracking_uri = "http://127.0.0.1:8080",
+                experiment_name = "Rakuten Models",
+                run_name = "SVC-C0.5",
+                artifact_path = "rf_rakuten")
 
 
 if __name__ == "__main__":

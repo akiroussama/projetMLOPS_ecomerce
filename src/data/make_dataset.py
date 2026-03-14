@@ -1,10 +1,3 @@
-'''
-Make Dataset
-
-Example usage:
-python3 src/data/make_dataset.py data/raw data/preprocessed
-'''
-
 import pandas as pd
 import re
 import html
@@ -41,16 +34,18 @@ def make_dataset(input_filepath='data/raw', output_filepath='data/preprocessed')
     # Fichiers bruts
     X_train_path = raw_path / "X_train_update.csv"
     y_train_path = raw_path / "Y_train_CVw08PX.csv"
+    X_test_path = raw_path / "X_test_update.csv"
 
     # Fichier déjà traduit
-    transl_path = raw_path / "Rak_train_translations.csv"
-    
+    X_train_transl_path = raw_path / "Rak_train_translations.csv"
+    X_test_transl_path = raw_path / "Rak_test_translations.csv"
+
     # Labels
     y = pd.read_csv(y_train_path, index_col=0).iloc[:, 0]
     
-    if transl_path.exists():
-        print(f"Using translations: {transl_path}")
-        df = pd.read_csv(transl_path, index_col=0)
+    if X_train_transl_path.exists():
+        print(f"Using translations: {X_train_transl_path}")
+        df = pd.read_csv(X_train_transl_path, index_col=0)
         if "product_txt_transl" not in df.columns:
             raise ValueError("Rak_train_translations.csv doit contenir la colonne 'product_txt_transl'")
     else:
