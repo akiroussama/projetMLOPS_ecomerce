@@ -5,7 +5,6 @@ Example usage:
 python3 src/data/make_dataset.py data/raw data/preprocessed
 '''
 
-import click
 import pandas as pd
 import re
 import html
@@ -30,10 +29,7 @@ def build_product_txt(df):
     desc = desc.map(strip_html).map(basic_clean)
     return (des + " . -//- " + desc).fillna("").astype(str)
 
-@click.command()
-@click.argument('input_filepath', type=click.Path(exists=True))
-@click.argument('output_filepath', type=click.Path())
-def main(input_filepath, output_filepath):
+def make_dataset(input_filepath='data/raw', output_filepath='data/preprocessed'):
     os.makedirs(output_filepath, exist_ok=True)
     
     # on charge les fichiers sources
@@ -79,4 +75,4 @@ def main(input_filepath, output_filepath):
     print(f"Saved: {out_path}")
 
 if __name__ == "__main__":
-    main()
+    make_dataset()

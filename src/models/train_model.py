@@ -7,12 +7,10 @@ from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC
 from sklearn.metrics import f1_score, recall_score
 import sys
-sys.path.append('src/features/')
-import build_features
 import mlflow
 
 
-def main():
+def train_model(X_train=None, X_val=None, y_train=None, y_val=None, feats=None):
     # Define mlflow tracking_uri
     mlflow.set_tracking_uri("http://127.0.0.1:8080")
     # Define experiment name, run name and artifact_path name
@@ -20,7 +18,12 @@ def main():
     RUN_NAME = "SVC-C0.5"
     ARTIFACT_PATH = "rf_rakuten"
 
-    X_train, X_val, y_train, y_val, feats = build_features.main(preprocessed_path = "data/preprocessed")
+    if any(e is None for e in [X_train, X_val, y_train, y_val, feats]):
+        sys.path.append('src/features/')
+        import build_features
+
+        print('Features not supplied. Building features...')
+        X_train, X_val, y_train, y_val, feats = build_features.main(preprocessed_path = "data/preprocessed")
 
     params = {
         "C": 0.5
@@ -63,4 +66,4 @@ def main():
     print("Model saved as joblib.")
 
 if __name__ == "__main__":
-    main()
+    train_model()

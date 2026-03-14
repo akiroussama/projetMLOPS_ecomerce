@@ -5,7 +5,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.pipeline import FeatureUnion
 
 
-def main(preprocessed_path = "data/preprocessed"):
+def build_features(preprocessed_path = "data/preprocessed"):
     ##load data prepared by make_dataset
     print("Using preprocessed_path:", preprocessed_path)
     path_train_clean = f"{preprocessed_path}/train_clean.csv"
@@ -61,4 +61,4 @@ def main(preprocessed_path = "data/preprocessed"):
 
 
 if __name__ == "__main__":
-    main()
+    build_features()
