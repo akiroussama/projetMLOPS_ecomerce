@@ -14,7 +14,7 @@
 | 3 | **Liviu** | 9 → 13 | ~4.5 min | Airflow, Airflow DAG, CI/CD, Prometheus, Grafana |
 | 4 | **Oussama** | 14 → 17 + demo | ~7.5 min | Streamlit (2 min) + Demo live (4 min) + Conclusion (1.5 min) |
 
-> **Regle Q&A** : pendant les 10 min de questions, celui qui a *code* la fonctionnalite repond, meme s'il ne l'a pas presentee. Exemple : question sur MLflow → Liviu repond. Question sur Airflow → Oussama repond.
+> **Regle Q&A** : pendant les 10 min de questions, celui qui a *code* la fonctionnalite repond, meme s'il ne l'a pas presentee. Exemple : question sur MLflow/sweep → Johan repond. Question sur Airflow/DAG → Liviu repond. Question sur /stats ou drift → Oussama. Voir le fichier `docs/QUESTIONS_JURY.md` pour les reponses detaillees prepares.
 
 ---
 
@@ -42,7 +42,7 @@
 
 ### Slide 4 — API FastAPI (~1 min)
 
-> L'API est construite avec FastAPI et expose trois endpoints principaux. Le endpoint /health permet de verifier l'etat du service et du modele charge. Le endpoint /predict accepte une requete POST avec le titre et la description du produit, et retourne la categorie predite, le code correspondant, le score de confiance et le nom du modele. Enfin, le endpoint /metrics expose les metriques Prometheus que nous verrons plus tard.
+> L'API est construite avec FastAPI et expose quatre endpoints principaux. Le endpoint /health permet de verifier l'etat du service et du modele charge. Le endpoint /predict accepte une requete POST avec le titre et la description du produit, et retourne la categorie predite, le code correspondant, le score de confiance et le nom du modele. Le endpoint /metrics expose les metriques Prometheus. Et le nouveau endpoint /stats retourne des statistiques metier en temps reel : nombre de predictions par categorie, temps d'inference moyen, min et max — collectees de facon thread-safe avec un lock Python.
 >
 > L'architecture est modulaire : app.py gere les routes, service.py contient la logique metier, et schemas.py definit la validation Pydantic. Le endpoint /predict est protege par un Bearer token, ce que Johan va detailler dans la partie securite. Je lui passe la parole.
 
@@ -64,9 +64,9 @@
 
 ### Slide 7 — MLflow (~1 min)
 
-> Pour le suivi des experiences, nous utilisons MLflow. Chaque entrainement, qu'il soit lance par le bootstrap ou par Airflow, est trace dans l'experience « rakuten-text-baseline ». Vous pouvez voir sur cette capture trois runs : un run initial bootstrap et deux re-entrainements automatiques declenches par Airflow.
+> Pour le suivi des experiences, nous utilisons MLflow. Vous pouvez voir sur cette capture plus de quinze runs : un run initial bootstrap, des re-entrainements Airflow, et surtout un sweep d'hyperparametres que nous avons lance pour optimiser le modele.
 >
-> A chaque run, nous loggons les parametres du modele, les metriques — accuracy, F1-score macro, nombre d'echantillons — et les artefacts. MLflow tourne dans son propre conteneur avec un stockage persistant via des volumes Docker. Le tracking URI est partage entre les services via la variable d'environnement MLFLOW_TRACKING_URI.
+> Ce sweep couvre quinze combinaisons : alpha de 1e-6 a 1e-3, la fonction de perte log_loss vs modified_huber, et max_iter de 300 a 2000. Le meilleur run — alpha egal a 1e-6 — atteint 76.68% d'accuracy et 74.25% de F1-score macro. Nous avons aussi une deuxieme experience « rakuten-data-drift » qui logue les resultats du rapport de derive. A chaque run, parametres, metriques et artefacts sont traces automatiquement. Le tracking URI est partage entre les services via la variable MLFLOW_TRACKING_URI.
 
 ### Slide 8 — Securite (~30s)
 
@@ -80,7 +80,9 @@
 
 > Merci Johan. Je vais maintenant vous presenter l'orchestration du pipeline avec Apache Airflow. Nous avons cree un DAG appele « rakuten_weekly_retraining » qui automatise l'ensemble du cycle de re-entrainement. Ce DAG est programme pour s'executer chaque lundi a deux heures du matin, via l'expression cron zero deux etoile etoile un.
 >
-> Le pipeline comprend six taches sequentielles. D'abord, le telechargement des donnees brutes depuis S3. Ensuite, la preparation du dataset : nettoyage et decoupage train/validation. Puis la construction des features TF-IDF. Le train_model entraine le SGDClassifier et logge les resultats dans MLflow. Enfin, verify_artifacts verifie l'integrite des fichiers produits, et generate_drift_report genere un rapport de derive.
+> Le pipeline comprend six taches sequentielles. D'abord, le telechargement des donnees brutes depuis S3. Ensuite, la preparation du dataset : nettoyage et decoupage train/validation. Puis la construction des features TF-IDF. Le train_model entraine le SGDClassifier et logge les resultats dans MLflow. Ensuite, verify_artifacts verifie l'integrite des fichiers produits, et generate_drift_report genere un rapport de derive avec un test de Kolmogorov-Smirnov via scipy.
+>
+> Et ce n'est pas seulement theorique : nous avons declenche ce DAG manuellement sur notre VPS Hetzner via l'API REST d'Airflow, et les six taches sont passees en vert — succes complet. Vous pouvez le voir sur la capture d'ecran.
 
 ### Slide 10 — Airflow DAG Detail (~45s)
 
@@ -140,13 +142,13 @@
 
 ### Slide 17 — Conclusion (~1.5 min)
 
-> Pour conclure, nous avons realise un pipeline MLOps complet couvrant les cinq phases du projet. Depuis les fondations — donnees, modele, API — jusqu'au monitoring et a l'interface utilisateur, en passant par la conteneurisation, le tracking MLflow et l'orchestration Airflow.
+> Pour conclure, nous avons realise un pipeline MLOps complet couvrant les cinq phases du projet. Et nous avons pousse plus loin encore avec cinq ameliorations supplementaires pour cette soutenance.
 >
-> En termes de metriques : soixante-seize pourcent d'accuracy pour notre baseline, huit services Docker orchestres, et les cinq phases du cahier des charges completees.
+> Premierement, l'endpoint /stats sur l'API pour des statistiques metier en temps reel par categorie. Deuxiemement, un sweep de quinze runs MLflow sur les hyperparametres du SGDClassifier — meilleur resultat : 76.68% d'accuracy. Troisiemement, la detection de derive des donnees par test KS de Kolmogorov-Smirnov, integree comme derniere tache du DAG Airflow et loggee dans MLflow. Quatriemement, le DAG Airflow a ete declenche et valide en conditions reelles sur notre VPS — six taches vertes. Et cinquiemement, nous avons prepare des reponses documentees pour vos questions.
 >
-> Nos principaux apprentissages portent sur l'orchestration Docker Compose multi-services, la gestion des permissions entre conteneurs, la serialisation pickle et ses pieges, et l'instrumentation automatique avec Prometheus.
+> Nos principaux apprentissages portent sur l'orchestration Docker Compose multi-services, la gestion des permissions entre conteneurs, la serialisation pickle et ses pieges, l'instrumentation automatique avec Prometheus, et la compatibilite des bibliotheques en production.
 >
-> En perspectives, nous envisageons le deploiement cloud sur AWS ou GCP, l'integration de modeles deep learning, la mise en place d'A/B testing, et la detection de derive avancee avec Evidently AI.
+> En perspectives : deploiement cloud sur AWS ou GCP, integration de modeles deep learning comme BERT, et mise en place d'A/B testing pour comparer les modeles en production.
 >
 > Merci pour votre attention. Nous sommes prets pour vos questions.
 
@@ -222,11 +224,13 @@ docker compose down
 |----------|--------|
 | Pourquoi SGDClassifier et pas un modele deep learning ? | Hery |
 | Comment gerez-vous la mise a jour du modele en production ? | Oussama (Airflow) |
-| Comment fonctionne le tracking MLflow ? | Liviu |
+| Comment fonctionne le tracking MLflow ? | Johan |
 | Comment les conteneurs communiquent entre eux ? | Johan |
 | Quelle est la latence de prediction ? | Hery (< 10ms CPU) |
-| Comment detectez-vous la derive des donnees ? | Oussama (drift report dans Airflow) |
+| Comment detectez-vous la derive des donnees ? | Oussama (KS-test scipy dans generate_drift_report, logge dans MLflow experiment rakuten-data-drift) |
 | Pourquoi Docker Compose et pas Kubernetes ? | Johan |
 | Comment gerez-vous la securite de l'API ? | Hery |
-| Le re-entrainement est-il automatique ? | Oussama (cron Airflow) |
-| Comment provisionnez-vous Grafana ? | Oussama (YAML provisioning) |
+| Le re-entrainement est-il automatique ? | Liviu (DAG cron Airflow 0 2 * * 1, valide en prod VPS) |
+| Comment provisionnez-vous Grafana ? | Liviu (YAML provisioning dans docker/monitoring/grafana/provisioning) |
+| Qu'est-ce que le sweep MLflow et pourquoi ? | Johan (15 runs SGDClassifier, alpha/loss/max_iter, meilleur : alpha=1e-6, 76.68%) |
+| A quoi sert l'endpoint /stats ? | Hery (stats metier : predictions par categorie, temps inference moyen/min/max, thread-safe) |

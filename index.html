@@ -745,6 +745,11 @@
                                     <td>GET</td>
                                     <td>Metriques Prometheus</td>
                                 </tr>
+                                <tr>
+                                    <td><code>/stats</code></td>
+                                    <td>GET</td>
+                                    <td>Stats predictions par categorie + inference</td>
+                                </tr>
                             </table>
                         </div>
 
@@ -906,8 +911,8 @@ CMD ["uvicorn", "src.api.app:app",
                         <rect x="300" y="90" width="120" height="100" rx="10" fill="#fef2f2" stroke="#bf0000" stroke-width="2.5"/>
                         <text x="360" y="118" text-anchor="middle" font-size="14" font-weight="800" fill="#bf0000">FastAPI</text>
                         <text x="360" y="138" text-anchor="middle" font-size="10" fill="#991b1b">:8000 (ext 8200)</text>
-                        <text x="360" y="155" text-anchor="middle" font-size="9" fill="#64748b">/predict /health</text>
-                        <text x="360" y="170" text-anchor="middle" font-size="9" fill="#64748b">/metrics</text>
+                        <text x="360" y="152" text-anchor="middle" font-size="9" fill="#64748b">/predict /health</text>
+                        <text x="360" y="165" text-anchor="middle" font-size="9" fill="#64748b">/metrics /stats</text>
 
                         <!-- Arrow API to Models volume -->
                         <line x1="360" y1="192" x2="360" y2="235" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
@@ -1000,11 +1005,11 @@ CMD ["uvicorn", "src.api.app:app",
                                 </tr>
                                 <tr>
                                     <td><code>val_accuracy</code></td>
-                                    <td class="highlight">0.762</td>
+                                    <td class="highlight">0.7668 (meilleur)</td>
                                 </tr>
                                 <tr>
                                     <td><code>val_macro_f1</code></td>
-                                    <td class="highlight">0.739</td>
+                                    <td class="highlight">0.7425 (meilleur)</td>
                                 </tr>
                                 <tr>
                                     <td><code>train_samples</code></td>
@@ -1019,7 +1024,7 @@ CMD ["uvicorn", "src.api.app:app",
 
                         <div class="success-box mt-1">
                             <div class="success-box-title">Experiment tracking</div>
-                            <p>Chaque run (bootstrap + Airflow re-entrainement) est trace dans l'experiment <code>rakuten-text-baseline</code>. Parametres, metriques et artefacts versiones.</p>
+                            <p><strong>15+ runs loggues</strong> : sweep hyperparametres (alpha, loss, max_iter) + Airflow re-entrainements. Meilleur run : <code>alpha=1e-6</code>, accuracy <strong>76.68%</strong>. Experiences <code>rakuten-text-baseline</code> et <code>rakuten-data-drift</code>.</p>
                         </div>
                     </div>
 
@@ -1028,7 +1033,7 @@ CMD ["uvicorn", "src.api.app:app",
                             <img src="../docs/screenshots/12-mlflow-ui.png" alt="MLflow UI montrant les runs d'entrainement">
                         </div>
                         <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">
-                            MLflow UI — 3 runs : 1 bootstrap + 2 re-entrainements Airflow
+                            MLflow UI — 15+ runs : sweep hyperparametres + Airflow retraining + drift tracking
                         </p>
                     </div>
                 </div>
@@ -1127,12 +1132,12 @@ CMD ["uvicorn", "src.api.app:app",
                             <img src="../docs/screenshots/14-airflow-dag-grid.png" alt="Airflow DAG Grid View">
                         </div>
                         <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem;">
-                            Airflow Grid View — 6 taches avec statuts
+                            Airflow Grid View — 6/6 taches SUCCESS (run complet sur VPS)
                         </p>
 
                         <div class="info-box mt-1">
                             <div class="info-box-title">Schedule</div>
-                            <p>Re-entrainement hebdomadaire : <code>0 2 * * 1</code> (lundi a 2h). Chaque run tracke les metriques dans MLflow automatiquement.</p>
+                            <p>Re-entrainement hebdomadaire : <code>0 2 * * 1</code> (lundi a 2h). DAG declenche et valide sur VPS : <strong>6/6 taches vertes</strong>. Drift detecte via KS-test scipy.</p>
                         </div>
                     </div>
                 </div>
@@ -1331,7 +1336,7 @@ CMD ["uvicorn", "src.api.app:app",
                         <div class="metric-label">Taux 4xx</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-value" style="font-size: 1.6rem;">3</div>
+                        <div class="metric-value" style="font-size: 1.6rem;">4</div>
                         <div class="metric-label">Endpoints traces</div>
                     </div>
                 </div>
@@ -1481,16 +1486,20 @@ CMD ["uvicorn", "src.api.app:app",
             <div class="content-full text-center">
                 <h1 class="hero-title" style="font-size: 2.5rem;">Conclusion & Perspectives</h1>
 
-                <div class="grid-3 mt-2">
+                <div class="grid-4 mt-2">
                     <div class="metric-card success">
-                        <div class="metric-value">76.2%</div>
-                        <div class="metric-label">Accuracy Baseline</div>
+                        <div class="metric-value">76.68%</div>
+                        <div class="metric-label">Accuracy (best run)</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-value">8+</div>
-                        <div class="metric-label">Services Docker</div>
+                        <div class="metric-value">15+</div>
+                        <div class="metric-label">MLflow Runs</div>
                     </div>
                     <div class="metric-card warning">
+                        <div class="metric-value">6/6</div>
+                        <div class="metric-label">Taches Airflow OK</div>
+                    </div>
+                    <div class="metric-card success">
                         <div class="metric-value">5/5</div>
                         <div class="metric-label">Phases completees</div>
                     </div>
@@ -1500,7 +1509,7 @@ CMD ["uvicorn", "src.api.app:app",
                     <div class="card text-center">
                         <div class="card-icon" style="margin: 0 auto 0.5rem;">&#9989;</div>
                         <div class="card-title">Realise</div>
-                        <div class="card-text">Pipeline MLOps complet : API securisee, MLflow, Airflow, Prometheus/Grafana, Streamlit, CI/CD</div>
+                        <div class="card-text">Pipeline MLOps complet : API securisee + <code>/stats</code>, MLflow (15+ runs, sweep hyperparams), Airflow (6/6 succes VPS), Prometheus/Grafana, Streamlit, CI/CD, drift detection KS-test</div>
                     </div>
                     <div class="card text-center">
                         <div class="card-icon" style="margin: 0 auto 0.5rem;">&#128161;</div>
@@ -1510,17 +1519,20 @@ CMD ["uvicorn", "src.api.app:app",
                     <div class="card text-center">
                         <div class="card-icon" style="margin: 0 auto 0.5rem;">&#128640;</div>
                         <div class="card-title">Perspectives</div>
-                        <div class="card-text">Deploiement cloud (AWS/GCP), A/B testing, drift detection avancee, CD automatise</div>
+                        <div class="card-text">Deploiement cloud (AWS/GCP), modele deep learning (BERT), A/B testing, CD automatise, Kubernetes</div>
                     </div>
                 </div>
 
-                <div class="success-box mt-2" style="max-width: 700px; margin-left: auto; margin-right: auto;">
-                    <div class="success-box-title" style="justify-content: center;">Ameliorations envisagees</div>
+                <div class="success-box mt-2" style="max-width: 800px; margin-left: auto; margin-right: auto;">
+                    <div class="success-box-title" style="justify-content: center;">Ameliorations implementees (soutenance)</div>
                     <p>
-                        <span class="tag tag-green">Modele Deep Learning</span>
-                        <span class="tag tag-blue">Kubernetes</span>
-                        <span class="tag tag-purple">Feature Store</span>
-                        <span class="tag tag-orange">Evidently AI</span>
+                        <span class="tag tag-green">Drift KS-test scipy</span>
+                        <span class="tag tag-green">Endpoint /stats</span>
+                        <span class="tag tag-green">Sweep 15 runs MLflow</span>
+                        <span class="tag tag-green">Airflow DAG valide VPS</span>
+                        <span class="tag tag-blue">Kubernetes (futur)</span>
+                        <span class="tag tag-purple">Feature Store (futur)</span>
+                        <span class="tag tag-orange">Deep Learning (futur)</span>
                     </p>
                 </div>
 
