@@ -25,17 +25,13 @@ from pathlib import Path
 
 import pandas as pd
 
+_EVIDENTLY_AVAILABLE = False
 try:
     from evidently.metric_preset import DataDriftPreset, DataQualityPreset
     from evidently.report import Report
+    _EVIDENTLY_AVAILABLE = True
 except ImportError:
-    print(
-        "ERROR: The 'evidently' package is not installed.\n"
-        "Install monitoring dependencies with:\n\n"
-        "    pip install -r requirements-monitoring.txt\n",
-        file=sys.stderr,
-    )
-    sys.exit(1)
+    pass  # Falls back to scipy KS-test implementation
 
 
 # ──────────────────────────────────────────────────────────────────────
@@ -105,36 +101,71 @@ def generate_drift_report(
     reference_features = _derive_features(reference_df)
     current_features = _derive_features(current_df)
 
-    # --- Build Evidently report ------------------------------------------
-    print("Running Evidently drift analysis ...")
-    report = Report(
-        metrics=[
-            DataDriftPreset(),
-            DataQualityPreset(),
-        ]
-    )
-    report.run(reference_data=reference_features, current_data=current_features)
-
-    # --- Persist outputs -------------------------------------------------
+    # --- Build drift report (Evidently if available, scipy KS-test fallback) ---
     output_dir.mkdir(parents=True, exist_ok=True)
-
     html_path = output_dir / "drift_report.html"
     json_path = output_dir / "drift_report.json"
 
-    report.save_html(str(html_path))
-    print(f"HTML report saved to {html_path}")
+    if _EVIDENTLY_AVAILABLE:
+        print("Running Evidently drift analysis ...")
+        report = Report(metrics=[DataDriftPreset(), DataQualityPreset()])
+        report.run(reference_data=reference_features, current_data=current_features)
+        report.save_html(str(html_path))
+        print(f"HTML report saved to {html_path}")
+        report.save_json(str(json_path))
+        print(f"JSON report saved to {json_path}")
+    else:
+        print("Evidently not available — using scipy KS-test fallback ...")
+        from scipy import stats
 
-    report.save_json(str(json_path))
-    print(f"JSON report saved to {json_path}")
+        feat_details: dict = {}
+        drift_metrics: dict = {}
+        for col in reference_features.columns:
+            ks_stat, p_val = stats.ks_2samp(reference_features[col], current_features[col])
+            drift = bool(p_val < 0.05)
+            feat_details[col] = {
+                "ks_stat": round(float(ks_stat), 4),
+                "p_value": round(float(p_val), 6),
+                "drift_detected": drift,
+            }
+            drift_metrics[f"ks_{col}"] = round(float(ks_stat), 4)
+            drift_metrics[f"pval_{col}"] = round(float(p_val), 6)
+            print(f"  {col}: KS={ks_stat:.4f}, p={p_val:.6f}, {'DRIFT' if drift else 'ok'}")
 
-    # Quick summary from the JSON
-    try:
-        with open(json_path, "r", encoding="utf-8") as fh:
-            report_data = json.load(fh)
-        print("\n--- Drift report summary ---")
-        print(json.dumps(report_data.get("summary", {}), indent=2))
-    except Exception:
-        pass  # non-critical – the files are already written
+        drift_share = sum(1 for v in feat_details.values() if v["drift_detected"]) / len(feat_details)
+        report_data = {
+            "summary": {
+                "drift_share": drift_share,
+                "method": "KS-test (scipy)",
+                "n_reference": len(reference_features),
+                "n_current": len(current_features),
+            },
+            "features": feat_details,
+        }
+        json_path.write_text(json.dumps(report_data, indent=2), encoding="utf-8")
+        print(f"JSON report saved to {json_path}")
+
+        rows = "\n".join(
+            f'<tr class="{"drift" if v["drift_detected"] else "nodrift"}">'
+            f"<td>{c}</td><td>{v['ks_stat']:.4f}</td>"
+            f"<td>{v['p_value']:.6f}</td>"
+            f'<td>{"YES" if v["drift_detected"] else "NO"}</td></tr>'
+            for c, v in feat_details.items()
+        )
+        html_path.write_text(
+            f"""<!DOCTYPE html><html><head><title>Drift Report</title>
+<style>body{{font-family:sans-serif;margin:40px}}table{{border-collapse:collapse;width:100%}}
+td,th{{border:1px solid #ddd;padding:8px}}th{{background:#4CAF50;color:white}}
+.drift{{background:#ffcccc}}.nodrift{{background:#ccffcc}}</style></head><body>
+<h1>Rakuten MLOps — Data Drift Report (KS-test)</h1>
+<p>Reference: {len(reference_features)} rows | Current: {len(current_features)} rows</p>
+<h3>Drift Share: {drift_share:.0%}</h3>
+<table><tr><th>Feature</th><th>KS Stat</th><th>p-value</th><th>Drift (p&lt;0.05)</th></tr>
+{rows}</table></body></html>""",
+            encoding="utf-8",
+        )
+        print(f"HTML report saved to {html_path}")
+        print(f"Drift share: {drift_share:.0%} — {'No significant drift detected' if drift_share == 0 else 'Drift detected!'}")
 
     print("\nDrift report generation complete.")
 

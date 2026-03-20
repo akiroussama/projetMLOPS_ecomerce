@@ -17,6 +17,7 @@ x-airflow-common: &airflow-common
     - ./:/opt/airflow/project
     - ./orchestration/dags:/opt/airflow/dags
     - ./orchestration/logs:/opt/airflow/logs
+    - mlflow-artifacts:/mlflow/artifacts
   depends_on:
     postgres:
       condition: service_healthy
