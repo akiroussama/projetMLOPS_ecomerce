@@ -1,4 +1,4 @@
-from typing import Annotated, Literal, Optional, Union
+from typing import Annotated, Dict, Literal, Optional, Union
 
 from pydantic import (
     BaseModel,
@@ -59,3 +59,11 @@ class ErrorResponse(BaseModel):
     error_code: str
     message: str
     details: list[ErrorDetail] = Field(default_factory=list)
+
+
+class StatsResponse(BaseModel):
+    total_predictions: int
+    predictions_by_category: Dict[str, int]
+    avg_inference_ms: Optional[float] = None
+    min_inference_ms: Optional[float] = None
+    max_inference_ms: Optional[float] = None

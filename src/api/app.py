@@ -1,4 +1,8 @@
+import threading
+import time
+from collections import defaultdict
 from contextlib import asynccontextmanager
+from typing import Dict, List
 
 import uvicorn
 from fastapi import Depends, FastAPI, HTTPException, Request, status
@@ -6,9 +10,36 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from prometheus_fastapi_instrumentator import Instrumentator
 
-from .schemas import ErrorDetail, ErrorResponse, HealthResponse, PredictRequest, PredictResponse
+from .schemas import ErrorDetail, ErrorResponse, HealthResponse, PredictRequest, PredictResponse, StatsResponse
 from .security import require_prediction_token
 from .service import ModelNotReadyError, PredictionExecutionError, PredictionService
+
+
+class _AppStats:
+    """Thread-safe in-memory prediction statistics."""
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self._counts: Dict[str, int] = defaultdict(int)
+        self._inference_times: List[float] = []
+
+    def record(self, predicted_label: str, inference_ms: float) -> None:
+        with self._lock:
+            self._counts[predicted_label] += 1
+            self._inference_times.append(inference_ms)
+
+    def snapshot(self) -> dict:
+        with self._lock:
+            times = list(self._inference_times)
+            counts = dict(self._counts)
+        total = sum(counts.values())
+        return {
+            "total_predictions": total,
+            "predictions_by_category": counts,
+            "avg_inference_ms": round(sum(times) / len(times), 2) if times else None,
+            "min_inference_ms": round(min(times), 2) if times else None,
+            "max_inference_ms": round(max(times), 2) if times else None,
+        }
 
 
 def _get_prediction_service(application: FastAPI) -> PredictionService:
@@ -64,6 +95,7 @@ def create_app() -> FastAPI:
         service = PredictionService()
         service.load()
         app.state.prediction_service = service
+        app.state.stats = _AppStats()
         yield
 
     application = FastAPI(
@@ -154,6 +186,7 @@ def create_app() -> FastAPI:
     ) -> PredictResponse:
         service = _get_prediction_service(request.app)
 
+        t0 = time.perf_counter()
         try:
             prediction = service.predict(payload)
         except ModelNotReadyError as exc:
@@ -173,7 +206,24 @@ def create_app() -> FastAPI:
                 },
             ) from exc
 
+        inference_ms = (time.perf_counter() - t0) * 1000
+        app_stats: _AppStats = getattr(request.app.state, "stats", None)
+        if app_stats is not None:
+            app_stats.record(str(prediction["predicted_label"]), inference_ms)
+
         return PredictResponse(**prediction)
+
+    @application.get(
+        "/stats",
+        response_model=StatsResponse,
+        tags=["system"],
+        summary="Live prediction statistics (in-memory, resets on restart)",
+    )
+    def stats(request: Request) -> StatsResponse:
+        app_stats: _AppStats = getattr(request.app.state, "stats", None)
+        if app_stats is None:
+            return StatsResponse(total_predictions=0, predictions_by_category={})
+        return StatsResponse(**app_stats.snapshot())
 
     Instrumentator().instrument(application).expose(application)
 
