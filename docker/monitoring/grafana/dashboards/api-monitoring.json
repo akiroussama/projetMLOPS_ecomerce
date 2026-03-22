@@ -318,7 +318,7 @@
     },
     {
       "id": 4,
-      "title": "Active Requests",
+      "title": "Total Predictions",
       "type": "stat",
       "gridPos": {
         "h": 9,
@@ -341,18 +341,10 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 5
-              },
-              {
-                "color": "red",
-                "value": 10
               }
             ]
           },
-          "unit": "none"
+          "unit": "short"
         },
         "overrides": []
       },
@@ -375,8 +367,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "http_requests_in_progress",
-          "legendFormat": "{{handler}}",
+          "expr": "http_requests_total{handler=\"/predict\",method=\"POST\",status=\"2xx\"}",
+          "legendFormat": "predictions reussies",
           "refId": "A",
           "editorMode": "code",
           "instant": true

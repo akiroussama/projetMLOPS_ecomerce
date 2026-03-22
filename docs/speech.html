@@ -420,146 +420,184 @@
         </div>
     </div>
 
-    <!-- ==================== SLIDE 14 : STREAMLIT ==================== -->
-    <div class="speech-slide" data-speaker="oussama" data-time="~1 min">
-        <div class="slide-label">Slide 14 &middot; Streamlit &middot; ~1 min</div>
-        <div class="slide-heading">Phase 5 (optionnelle) &mdash; Interface utilisateur</div>
-        <div class="speech-text">
-            Merci Liviu. Phase 5. L'application <strong>Streamlit</strong>, c'est l'interface utilisateur. Elle communique <strong>uniquement avec l'API</strong> &mdash; pas d'acces direct aux donnees ou au modele.
-            <br><br>
-            Quatre pages : <strong>Accueil</strong> (vue d'ensemble), <strong>Contexte</strong> (statut API), <strong>Data Explorer</strong> (distribution categories), <strong>Predictions</strong> (test en temps reel).
-        </div>
-    </div>
-
-    <!-- ==================== SLIDE 15 : STREAMLIT DETAIL ==================== -->
-    <div class="speech-slide" data-speaker="oussama" data-time="~45s">
-        <div class="slide-label">Slide 15 &middot; Streamlit Detail &middot; ~45s</div>
-        <div class="slide-heading">Pages en detail</div>
-        <div class="speech-text">
-            A gauche le Data Explorer &mdash; les 27 categories et leur repartition. A droite le formulaire de prediction : un titre, une description, reponse en <strong>moins d'une seconde</strong>. Tout passe par l'API.
-            <br><br>
-            C'est ce que je vais vous montrer maintenant.
-        </div>
-    </div>
-
-    <!-- ==================== SLIDE 16 : DEMO INTRO ==================== -->
+    <!-- ==================== SLIDE 14 : TRANSITION DEMO ==================== -->
     <div class="speech-slide" data-speaker="oussama" data-time="~30s">
-        <div class="slide-label">Slide 16 &middot; Demo &mdash; Introduction &middot; ~30s</div>
-        <div class="slide-heading">Demo en direct</div>
+        <div class="slide-label">Slide 14 &middot; Transition vers la Demo &middot; ~30s</div>
+        <div class="slide-heading">Phase 5 + Demo en direct</div>
         <div class="speech-text">
-            Plutot que de vous montrer des screenshots, je vais directement ouvrir nos services qui tournent <strong>en ce moment sur notre VPS</strong>. Tout ce que vous allez voir est en production, rien n'est simule.
+            Merci Liviu. Plutot que de vous presenter Streamlit sur des slides, je vais <strong>directement basculer sur le navigateur</strong>.
             <br><br>
-            On va parcourir quatre outils : <strong>Streamlit</strong> pour l'interface utilisateur, <strong>Grafana</strong> pour le monitoring temps reel, <strong>MLflow</strong> pour le suivi des experiences, et <strong>Airflow</strong> pour l'orchestration.
+            Ce que vous allez voir tourne <strong>en ce moment sur notre VPS</strong> &mdash; un serveur distant avec <span class="num">4</span> vCPU et <span class="num">8</span> Go de RAM. Rien n'est simule, rien n'est en local. <strong>Huit conteneurs Docker</strong> communiquent entre eux en production.
+            <br><br>
+            Je vais vous montrer le parcours complet : un utilisateur fait une prediction dans Streamlit, on voit la trace dans Grafana, l'historique dans MLflow, et l'automatisation dans Airflow.
         </div>
         <div class="demo-note">
             <div class="demo-title">Action</div>
-            Ouvrir le navigateur avec les 4 onglets deja prets.
+            Basculer sur le navigateur. Onglets deja ouverts : Streamlit, Grafana, MLflow, Airflow, Swagger.
         </div>
     </div>
 
-    <!-- ==================== SLIDE 17 : DEMO STREAMLIT ==================== -->
-    <div class="speech-slide" data-speaker="oussama" data-time="~1min30">
-        <div class="slide-label">Slide 17 &middot; Demo &mdash; Streamlit &middot; ~1min30</div>
-        <div class="slide-heading">1. Streamlit &mdash; Interface utilisateur</div>
+    <!-- ==================== SLIDE 15 : DEMO STREAMLIT ACCUEIL ==================== -->
+    <div class="speech-slide" data-speaker="oussama" data-time="~45s">
+        <div class="slide-label">Slide 15 &middot; Demo &mdash; Streamlit Accueil &middot; ~45s</div>
+        <div class="slide-heading">1. Streamlit &mdash; Vue d'ensemble</div>
         <div class="speech-text">
-            On commence par <strong>Streamlit</strong>. C'est l'interface grand public &mdash; un utilisateur metier n'a pas besoin de connaitre l'API, il utilise cette page.
+            On est sur <strong>Streamlit</strong>, port <span class="num">8501</span>. C'est l'interface pour un utilisateur metier &mdash; il n'a pas besoin de connaitre l'API.
             <br><br>
-            On a quatre pages. La page <strong>Accueil</strong> donne une vue d'ensemble du projet. La page <strong>Contexte</strong> montre le statut de l'API en temps reel &mdash; vous voyez ici que le service est <strong>UP</strong> et quel modele est charge.
-            <br><br>
-            La page <strong>Data Explorer</strong> &mdash; ici on voit la repartition des <span class="num">27</span> categories, les statistiques de longueur de texte. C'est utile pour comprendre les donnees avant de faire des predictions.
+            En bas de la page d'accueil, vous voyez deja un indicateur vert : <strong>&laquo; API connectee &mdash; Modele SGDClassifier charge avec succes &raquo;</strong>. Ca veut dire que le conteneur Streamlit communique bien avec le conteneur API sur le reseau Docker interne.
         </div>
         <div class="demo-note">
             <div class="demo-title">Action</div>
-            Montrer rapidement Accueil, Contexte, Data Explorer (10 secondes chacune).
+            Montrer la page d'accueil. Pointer le bandeau vert en bas. Puis cliquer sur <strong>Contexte</strong> dans le menu a gauche.
         </div>
     </div>
 
-    <!-- ==================== SLIDE 18 : DEMO PREDICTION ==================== -->
+    <!-- ==================== SLIDE 16 : DEMO CONTEXTE ==================== -->
+    <div class="speech-slide" data-speaker="oussama" data-time="~45s">
+        <div class="slide-label">Slide 16 &middot; Demo &mdash; Contexte &middot; ~45s</div>
+        <div class="slide-heading">1b. Streamlit &mdash; Contexte &amp; Architecture</div>
+        <div class="speech-text">
+            La page <strong>Contexte</strong> resume le projet pour un nouveau venu. En haut, le challenge Rakuten et les donnees d'entree &mdash; les colonnes <span class="tech">designation</span> et <span class="tech">description</span>.
+            <br><br>
+            Au milieu, le <strong>schema d'architecture</strong> qui montre comment les services communiquent : Airflow orchestre, FastAPI sert, MLflow tracke, Grafana monitore.
+            <br><br>
+            En bas, les <strong>quatre metriques cles</strong> en temps reel : API OK, modele SGDClassifier, modele charge, <span class="num">27</span> classes. Et les liens vers tous nos services.
+        </div>
+        <div class="demo-note">
+            <div class="demo-title">Action</div>
+            Scroller lentement pour montrer le schema d'archi + les 4 metriques vertes. Puis cliquer <strong>Predictions</strong>.
+        </div>
+    </div>
+
+    <!-- ==================== SLIDE 18 : DEMO PREDICTION 1 ==================== -->
     <div class="speech-slide" data-speaker="oussama" data-time="~1min">
-        <div class="slide-label">Slide 18 &middot; Demo &mdash; Prediction Live &middot; ~1min</div>
-        <div class="slide-heading">1b. Streamlit &mdash; Prediction en direct</div>
+        <div class="slide-label">Slide 18 &middot; Demo &mdash; Prediction 1 &middot; ~1min</div>
+        <div class="slide-heading">2. Prediction en direct &mdash; Le moment de verite</div>
         <div class="speech-text">
-            Maintenant la page <strong>Predictions</strong>. Je vais taper un produit et on va voir ce que le modele retourne.
+            La page <strong>Predictions</strong>. En haut, le bandeau vert confirme que l'API repond. On a <span class="num">6</span> exemples pre-remplis, mais je vais taper moi-meme.
             <br><br>
-            En designation je mets <strong>&laquo; Console Sony PlayStation 5 &raquo;</strong>. En description <strong>&laquo; PS5 edition standard 825GB SSD manette DualSense &raquo;</strong>. Je clique sur Predict.
+            En designation : <strong>&laquo; FIFA 24 Edition Standard PS5 &raquo;</strong>. En description : <strong>&laquo; Le jeu de football ultime sur PlayStation 5 HyperMotion V mode carriere renove &raquo;</strong>.
+            <br><br>
+            Je clique <strong>Predire la categorie</strong>.
         </div>
         <div class="demo-note">
             <div class="demo-title">Action</div>
-            Saisir le texte, cliquer Predict, attendre le resultat.
+            Taper le texte dans les 2 champs. Marquer une micro-pause avant de cliquer pour creer le suspense. Cliquer.
         </div>
         <div class="speech-text" style="margin-top: 1rem;">
-            Le modele retourne la categorie <strong>&laquo; Jeux video / Consoles &raquo;</strong> avec un score de confiance affiche sur la jauge. Le temps d'inference est affiche en dessous &mdash; on est sous les <span class="num">100ms</span>. Tout ca a transite par l'API FastAPI en passant par le Bearer token d'authentification.
+            <strong>&laquo; Jeux video / Consoles &raquo;</strong>, code <span class="num">40</span>. Le modele a raison. Le temps de reponse : <span class="num">0.01 seconde</span> &mdash; dix millisecondes. La jauge de confiance est a <span class="num">36%</span>, ce qui est attendu : avec <span class="num">27</span> classes, un SGDClassifier ne produit pas des confiances a 95%. Mais la categorie est correcte.
             <br><br>
-            On peut aussi essayer avec un autre produit &mdash; par exemple <strong>&laquo; Harry Potter tome 1 &raquo;</strong> &mdash; et le modele retourne <strong>&laquo; Livres / Magazines &raquo;</strong>. On a six exemples pre-remplis dans l'interface pour tester differentes categories.
+            On voit aussi que tout a transite par l'API : Streamlit a envoye une requete HTTP POST a <span class="tech">/predict</span> avec le Bearer token, l'API a vectorise le texte avec TF-IDF, passe au modele, et retourne le resultat. <strong>Aucun modele n'est charge dans Streamlit.</strong>
         </div>
     </div>
 
-    <!-- ==================== SLIDE 19 : DEMO GRAFANA ==================== -->
-    <div class="speech-slide" data-speaker="oussama" data-time="~1min">
-        <div class="slide-label">Slide 19 &middot; Demo &mdash; Grafana &middot; ~1min</div>
-        <div class="slide-heading">2. Grafana &mdash; Monitoring temps reel</div>
+    <!-- ==================== SLIDE 19 : DEMO PREDICTION 2 ==================== -->
+    <div class="speech-slide" data-speaker="oussama" data-time="~50s">
+        <div class="slide-label">Slide 19 &middot; Demo &mdash; Prediction 2 &middot; ~50s</div>
+        <div class="slide-heading">2b. Deuxieme test &mdash; domaine different</div>
         <div class="speech-text">
-            Je passe sur <strong>Grafana</strong>. C'est notre tableau de bord de monitoring. Ce que vous voyez ici, c'est le dashboard <strong>&laquo; FastAPI Monitoring &raquo;</strong> qui se rafraichit <strong>toutes les 5 secondes</strong>.
-            <br><br>
-            Quatre panneaux. Le premier montre les <strong>requetes par seconde</strong> &mdash; vous voyez le pic qui correspond a la prediction qu'on vient de faire. Le deuxieme montre la <strong>latence</strong>. Le troisieme les <strong>codes de statut HTTP</strong> &mdash; on est a <span class="num">99%</span> de 200. Le dernier montre les <strong>requetes en cours</strong>.
-            <br><br>
-            La requete Streamlit qu'on vient de faire est <strong>deja visible ici</strong>. Prometheus collecte les metriques de l'API toutes les 5 secondes et Grafana les affiche en temps reel. Zero configuration manuelle &mdash; tout est provisionne automatiquement au demarrage des conteneurs.
+            Deuxieme test, un domaine completement different. Je tape <strong>&laquo; Harry Potter et la Chambre des Secrets &raquo;</strong>, description <strong>&laquo; Roman de J.K. Rowling, edition de poche, tome 2 &raquo;</strong>.
         </div>
         <div class="demo-note">
             <div class="demo-title">Action</div>
-            Montrer le dashboard, pointer le pic de requetes recent, la latence.
+            Effacer les champs, taper le nouveau texte, cliquer Predict.
+        </div>
+        <div class="speech-text" style="margin-top: 1rem;">
+            <strong>&laquo; Livres anciens / Collection &raquo;</strong>, code <span class="num">2403</span>, confiance <span class="num">45%</span>. Le modele reconnait bien un livre. On est dans la bonne famille, meme si le code exact pourrait etre discute entre &laquo; Livres &raquo; et &laquo; Livres anciens &raquo; &mdash; mais c'est une ambiguite qui existe aussi pour un humain.
+            <br><br>
+            En bas, l'<strong>historique de session</strong> cumule les deux predictions avec le temps de reponse. C'est un outil pratique pour tester en serie.
         </div>
     </div>
 
-    <!-- ==================== SLIDE 20 : DEMO MLFLOW ==================== -->
-    <div class="speech-slide" data-speaker="oussama" data-time="~1min">
-        <div class="slide-label">Slide 20 &middot; Demo &mdash; MLflow &middot; ~1min</div>
-        <div class="slide-heading">3. MLflow &mdash; Suivi des experiences</div>
-        <div class="speech-text">
-            <strong>MLflow</strong>. C'est ici qu'on suit toutes nos experiences d'entrainement. L'experience s'appelle <span class="tech">rakuten-text-baseline</span>.
-            <br><br>
-            On voit nos runs &mdash; chaque run correspond a un entrainement avec des parametres differents. On peut les <strong>comparer</strong> : ici par exemple les parametres logges &mdash; <span class="tech">alpha</span>, <span class="tech">loss</span>, <span class="tech">max_features</span> &mdash; et les metriques : <strong>accuracy</strong> et <strong>macro F1</strong>.
-            <br><br>
-            Si je clique sur notre meilleur run &mdash; <span class="num">76.68%</span> d'accuracy &mdash; on voit les artefacts : le modele <span class="tech">baseline_model.pkl</span>, le vectorizer <span class="tech">tfidf_vectorizer.pkl</span>, le rapport de classification. C'est exactement ces fichiers que l'API charge au demarrage pour servir les predictions.
-        </div>
-        <div class="demo-note">
-            <div class="demo-title">Action</div>
-            Ouvrir l'experiment, montrer la liste des runs, cliquer sur le meilleur, montrer les artefacts.
-        </div>
-    </div>
-
-    <!-- ==================== SLIDE 21 : DEMO AIRFLOW ==================== -->
+    <!-- ==================== SLIDE 20 : DEMO SWAGGER ==================== -->
     <div class="speech-slide" data-speaker="oussama" data-time="~45s">
-        <div class="slide-label">Slide 21 &middot; Demo &mdash; Airflow &middot; ~45s</div>
-        <div class="slide-heading">4. Airflow &mdash; Orchestration</div>
+        <div class="slide-label">Slide 20 &middot; Demo &mdash; Swagger &middot; ~45s</div>
+        <div class="slide-heading">3. Swagger &mdash; L'API sous le capot</div>
         <div class="speech-text">
-            Dernier outil : <strong>Airflow</strong>. Le DAG <span class="tech">rakuten_weekly_retraining</span> &mdash; c'est notre pipeline automatise.
+            Ce qu'on vient de voir dans Streamlit, c'est la couche utilisateur. Maintenant je montre <strong>ce qui se passe en dessous</strong>. Voici la documentation auto-generee de notre API FastAPI &mdash; port <span class="num">8200</span>.
             <br><br>
-            Vous voyez les <strong>six taches</strong> &mdash; telechargement, preparation, features, entrainement, verification, drift. Toutes les <span class="num">6</span> sont au <strong>vert</strong>. Ce DAG tourne automatiquement chaque lundi a 2h du matin, mais on peut aussi le <strong>declencher manuellement</strong> depuis cette interface.
+            Trois endpoints. <span class="tech">GET /health</span> &mdash; le healthcheck, public. <span class="tech">POST /predict</span> &mdash; la prediction, protegee par Bearer token &mdash; vous voyez le cadenas. <span class="tech">GET /metrics</span> &mdash; les metriques Prometheus, publiques aussi.
             <br><br>
-            C'est ce qui boucle la boucle : Airflow entraine le modele, le logge dans MLflow, et l'API le sert aux utilisateurs via Streamlit.
+            En bas, les <strong>schemas Pydantic</strong> : <span class="tech">PredictRequest</span>, <span class="tech">PredictResponse</span>, <span class="tech">ErrorResponse</span>. Tout est type, valide, documente. Un developpeur peut integrer cette API en cinq minutes.
         </div>
         <div class="demo-note">
-            <div class="demo-title">Action &mdash; SKIPPER SI PEU DE TEMPS</div>
-            Login airflow/airflow. Montrer le DAG, les 6 taches vertes. Si le temps le permet, montrer le graph view.
+            <div class="demo-title">Action</div>
+            Onglet Swagger. Pointer le cadenas sur /predict, montrer rapidement les schemas. Ne pas executer de requete ici &mdash; on l'a deja fait dans Streamlit.
+        </div>
+    </div>
+
+    <!-- ==================== SLIDE 21 : DEMO GRAFANA ==================== -->
+    <div class="speech-slide" data-speaker="oussama" data-time="~1min">
+        <div class="slide-label">Slide 21 &middot; Demo &mdash; Grafana &middot; ~1min</div>
+        <div class="slide-heading">4. Grafana &mdash; La preuve que tout est trace</div>
+        <div class="speech-text">
+            Maintenant la question cle pour le jury : <strong>comment on sait que ca marche en production ?</strong> Reponse : Grafana.
+            <br><br>
+            Dashboard <strong>&laquo; Rakuten API Monitoring &raquo;</strong>, il se rafraichit <strong>toutes les 5 secondes</strong>. Quatre panneaux.
+            <br><br>
+            <strong>Requests per Second</strong> &mdash; vous voyez trois courbes : <span class="tech">/health</span>, <span class="tech">/metrics</span>, et <span class="tech">/docs</span>. Les predictions qu'on vient de faire apparaissent ici.
+            <br><br>
+            <strong>Response Latency P95</strong> &mdash; la latence au 95eme percentile, autour de <span class="num">95ms</span>. C'est stable.
+            <br><br>
+            <strong>Status Code Distribution</strong> &mdash; <span class="num">41 233</span> requetes en <span class="num">2xx</span>, soit <span class="num">100%</span> de succes. <span class="num">14</span> requetes en <span class="num">4xx</span> &mdash; ce sont des tentatives sans token.
+            <br><br>
+            Tout ca, c'est <strong>Prometheus</strong> qui scrape l'endpoint <span class="tech">/metrics</span> de l'API toutes les 5 secondes. Zero code ajoute &mdash; on utilise <span class="tech">prometheus-fastapi-instrumentator</span> qui s'integre automatiquement.
+        </div>
+        <div class="demo-note">
+            <div class="demo-title">Action</div>
+            Onglet Grafana. Pointer chaque panneau en parlant. Laisser le jury voir les courbes bouger en temps reel.
+        </div>
+    </div>
+
+    <!-- ==================== SLIDE 22 : DEMO MLFLOW ==================== -->
+    <div class="speech-slide" data-speaker="oussama" data-time="~1min">
+        <div class="slide-label">Slide 22 &middot; Demo &mdash; MLflow &middot; ~1min</div>
+        <div class="slide-heading">5. MLflow &mdash; L'historique de nos modeles</div>
+        <div class="speech-text">
+            <strong>MLflow</strong>, port <span class="num">5000</span>. A gauche, trois experiences : <span class="tech">rakuten-text-baseline</span> pour l'entrainement, <span class="tech">rakuten-data-drift</span> pour le monitoring de derive, et <span class="tech">test-artifact-routing</span> pour nos tests.
+            <br><br>
+            Je clique sur <span class="tech">rakuten-text-baseline</span>. On voit <span class="num">26</span> runs, tous appeles <strong>&laquo; airflow-retraining &raquo;</strong> &mdash; parce que c'est Airflow qui les a declenches, pas nous a la main. Certains sont verts, d'autres rouges &mdash; c'est normal, on a itere pendant le developpement.
+            <br><br>
+            Chaque run logge les parametres (<span class="tech">alpha</span>, <span class="tech">loss</span>, <span class="tech">max_features</span>), les metriques (<span class="tech">val_accuracy</span>, <span class="tech">val_macro_f1</span>), et les artefacts &mdash; le modele <span class="tech">baseline_model.pkl</span> et le vectorizer <span class="tech">tfidf_vectorizer.pkl</span>. C'est exactement ces fichiers que l'API charge au demarrage.
+        </div>
+        <div class="demo-note">
+            <div class="demo-title">Action</div>
+            Onglet MLflow. Cliquer sur rakuten-text-baseline. Montrer les 26 runs. Si le temps le permet, cliquer sur un run vert pour montrer les artefacts.
+        </div>
+    </div>
+
+    <!-- ==================== SLIDE 23 : DEMO AIRFLOW ==================== -->
+    <div class="speech-slide" data-speaker="oussama" data-time="~1min">
+        <div class="slide-label">Slide 23 &middot; Demo &mdash; Airflow &middot; ~1min</div>
+        <div class="slide-heading">6. Airflow &mdash; La boucle est bouclee</div>
+        <div class="speech-text">
+            Dernier service : <strong>Airflow</strong>, port <span class="num">8280</span>. Un seul DAG : <span class="tech">rakuten_weekly_retraining</span>. Il est <strong>actif</strong> &mdash; le toggle est bleu. Schedule : <span class="tech">0 2 * * 1</span> &mdash; chaque lundi a 2h du matin.
+            <br><br>
+            Le DAG a <strong>six taches</strong> sequentielles. Je clique pour voir le graph.
+            <br><br>
+            <span class="tech">download_raw_data</span> &rarr; <span class="tech">prepare_dataset</span> &rarr; <span class="tech">build_features</span> &rarr; <span class="tech">train_model</span> &rarr; <span class="tech">verify_artifacts</span> &rarr; <span class="tech">generate_drift_report</span>.
+            <br><br>
+            Les <span class="num">6</span> taches sont au <strong>vert</strong> sur le dernier run. Et c'est cette tache <span class="tech">train_model</span> qui a cree les <span class="num">26</span> runs dans MLflow qu'on vient de voir. <strong>C'est ca la boucle MLOps</strong> : Airflow entraine, MLflow tracke, l'API sert, Grafana monitore, Streamlit affiche.
+        </div>
+        <div class="demo-note">
+            <div class="demo-title">Action</div>
+            Onglet Airflow (deja loggue). Montrer le DAG, cliquer dessus pour voir le grid/graph avec les 6 taches vertes. Pointer la description du DAG.
         </div>
         <div class="transition-note">
-            Je reviens maintenant sur les slides pour conclure.
+            &rarr; Je reviens sur les slides pour conclure.
         </div>
     </div>
 
-    <!-- ==================== SLIDE 22 : CONCLUSION ==================== -->
-    <div class="speech-slide" data-speaker="oussama" data-time="~1.5 min">
-        <div class="slide-label">Slide 22 &middot; Conclusion &middot; ~1.5 min</div>
+    <!-- ==================== SLIDE 24 : CONCLUSION ==================== -->
+    <div class="speech-slide" data-speaker="oussama" data-time="~1 min">
+        <div class="slide-label">Slide 24 &middot; Conclusion &middot; ~1 min</div>
         <div class="slide-heading">Conclusion &amp; Perspectives</div>
         <div class="speech-text">
-            Pour conclure. On a couvert les <strong>cinq phases</strong> &mdash; les trois obligatoires et les deux optionnelles.
+            Pour conclure. On a couvert les <strong>cinq phases</strong> &mdash; les trois obligatoires et les deux optionnelles. Et vous venez de voir que <strong>tout tourne reellement</strong> sur notre VPS.
             <br><br>
-            Mais au-dela de la checklist, ce qu'on retient c'est ce qu'on a <strong>appris en le construisant</strong>. Gerer 8 conteneurs qui communiquent, les permissions, la compatibilite des librairies &mdash; par exemple <strong>Evidently</strong> a change son API, on a du adapter notre drift pour utiliser <strong>scipy</strong> en fallback. C'est le genre de probleme qu'on rencontre pas dans un notebook.
+            Ce qu'on retient, c'est que <strong>le modele est le composant le plus simple</strong>. Tout ce qui est autour &mdash; l'API, le monitoring, l'orchestration, le CI &mdash; c'est la la complexite reelle d'un projet MLOps. Et c'est ce qu'on a appris a construire.
             <br><br>
-            L'autre apprentissage : <strong>le modele c'est le composant le plus simple</strong>. Tout ce qui est autour &mdash; API, monitoring, orchestration, CI &mdash; c'est la la complexite reelle d'un projet MLOps.
-            <br><br>
-            Perspectives : deploiement cloud, modele deep learning, A/B testing.
+            Si on avait plus de temps : passer a un modele deep learning &mdash; l'architecture est <strong>model-agnostic</strong>, on changerait une seule classe. Ajouter du CD automatique avec MLflow Model Registry. Et logger les inputs de production pour detecter le drift sur des donnees reelles.
             <br><br>
             <strong>Merci pour votre attention. On est prets pour vos questions.</strong>
         </div>
@@ -573,7 +611,7 @@
 
 <div class="bottombar">
     <button class="nav-btn" onclick="prev()" title="Precedent (fleche gauche)">&larr;</button>
-    <span class="nav-counter"><span id="cur">1</span> / <span id="tot">23</span></span>
+    <span class="nav-counter"><span id="cur">1</span> / <span id="tot">24</span></span>
     <button class="nav-btn" onclick="next()" title="Suivant (fleche droite)">&rarr;</button>
 </div>
 
