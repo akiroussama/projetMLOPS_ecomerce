@@ -1,6 +1,4 @@
 import logging
-import os
-import sys
 import threading
 import time
 from collections import defaultdict
