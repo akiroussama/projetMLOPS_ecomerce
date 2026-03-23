@@ -584,13 +584,36 @@
             Onglet Airflow (deja loggue). Montrer le DAG, cliquer dessus pour voir le grid/graph avec les 6 taches vertes. Pointer la description du DAG.
         </div>
         <div class="transition-note">
-            &rarr; Je reviens sur les slides pour conclure.
+            &rarr; Un dernier service a montrer avant de conclure.
         </div>
     </div>
 
-    <!-- ==================== SLIDE 24 : CONCLUSION ==================== -->
+    <!-- ==================== SLIDE 24 : DEMO GITHUB ACTIONS ==================== -->
+    <div class="speech-slide" data-speaker="oussama" data-time="~1min30">
+        <div class="slide-label">Slide 24 &middot; Demo &mdash; GitHub Actions &middot; ~1min30</div>
+        <div class="slide-heading">7. CI/CD &mdash; Le filet de securite</div>
+        <div class="speech-text">
+            Dernier point avant de conclure : notre <strong>pipeline CI</strong>. A chaque push sur main, <strong>GitHub Actions</strong> lance trois etapes sequentielles : <span class="tech">lint</span> avec flake8, <span class="tech">test</span> avec pytest et couverture a <span class="num">80%</span>, puis <span class="tech">docker build</span>.
+            <br><br>
+            Si je montre l'onglet <strong>Actions</strong> sur GitHub, vous voyez un mix de <strong>vert et de rouge</strong>. C'est exactement le role du CI &mdash; voici trois scenarios reels :
+            <br><br>
+            <strong>Scenario 1 &mdash; Imports inutilises.</strong> En ajoutant du logging structuré, on a importé <span class="tech">os</span> et <span class="tech">sys</span> sans les utiliser. Flake8 a detecte l'erreur <span class="tech">F401</span> et bloqué le merge. Le commit suivant supprime les imports &rarr; pipeline redevient vert.
+            <br><br>
+            <strong>Scenario 2 &mdash; Contrat API casse.</strong> On a renomme le status health de <span class="tech">'ok'</span> a <span class="tech">'healthy'</span> pour suivre les conventions REST. Sauf que nos tests unitaires assertent sur <span class="tech">"ok"</span>, et le Docker healthcheck en depend aussi. <strong>Pytest a casse</strong> &mdash; le CI a protege le contrat API. On a revert.
+            <br><br>
+            <strong>Scenario 3 &mdash; Reference indefinie.</strong> En ajoutant le calcul de latence mediane au <span class="tech">/stats</span>, on a utilise <span class="tech">statistics.median()</span> sans importer le module. Flake8 detecte <span class="tech">F821</span> &mdash; undefined name.
+            <br><br>
+            A chaque fois, <strong>le commit suivant corrige</strong>, et le pipeline repasse au vert. C'est ca le CI : il attrape les erreurs <strong>avant</strong> la production.
+        </div>
+        <div class="demo-note">
+            <div class="demo-title">Action</div>
+            Onglet GitHub &rarr; Actions. Montrer les runs rouges/verts. Cliquer sur un run rouge (ex: le F401 ou le test fail) pour montrer les logs d'erreur. Puis montrer le fix en vert juste apres.
+        </div>
+    </div>
+
+    <!-- ==================== SLIDE 25 : CONCLUSION ==================== -->
     <div class="speech-slide" data-speaker="oussama" data-time="~1 min">
-        <div class="slide-label">Slide 24 &middot; Conclusion &middot; ~1 min</div>
+        <div class="slide-label">Slide 25 &middot; Conclusion &middot; ~1 min</div>
         <div class="slide-heading">Conclusion &amp; Perspectives</div>
         <div class="speech-text">
             Pour conclure. On a couvert les <strong>cinq phases</strong> &mdash; les trois obligatoires et les deux optionnelles. Et vous venez de voir que <strong>tout tourne reellement</strong> sur notre VPS.
