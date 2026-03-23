@@ -139,7 +139,7 @@ class PredictionService:
 
     def health_snapshot(self) -> Dict[str, Any]:
         return {
-            "status": "ok" if self.is_ready else "degraded",
+            "status": "healthy" if self.is_ready else "degraded",
             "model_loaded": self.is_ready,
             "model_name": type(self.model).__name__ if self.model is not None else None,
             "model_path": self._stringify_path(self.artifacts.model_path),

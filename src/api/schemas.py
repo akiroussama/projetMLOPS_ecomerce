@@ -22,7 +22,7 @@ StrictIdentifier = Annotated[StrictInt, Field(ge=0)]
 
 
 class HealthResponse(BaseModel):
-    status: Literal["ok", "degraded"]
+    status: Literal["healthy", "degraded"]
     model_loaded: bool
     model_name: Optional[str] = None
     model_path: Optional[str] = None
