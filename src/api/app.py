@@ -210,6 +210,12 @@ def create_app() -> FastAPI:
             ) from exc
 
         inference_ms = (time.perf_counter() - t0) * 1000
+        logger.info(
+            "prediction: label=%s confidence=%.4f time=%.1fms",
+            prediction["predicted_label"],
+            prediction.get("confidence", 0),
+            inference_ms,
+        )
         app_stats: _AppStats = getattr(request.app.state, "stats", None)
         if app_stats is not None:
             app_stats.record(str(prediction["predicted_label"]), inference_ms)
