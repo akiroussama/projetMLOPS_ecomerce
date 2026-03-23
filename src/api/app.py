@@ -1,3 +1,6 @@
+import logging
+import os
+import sys
 import threading
 import time
 from collections import defaultdict
@@ -13,6 +16,8 @@ from prometheus_fastapi_instrumentator import Instrumentator
 from .schemas import ErrorDetail, ErrorResponse, HealthResponse, PredictRequest, PredictResponse, StatsResponse
 from .security import require_prediction_token
 from .service import ModelNotReadyError, PredictionExecutionError, PredictionService
+
+logger = logging.getLogger("rakuten.api")
 
 
 class _AppStats:
