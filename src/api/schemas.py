@@ -75,3 +75,6 @@ class StatsResponse(BaseModel):
     max_inference_ms: Optional[float] = Field(
         default=None, description="Maximum inference time in ms"
     )
+    median_inference_ms: Optional[float] = Field(
+        default=None, description="Median inference time in ms"
+    )

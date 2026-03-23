@@ -45,6 +45,7 @@ class _AppStats:
             "avg_inference_ms": round(sum(times) / len(times), 2) if times else None,
             "min_inference_ms": round(min(times), 2) if times else None,
             "max_inference_ms": round(max(times), 2) if times else None,
+            "median_inference_ms": round(statistics.median(times), 2) if times else None,
         }
 
 
