@@ -17,6 +17,9 @@ from .service import ModelNotReadyError, PredictionExecutionError, PredictionSer
 
 logger = logging.getLogger("rakuten.api")
 
+API_TITLE = "Rakuten MLOps API"
+API_DESCRIPTION = "Prediction API for the e-commerce product classifier."
+
 
 class _AppStats:
     """Thread-safe in-memory prediction statistics."""
@@ -102,9 +105,9 @@ def create_app() -> FastAPI:
         yield
 
     application = FastAPI(
-        title="Rakuten MLOps API",
+        title=API_TITLE,
         version="1.0.0",
-        description="Prediction API for the e-commerce product classifier.",
+        description=API_DESCRIPTION,
         lifespan=lifespan,
     )
 
