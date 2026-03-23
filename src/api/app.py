@@ -100,7 +100,7 @@ def create_app() -> FastAPI:
 
     application = FastAPI(
         title="Rakuten MLOps API",
-        version="0.1.0",
+        version="1.0.0",
         description="Prediction API for the e-commerce product classifier.",
         lifespan=lifespan,
     )
