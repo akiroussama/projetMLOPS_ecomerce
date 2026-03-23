@@ -62,8 +62,16 @@ class ErrorResponse(BaseModel):
 
 
 class StatsResponse(BaseModel):
-    total_predictions: int
-    predictions_by_category: Dict[str, int]
-    avg_inference_ms: Optional[float] = None
-    min_inference_ms: Optional[float] = None
-    max_inference_ms: Optional[float] = None
+    total_predictions: int = Field(description="Total number of predictions served")
+    predictions_by_category: Dict[str, int] = Field(
+        description="Prediction count per category"
+    )
+    avg_inference_ms: Optional[float] = Field(
+        default=None, description="Average inference time in ms"
+    )
+    min_inference_ms: Optional[float] = Field(
+        default=None, description="Minimum inference time in ms"
+    )
+    max_inference_ms: Optional[float] = Field(
+        default=None, description="Maximum inference time in ms"
+    )
