@@ -82,33 +82,151 @@ st.markdown("## Architecture MLOps")
 
 st.markdown(
     """
-    <div style="background: #FAFAFA; border: 1px solid #E0E0E0; border-radius: 12px;
-                padding: 2rem; font-family: monospace; font-size: 0.85rem;
-                overflow-x: auto; line-height: 1.7;">
-    <pre style="margin:0; color:#1A1A2E;">
-    ┌─────────────────────────────────────────────────────────────────────────┐
-    │                        RAKUTEN MLOps PIPELINE                          │
-    ├─────────────────────────────────────────────────────────────────────────┤
-    │                                                                         │
-    │   ┌──────────┐     ┌──────────────┐     ┌──────────────┐               │
-    │   │  Airflow  │────▶│  Preprocessing│────▶│   Training   │               │
-    │   │  :8080   │     │  (cleaning)  │     │  (TF-IDF+ML) │               │
-    │   └──────────┘     └──────────────┘     └──────┬───────┘               │
-    │                                                 │                       │
-    │                                                 ▼                       │
-    │   ┌──────────┐     ┌──────────────┐     ┌──────────────┐               │
-    │   │ Streamlit │────▶│   FastAPI    │◀────│    MLflow    │               │
-    │   │  :8501   │HTTP │   :8000      │     │    :5000     │               │
-    │   └──────────┘     └──────────────┘     └──────────────┘               │
-    │                           │                                             │
-    │                           ▼                                             │
-    │                    ┌──────────────┐     ┌──────────────┐               │
-    │                    │   Models/    │     │   Grafana    │               │
-    │                    │  Artifacts   │     │    :3000     │               │
-    │                    └──────────────┘     └──────────────┘               │
-    │                                                                         │
-    └─────────────────────────────────────────────────────────────────────────┘
-    </pre>
+    <style>
+    .mlops-grid {
+        display: grid;
+        grid-template-columns: 1fr 40px 1fr 40px 1fr;
+        gap: 10px;
+        align-items: center;
+        justify-items: center;
+        background: #ffffff;
+        padding: 2rem;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        font-family: 'Inter', sans-serif;
+        margin: 1rem 0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    }
+
+    .mlops-card {
+        background: #f8fafc;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 1rem;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        transition: all 0.3s ease;
+    }
+
+    .mlops-card:hover {
+        border-color: #BF0000;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(191,0,0,0.08);
+    }
+
+    .mlops-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 0.2rem;
+    }
+
+    .mlops-desc {
+        font-size: 0.8rem;
+        color: #64748b;
+        margin-bottom: 0.6rem;
+    }
+
+    .mlops-port {
+        font-family: 'Fira Code', monospace;
+        font-size: 0.75rem;
+        background: #fee2e2;
+        color: #BF0000;
+        padding: 0.2rem 0.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+    }
+
+    .mlops-arrow {
+        font-size: 1.5rem;
+        color: #cbd5e1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .mlops-arrow-text {
+        font-size: 0.6rem;
+        color: #94a3b8;
+        font-weight: 700;
+        margin-bottom: -4px;
+    }
+
+    .api-card {
+        border-color: #22c55e;
+        border-width: 2px;
+        background: #f0fdf4;
+    }
+    </style>
+
+    <div class="mlops-grid">
+        <!-- Row 1 -->
+        <div class="mlops-card">
+            <div class="mlops-title">🔄 Airflow</div>
+            <div class="mlops-desc">Orchestration</div>
+            <span class="mlops-port">:8080</span>
+        </div>
+        <div class="mlops-arrow">➔</div>
+        <div class="mlops-card">
+            <div class="mlops-title">🧹 Preprocessing</div>
+            <div class="mlops-desc">Nettoyage texte</div>
+        </div>
+        <div class="mlops-arrow">➔</div>
+        <div class="mlops-card">
+            <div class="mlops-title">⚙️ Training</div>
+            <div class="mlops-desc">TF-IDF + SGD</div>
+        </div>
+
+        <!-- Row 2 -->
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div class="mlops-arrow" style="margin: 5px 0;">⬇</div>
+
+        <!-- Row 3 -->
+        <div class="mlops-card">
+            <div class="mlops-title">🖥️ Streamlit</div>
+            <div class="mlops-desc">Interface Utilisateur</div>
+            <span class="mlops-port">:8501</span>
+        </div>
+        <div class="mlops-arrow">
+            <span class="mlops-arrow-text">HTTP</span>
+            ➔
+        </div>
+        <div class="mlops-card api-card">
+            <div class="mlops-title">🚀 FastAPI</div>
+            <div class="mlops-desc">Serving API REST</div>
+            <span class="mlops-port">:8000</span>
+        </div>
+        <div class="mlops-arrow">⬅</div>
+        <div class="mlops-card">
+            <div class="mlops-title">📈 MLflow</div>
+            <div class="mlops-desc">Experiment Tracking</div>
+            <span class="mlops-port">:5000</span>
+        </div>
+
+        <!-- Row 4 -->
+        <div></div>
+        <div></div>
+        <div class="mlops-arrow" style="margin: 5px 0;">⬇</div>
+        <div></div>
+        <div></div>
+
+        <!-- Row 5 -->
+        <div></div>
+        <div></div>
+        <div class="mlops-card">
+            <div class="mlops-title">📦 Artifacts</div>
+            <div class="mlops-desc">Volume /Models</div>
+        </div>
+        <div></div>
+        <div class="mlops-card">
+            <div class="mlops-title">📊 Grafana</div>
+            <div class="mlops-desc">Monitoring Métriques</div>
+            <span class="mlops-port">:3000</span>
+        </div>
     </div>
     """,
     unsafe_allow_html=True,
