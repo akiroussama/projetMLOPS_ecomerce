@@ -238,8 +238,8 @@
         "overrides": [
           {
             "matcher": {
-              "id": "byRegexp",
-              "options": "^2\\d{2}$|.*2\\d{2}.*"
+              "id": "byName",
+              "options": "2xx"
             },
             "properties": [
               {
@@ -253,8 +253,8 @@
           },
           {
             "matcher": {
-              "id": "byRegexp",
-              "options": "^4\\d{2}$|.*4\\d{2}.*"
+              "id": "byName",
+              "options": "4xx"
             },
             "properties": [
               {
@@ -268,8 +268,8 @@
           },
           {
             "matcher": {
-              "id": "byRegexp",
-              "options": "^5\\d{2}$|.*5\\d{2}.*"
+              "id": "byName",
+              "options": "5xx"
             },
             "properties": [
               {
@@ -308,7 +308,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum by(status) (http_requests_total)",
+          "expr": "sum by(status) (http_requests_total{handler=\"/predict\"})",
           "legendFormat": "{{status}}",
           "refId": "A",
           "editorMode": "code",
