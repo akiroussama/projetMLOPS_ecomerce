@@ -165,7 +165,7 @@ st.markdown(
         <div class="mlops-card">
             <div class="mlops-title">🔄 Airflow</div>
             <div class="mlops-desc">Orchestration</div>
-            <span class="mlops-port">:8080</span>
+            <span class="mlops-port">:8280</span>
         </div>
         <div class="mlops-arrow">➔</div>
         <div class="mlops-card">
@@ -198,7 +198,7 @@ st.markdown(
         <div class="mlops-card api-card">
             <div class="mlops-title">🚀 FastAPI</div>
             <div class="mlops-desc">Serving API REST</div>
-            <span class="mlops-port">:8000</span>
+            <span class="mlops-port">:8200</span>
         </div>
         <div class="mlops-arrow">⬅</div>
         <div class="mlops-card">
@@ -215,16 +215,20 @@ st.markdown(
         <div></div>
 
         <!-- Row 5 -->
-        <div></div>
-        <div></div>
+        <div class="mlops-card">
+            <div class="mlops-title">🔥 Prometheus</div>
+            <div class="mlops-desc">Collecte metriques</div>
+            <span class="mlops-port">:9090</span>
+        </div>
+        <div class="mlops-arrow">➔</div>
         <div class="mlops-card">
             <div class="mlops-title">📦 Artifacts</div>
             <div class="mlops-desc">Volume /Models</div>
         </div>
-        <div></div>
+        <div class="mlops-arrow">⬅</div>
         <div class="mlops-card">
             <div class="mlops-title">📊 Grafana</div>
-            <div class="mlops-desc">Monitoring Métriques</div>
+            <div class="mlops-desc">Monitoring Dashboard</div>
             <span class="mlops-port">:3000</span>
         </div>
     </div>
@@ -345,79 +349,35 @@ st.markdown('<hr style="border:none; height:1px; background:#e0e0e0; margin:2rem
 # ---------------------------------------------------------------------------
 st.markdown("## Acces aux Services")
 
-s1, s2, s3, s4 = st.columns(4)
+_HOST = os.getenv("SERVICES_BASE_URL", "http://rakuten-mlops.duckdns.org")
 
-with s1:
-    st.markdown(
-        """
-        <div style="background:#fff; border-radius:10px; padding:1.5rem;
-                    border:1px solid #e0e0e0; text-align:center;
-                    box-shadow:0 2px 8px rgba(0,0,0,0.05);">
-            <div style="font-size:2rem; margin-bottom:0.3rem;">🚀</div>
-            <h4 style="margin:0 0 0.3rem 0;">FastAPI</h4>
-            <p style="font-size:0.85rem; color:#555; margin:0 0 0.5rem 0;">API de prediction</p>
-            <a href="http://localhost:8000/docs" target="_blank"
-               style="color:#BF0000; font-weight:600; font-size:0.9rem;">
-                localhost:8000/docs ↗
-            </a>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+_SERVICES = [
+    {"icon": "🚀", "name": "FastAPI",    "desc": "API de prediction",    "url": f"{_HOST}:8200/docs", "label": "Swagger UI"},
+    {"icon": "📈", "name": "MLflow",     "desc": "Experiment tracking",  "url": f"{_HOST}:5000",      "label": "Tracking UI"},
+    {"icon": "🔄", "name": "Airflow",    "desc": "Orchestration DAGs",   "url": f"{_HOST}:8280",      "label": "Webserver"},
+    {"icon": "📊", "name": "Grafana",    "desc": "Dashboards monitoring","url": f"{_HOST}:3000",      "label": "Dashboard"},
+    {"icon": "🔥", "name": "Prometheus", "desc": "Collecte de metriques","url": f"{_HOST}:9090",      "label": "Targets"},
+]
 
-with s2:
-    st.markdown(
-        """
-        <div style="background:#fff; border-radius:10px; padding:1.5rem;
-                    border:1px solid #e0e0e0; text-align:center;
-                    box-shadow:0 2px 8px rgba(0,0,0,0.05);">
-            <div style="font-size:2rem; margin-bottom:0.3rem;">📈</div>
-            <h4 style="margin:0 0 0.3rem 0;">MLflow</h4>
-            <p style="font-size:0.85rem; color:#555; margin:0 0 0.5rem 0;">Experiment tracking</p>
-            <a href="http://localhost:5000" target="_blank"
-               style="color:#BF0000; font-weight:600; font-size:0.9rem;">
-                localhost:5000 ↗
-            </a>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-with s3:
-    st.markdown(
-        """
-        <div style="background:#fff; border-radius:10px; padding:1.5rem;
-                    border:1px solid #e0e0e0; text-align:center;
-                    box-shadow:0 2px 8px rgba(0,0,0,0.05);">
-            <div style="font-size:2rem; margin-bottom:0.3rem;">🔄</div>
-            <h4 style="margin:0 0 0.3rem 0;">Airflow</h4>
-            <p style="font-size:0.85rem; color:#555; margin:0 0 0.5rem 0;">Orchestration DAGs</p>
-            <a href="http://localhost:8080" target="_blank"
-               style="color:#BF0000; font-weight:600; font-size:0.9rem;">
-                localhost:8080 ↗
-            </a>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-with s4:
-    st.markdown(
-        """
-        <div style="background:#fff; border-radius:10px; padding:1.5rem;
-                    border:1px solid #e0e0e0; text-align:center;
-                    box-shadow:0 2px 8px rgba(0,0,0,0.05);">
-            <div style="font-size:2rem; margin-bottom:0.3rem;">📊</div>
-            <h4 style="margin:0 0 0.3rem 0;">Grafana</h4>
-            <p style="font-size:0.85rem; color:#555; margin:0 0 0.5rem 0;">Monitoring</p>
-            <a href="http://localhost:3000" target="_blank"
-               style="color:#BF0000; font-weight:600; font-size:0.9rem;">
-                localhost:3000 ↗
-            </a>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+_cols = st.columns(len(_SERVICES))
+for col, svc in zip(_cols, _SERVICES):
+    with col:
+        st.markdown(
+            f"""
+            <div style="background:#fff; border-radius:10px; padding:1.2rem;
+                        border:1px solid #e0e0e0; text-align:center;
+                        box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+                <div style="font-size:2rem; margin-bottom:0.3rem;">{svc["icon"]}</div>
+                <h4 style="margin:0 0 0.3rem 0;">{svc["name"]}</h4>
+                <p style="font-size:0.82rem; color:#555; margin:0 0 0.5rem 0;">{svc["desc"]}</p>
+                <a href="{svc["url"]}" target="_blank"
+                   style="color:#BF0000; font-weight:600; font-size:0.85rem;">
+                    {svc["label"]} ↗
+                </a>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
 st.markdown("")
 st.caption("Rakuten MLOps Project - Tous les services tournent dans Docker Compose.")
