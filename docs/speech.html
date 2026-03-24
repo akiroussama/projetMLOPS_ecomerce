@@ -819,31 +819,26 @@
             </div>
         </div>
 
-        <!-- ==================== SLIDE 24b : DEMO GITHUB ACTIONS — SCENARIOS ==================== -->
-        <div class="speech-slide" data-speaker="oussama" data-time="~45s">
-            <div class="slide-label">Slide 24b &middot; Demo &mdash; GitHub Actions &middot; ~45s</div>
-            <div class="slide-heading">7b. CI/CD &mdash; Trois vraies erreurs attrapees</div>
+        <!-- ==================== SLIDE 24b : DEMO GITHUB ACTIONS — WHAT WE CATCH ==================== -->
+        <div class="speech-slide" data-speaker="oussama" data-time="~30s">
+            <div class="slide-label">Slide 24b &middot; Demo &mdash; GitHub Actions &middot; ~30s</div>
+            <div class="slide-heading">7b. CI/CD &mdash; Ce qu'on detecte</div>
             <div class="speech-text">
-                <strong>Scenario 1</strong> : un import inutilise.
-                Un commit ajoute <span class="tech">import os</span> sans l'utiliser.
-                Le code tourne, mais flake8 detecte <span class="tech">F401</span>. Rouge immediatement.
+                Concretement, ce genre de pipeline attrape trois categories d'erreurs.
+                Le <strong>code mort</strong> &mdash; imports inutilises, variables non definies &mdash;
+                que le linter detecte avant meme l'execution.
+                Les <strong>regressions</strong> &mdash; une fonction qu'on modifie et qui casse
+                quelque chose ailleurs &mdash; que les tests capturent automatiquement.
+                Et les <strong>problemes de build</strong> &mdash; une image Docker qui ne compile plus
+                a cause d'une dependance manquante.
                 <br><br>
-                <strong>Scenario 2</strong> : un contrat API casse.
-                On renomme le status du health check de <span class="tech">'ok'</span> en
-                <span class="tech">'healthy'</span>. Ca semble logique, mais nos tests et
-                le healthcheck Docker assertent sur <span class="tech">"ok"</span>.
-                Pytest attrape ca &mdash; <strong>les tests protegent le contrat entre services</strong>.
-                <br><br>
-                <strong>Scenario 3</strong> : une variable non importee.
-                On utilise <span class="tech">statistics.median()</span> sans l'import.
-                Python ne le voit qu'a l'execution, mais flake8 detecte <span class="tech">F821</span>
-                avant meme que le code tourne. <strong>Sans CI, ca aurait crashe l'API en prod.</strong>
-                <br><br>
-                A chaque fois : <strong>commit &rarr; rouge &rarr; fix &rarr; vert</strong>.
+                Le principe : <strong>plus on detecte tot, moins ca coute.</strong>
+                Une erreur attrapee au commit, c'est cinq minutes de fix.
+                La meme erreur en production, c'est une coupure de service.
             </div>
             <div class="demo-note">
                 <div class="demo-title">Action</div>
-                Dans le log du run rouge ouvert, zoomer sur le message d'erreur flake8 ou pytest.
+                Pointer le log d'erreur ouvert &mdash; montrer le message en rouge, puis le commit de fix qui suit.
             </div>
         </div>
 
