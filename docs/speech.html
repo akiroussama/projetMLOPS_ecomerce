@@ -728,6 +728,51 @@
             </div>
         </div>
 
+        <!-- ==================== SLIDE 21b : DEMO PROMETHEUS ==================== -->
+        <div class="speech-slide" data-speaker="oussama" data-time="~30s">
+            <div class="slide-label">Slide 21b &middot; Demo &mdash; Prometheus &middot; ~30s</div>
+            <div class="slide-heading">4b. Prometheus &mdash; La collecte des metriques</div>
+            <div class="speech-text">
+                Prometheus, c'est ce qui alimente Grafana. On peut l'ouvrir directement &mdash;
+                onglet Targets, on voit notre API enregistree, statut <strong>UP</strong>.
+                Toutes les <span class="num">5</span> secondes, Prometheus va lui-meme
+                interroger le endpoint <span class="tech">/metrics</span> de l'API.
+                <br><br>
+                C'est le modele <strong>pull</strong> &mdash; l'API ne sait pas que Prometheus existe.
+                Elle expose juste ses metriques, et n'importe quel outil peut venir les lire.
+                On pourrait brancher dix outils de monitoring differents sans toucher
+                une seule ligne de code dans l'API. C'est ca le principe de <strong>separation des responsabilites</strong>.
+            </div>
+            <div class="demo-note">
+                <div class="demo-title">Action</div>
+                Onglet Prometheus &rarr; Status &rarr; Targets. Montrer l'API en vert (UP).
+                Optionnel : taper <strong>http_requests_total</strong> dans la barre de requete et executer.
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 21c : DEMO TESTS ==================== -->
+        <div class="speech-slide" data-speaker="oussama" data-time="~30s">
+            <div class="slide-label">Slide 21c &middot; Demo &mdash; Tests &middot; ~30s</div>
+            <div class="slide-heading">4c. Tests &mdash; Le filet de securite du code</div>
+            <div class="speech-text">
+                Avant de parler CI/CD, un mot sur les tests. Dans GitHub, onglet Actions,
+                on voit nos tests pytest tourner a chaque commit. On a plus de
+                <span class="num">80%</span> de couverture sur l'API.
+                <br><br>
+                Concretement, on teste que <span class="tech">/health</span> repond bien,
+                que <span class="tech">/predict</span> refuse une requete sans token,
+                que le format de sortie est correct. Ce ne sont pas des tests academiques &mdash;
+                ce sont des <strong>gardes-fous sur le comportement reel de l'API</strong>.
+                Si quelqu'un modifie la reponse du health check, ou change le format de prediction,
+                les tests cassent immediatement &mdash; avant que ca arrive en production.
+            </div>
+            <div class="demo-note">
+                <div class="demo-title">Action</div>
+                GitHub &rarr; Actions &rarr; cliquer sur un run vert &rarr; etape <strong>test</strong>
+                &rarr; montrer les lignes pytest passed et le pourcentage de couverture.
+            </div>
+        </div>
+
         <!-- ==================== SLIDE 22 : DEMO MLFLOW ==================== -->
         <div class="speech-slide" data-speaker="oussama" data-time="~1min">
             <div class="slide-label">Slide 22 &middot; Demo &mdash; MLflow &middot; ~1min</div>
@@ -843,36 +888,41 @@
         </div>
 
         <!-- ==================== SLIDE 25 : CONCLUSION ==================== -->
-        <div class="speech-slide" data-speaker="oussama" data-time="~1 min">
-            <div class="slide-label">Slide 25 &middot; Conclusion &middot; ~1 min</div>
-            <div class="slide-heading">Conclusion &amp; Perspectives</div>
+        <div class="speech-slide" data-speaker="oussama" data-time="~30s">
+            <div class="slide-label">Slide 25 &middot; Conclusion &middot; ~30s</div>
+            <div class="slide-heading">Conclusion &mdash; Ce qu'on a construit &amp; les limites</div>
             <div class="speech-text">
-                Pour conclure. Cinq phases couvertes &mdash; les trois obligatoires et les deux optionnelles. Mais
-                au-dela de la checklist, ce qu'on retient c'est ce qu'on a appris <strong>en le construisant</strong>.
+                Pour conclure. Cinq phases couvertes &mdash; les trois obligatoires et les deux optionnelles.
+                Mais au-dela de la checklist, ce qu'on retient c'est ce qu'on a appris
+                <strong>en le construisant</strong> : gerer huit conteneurs qui communiquent,
+                les permissions, les volumes partages, les incompatibilites de librairies.
+                C'est le genre de probleme qu'on ne rencontre <strong>jamais dans un notebook</strong>.
                 <br><br>
-                Gerer huit conteneurs qui communiquent, avec les permissions, les volumes partages, la compatibilite des
-                librairies &mdash; c'est un vrai defi d'ingenierie. Evidently a change son API entre deux versions, on a
-                du basculer sur scipy en fallback. Les UID Airflow qui bloquent MLflow. C'est le genre de probleme qu'on
-                ne rencontre <strong>jamais dans un notebook</strong>.
+                En toute transparence, deux limites. Notre detection de drift compare
+                train et validation du <strong>meme dataset</strong> &mdash; evidemment pas de drift.
+                En production, on utiliserait les vrais inputs utilisateurs logges depuis l'API.
+                Et on n'a pas de <strong>rollback automatique</strong> &mdash; ce serait le
+                MLflow Model Registry avec des stages Staging et Production.
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 25b : PERSPECTIVES ==================== -->
+        <div class="speech-slide" data-speaker="oussama" data-time="~30s">
+            <div class="slide-label">Slide 25b &middot; Perspectives &middot; ~30s</div>
+            <div class="slide-heading">Perspectives &amp; Mot de fin</div>
+            <div class="speech-text">
+                Quatre pistes pour la suite.
+                <strong>Deploiement cloud</strong> &mdash; l'architecture est cloud-agnostic, on change juste la cible.
+                <strong>Passage a BERT</strong> &mdash; le pipeline est model-agnostic, on change une classe.
+                <strong>A/B testing</strong> en production pour comparer les modeles sur du trafic reel.
+                Et une <strong>feedback loop</strong> &mdash; logger les inputs reels pour re-entrainer
+                avec des donnees de production.
                 <br><br>
-                En toute transparence, deux limites qu'on assume. <strong>Premiere limite</strong> : notre detection de
-                drift compare train et validation du <strong>meme dataset</strong>. Evidemment qu'il n'y a pas de drift
-                &mdash; les p-values sont proches de 1. En production, on remplacerait le fichier de reference par les
-                <strong>vrais inputs utilisateurs</strong> logges depuis l'API. C'est la prochaine etape.
-                <strong>Deuxieme limite</strong> : on n'a pas de <strong>rollback automatique</strong>. Aujourd'hui, le
-                volume ecrase l'ancien modele. En production, on utiliserait le <strong>MLflow Model Registry</strong>
-                avec des stages Staging et Production &mdash; le nouveau modele ne serait promu que s'il bat l'ancien
-                sur les metriques.
+                <strong>Le modele, c'est le composant le plus simple du systeme.
+                Tout ce qui est autour &mdash; c'est ca le MLOps.
+                Et c'est ce qu'on a appris a construire.</strong>
                 <br><br>
-                Quatre pistes pour la suite. <strong>Deploiement cloud</strong> &mdash; l'architecture est
-                cloud-agnostic. <strong>Passage a BERT</strong> &mdash; model-agnostic, on change une classe.
-                <strong>A/B testing</strong> en production. Et <strong>feedback loop</strong> &mdash; logger les inputs
-                reels pour nourrir le re-entrainement avec des donnees de production.
-                <br><br>
-                <strong>Le modele, c'est le composant le plus simple du systeme. Tout ce qui est autour &mdash; c'est ca
-                    le MLOps. Et c'est ce qu'on a appris a construire.</strong>
-                <br><br>
-                Merci pour votre attention. On est prets pour vos questions.
+                Merci. On est prets pour vos questions.
             </div>
         </div>
 
