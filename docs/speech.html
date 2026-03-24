@@ -484,16 +484,16 @@
     <!-- ==================== SLIDE 19 : DEMO PREDICTION 2 ==================== -->
     <div class="speech-slide" data-speaker="oussama" data-time="~45s">
         <div class="slide-label">Slide 19 &middot; Demo &mdash; Prediction 2 &middot; ~45s</div>
-        <div class="slide-heading">2b. Harry Potter &mdash; domaine different</div>
+        <div class="slide-heading">2b. Le Petit Prince &mdash; domaine different</div>
         <div class="speech-text">
-            Maintenant, quelque chose de completement different. Un livre &mdash; Harry Potter. On lance...
+            Maintenant, quelque chose de completement different. Un livre &mdash; Le Petit Prince de Saint-Exupery. On lance...
         </div>
         <div class="demo-note">
             <div class="demo-title">Action</div>
             Cliquer bouton <strong>Livre</strong> dans exemples rapides, puis Predire.
         </div>
         <div class="speech-text" style="margin-top: 1rem;">
-            Categorie predite : <strong>Livres</strong>. Deux domaines completement differents &mdash; jeux video et livres &mdash; et le modele gere les deux. C'est le benefice du TF-IDF sur des textes courts : le vocabulaire de <em>&laquo; FIFA PlayStation manette &raquo;</em> et celui de <em>&laquo; Harry Potter edition poche &raquo;</em> sont suffisamment distincts pour que meme un modele lineaire les separe.
+            Categorie predite : <strong>Livres / Magazines</strong>, code <span class="num">10</span>, confiance <span class="num">26%</span>. Deux domaines completement differents &mdash; jeux video et livres &mdash; et le modele gere les deux. C'est le benefice du TF-IDF sur des textes courts : le vocabulaire de <em>&laquo; FIFA PlayStation HyperMotion &raquo;</em> et celui de <em>&laquo; Petit Prince litterature couverture rigide &raquo;</em> sont suffisamment distincts pour que meme un modele lineaire les separe.
             <br><br>
             En bas, l'<strong>historique de session</strong> &mdash; les deux predictions tracees avec confiance et temps de reponse.
         </div>
@@ -504,7 +504,7 @@
         <div class="slide-label">Slide 20 &middot; Demo &mdash; Swagger &middot; ~40s</div>
         <div class="slide-heading">3. Swagger &mdash; L'API sous le capot</div>
         <div class="speech-text">
-            Voila la documentation Swagger. Elle est <strong>auto-generee par FastAPI</strong> &mdash; zero effort de notre part. Quatre endpoints : <span class="tech">/health</span> public, <span class="tech">/predict</span> protege par un cadenas &mdash; vous le voyez la, c'est le Bearer token &mdash; <span class="tech">/metrics</span> pour Prometheus, et <span class="tech">/stats</span> pour les metriques metier.
+            Voila la documentation Swagger. Elle est <strong>auto-generee par FastAPI</strong> &mdash; zero effort de notre part. Trois endpoints principaux : <span class="tech">/health</span> public, <span class="tech">/predict</span> protege par un cadenas &mdash; vous le voyez la, c'est le Bearer token &mdash; et <span class="tech">/metrics</span> pour Prometheus.
             <br><br>
             Un developpeur qui veut integrer notre API n'a meme pas besoin de nous contacter. Il ouvre cette page, il voit les schemas d'entree et de sortie, il peut tester directement. <strong>Integration en cinq minutes.</strong> C'est ca la force de FastAPI par rapport a Flask : la documentation est native, pas un ajout.
         </div>
