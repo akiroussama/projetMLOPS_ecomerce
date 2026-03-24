@@ -499,6 +499,50 @@ word_count:         KS=0.003  p=1.00  → pas de drift
 
 ---
 
+---
+
+## 9. Pepites d'expert — Phrases qui montrent la maitrise
+
+### Phrases "wow" a placer naturellement pendant le Q&A
+
+**Sur l'architecture globale :**
+> "Le modele est le composant le plus simple du systeme. Tout ce qui est autour — l'API, le monitoring, l'orchestration — c'est la la complexite reelle. Et c'est exactement ca le MLOps."
+
+**Sur la latence :**
+> "5ms de latence moyenne. Pas parce qu'on l'a optimise, mais parce qu'on a fait un choix delibere : TF-IDF + SGD au lieu de BERT. En production, la latence est une feature, pas un bug."
+
+**Sur les echecs Airflow :**
+> "Les 4 runs echecs dans Airflow, c'est des problemes de permissions inter-conteneurs. Quand Airflow ecrit un fichier avec UID 50000 et que MLflow attend UID 1000, le fichier est la mais illisible. C'est le genre de probleme qu'on ne rencontre jamais en local."
+
+**Sur Prometheus pull vs push :**
+> "Prometheus utilise le pull : c'est lui qui va chercher les metriques. L'API n'a pas besoin de savoir que Prometheus existe. On pourrait ajouter 10 services a monitorer sans modifier une seule ligne dans l'API."
+
+**Sur la confiance du modele :**
+> "36% de confiance semble faible, mais avec 27 classes, la baseline random c'est 3.7%. Notre modele est 10x meilleur que le hasard sur cette prediction."
+
+**Sur le drift :**
+> "On ne peut pas faire un test statistique directement sur du texte brut. On derive 4 features numeriques — longueur du titre, presence de description, nombre de mots — et on applique un test de Kolmogorov-Smirnov sur chacune. C'est un proxy, mais en production c'est comme ca qu'on detecte le drift sur du NLP."
+
+**Sur Docker Compose vs Kubernetes :**
+> "Docker Compose, c'est un MVP de production. Si on devait scaler a 1000 predictions par seconde avec autoscaling, on migrerait vers Kubernetes. Mais pour 8 services sur un VPS, Compose est le bon outil — ajouter K8s serait de la sur-ingenierie."
+
+**Sur la CI/CD :**
+> "Le linter detecte des erreurs de runtime AVANT l'execution. Quand flake8 signale F821 — reference indefinie — c'est une erreur qui aurait crashe l'API en production. Le CI l'attrape au moment du push."
+
+**Sur MLflow :**
+> "Chaque run MLflow est atomique : parametres, metriques, artefacts. Si dans 6 mois on se demande 'quel alpha avait donne 76% ?', la reponse est dans MLflow, pas dans un notebook perdu."
+
+**Sur le health check Docker :**
+> "Streamlit ne demarre pas tant que l'API n'a pas repondu 5 fois au healthcheck. C'est Docker qui gere ca avec `condition: service_healthy`. Pas de race condition au boot."
+
+**Sur la securite :**
+> "On utilise hmac.compare_digest au lieu de == pour comparer les tokens. C'est une comparaison a temps constant qui previent les timing attacks. Le temps de reponse est le meme que le token soit bon ou mauvais."
+
+**Sur Grafana provisioning :**
+> "Le dashboard Grafana est un fichier JSON versionne dans Git. Au premier docker compose up, Grafana charge automatiquement le datasource Prometheus et le dashboard. Zero clic dans l'interface. C'est du provisioning-as-code — meme philosophie que Terraform."
+
+---
+
 ## Chiffres cles a retenir pour le Q&A
 
 | Metrique | Valeur | Source |
