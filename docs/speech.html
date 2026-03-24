@@ -728,28 +728,6 @@
             </div>
         </div>
 
-        <!-- ==================== SLIDE 21b : DEMO PROMETHEUS ==================== -->
-        <div class="speech-slide" data-speaker="oussama" data-time="~30s">
-            <div class="slide-label">Slide 21b &middot; Demo &mdash; Prometheus &middot; ~30s</div>
-            <div class="slide-heading">4b. Prometheus &mdash; La collecte des metriques</div>
-            <div class="speech-text">
-                Prometheus, c'est ce qui alimente Grafana. On peut l'ouvrir directement &mdash;
-                onglet Targets, on voit notre API enregistree, statut <strong>UP</strong>.
-                Toutes les <span class="num">5</span> secondes, Prometheus va lui-meme
-                interroger le endpoint <span class="tech">/metrics</span> de l'API.
-                <br><br>
-                C'est le modele <strong>pull</strong> &mdash; l'API ne sait pas que Prometheus existe.
-                Elle expose juste ses metriques, et n'importe quel outil peut venir les lire.
-                On pourrait brancher dix outils de monitoring differents sans toucher
-                une seule ligne de code dans l'API. C'est ca le principe de <strong>separation des responsabilites</strong>.
-            </div>
-            <div class="demo-note">
-                <div class="demo-title">Action</div>
-                Onglet Prometheus &rarr; Status &rarr; Targets. Montrer l'API en vert (UP).
-                Optionnel : taper <strong>http_requests_total</strong> dans la barre de requete et executer.
-            </div>
-        </div>
-
         <!-- ==================== SLIDE 21c : DEMO TESTS ==================== -->
         <div class="speech-slide" data-speaker="oussama" data-time="~30s">
             <div class="slide-label">Slide 21c &middot; Demo &mdash; Tests &middot; ~30s</div>
