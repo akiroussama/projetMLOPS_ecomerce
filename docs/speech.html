@@ -788,41 +788,52 @@
         </div>
 
         <!-- ==================== SLIDE 24 : DEMO GITHUB ACTIONS ==================== -->
-        <div class="speech-slide" data-speaker="oussama" data-time="~1min30">
-            <div class="slide-label">Slide 24 &middot; Demo &mdash; GitHub Actions &middot; ~1min30</div>
+        <div class="speech-slide" data-speaker="oussama" data-time="~45s">
+            <div class="slide-label">Slide 24 &middot; Demo &mdash; GitHub Actions &middot; ~45s</div>
             <div class="slide-heading">7. CI/CD &mdash; Le filet de securite</div>
             <div class="speech-text">
-                Notre pipeline GitHub Actions &mdash; trois etapes <strong>sequentielles</strong> : lint avec flake8,
-                tests avec pytest, et build Docker. Si une etape echoue, la suivante ne se lance pas. C'est le principe
-                du <strong>fail fast</strong>.
+                Onglet GitHub Actions. Vous voyez l'historique des runs &mdash; des verts, des rouges.
+                Notre pipeline, c'est trois etapes <strong>sequentielles</strong> : lint avec flake8,
+                tests avec pytest, build Docker. Si une etape echoue, la suivante ne se lance pas.
+                C'est le principe du <strong>fail fast</strong> &mdash; on detecte le probleme
+                le plus tot possible, avant que ca atteigne la production.
                 <br><br>
-                Et le CI a attrape de vraies erreurs. Trois scenarios.
-                <br><br>
-                <strong>Premier scenario</strong> : un import inutilise. Un commit ajoute <span class="tech">import
-                    os</span> et <span class="tech">import sys</span> pour du logging. Le code compile, il tourne, mais
-                flake8 detecte <span class="tech">F401</span> &mdash; imported but unused. Le CI passe au rouge.
-                <strong>Le linter attrape le code mort avant meme que les tests ne se lancent.</strong>
-                <br><br>
-                <strong>Deuxieme scenario</strong>, plus subtil : un <strong>contrat API casse</strong>. Un commit
-                renomme le status du health check de <span class="tech">'ok'</span> vers <span
-                    class="tech">'healthy'</span>. Ca parait logique. Mais nos tests assertent sur <span
-                    class="tech">"ok"</span>. Et le healthcheck Docker aussi. <strong>Pytest attrape ca
-                    immediatement.</strong> Les tests ne verifient pas juste le code &mdash; ils protegent le contrat
-                entre les services.
-                <br><br>
-                <strong>Troisieme scenario</strong> : une reference indefinie. Un commit utilise <span
-                    class="tech">statistics.median()</span> mais oublie le <span class="tech">import statistics</span>.
-                Python ne le detecte qu'a l'execution. Mais flake8 detecte <span class="tech">F821</span> &mdash;
-                undefined name &mdash; <strong>avant meme que le code ne soit execute</strong>. Sans CI, ca aurait
-                crashe l'API en production.
-                <br><br>
-                A chaque fois : <strong>commit, rouge, fix, vert</strong>. C'est ca l'interet &mdash; transformer les
-                erreurs en feedback rapide.
+                Les runs rouges que vous voyez &mdash; ce ne sont pas des accidents.
+                Ce sont des erreurs reelles qu'on a commises, et que le CI a attrapees
+                <strong>avant qu'elles n'atteignent le VPS</strong>.
             </div>
             <div class="demo-note">
                 <div class="demo-title">Action</div>
-                Onglet GitHub &rarr; Actions. Montrer les runs rouges/verts. Cliquer sur un run rouge pour montrer le
-                log d'erreur.
+                Onglet GitHub &rarr; Actions. Montrer la liste des runs rouges et verts.
+                Cliquer sur un run rouge pour ouvrir le log.
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 24b : DEMO GITHUB ACTIONS — SCENARIOS ==================== -->
+        <div class="speech-slide" data-speaker="oussama" data-time="~45s">
+            <div class="slide-label">Slide 24b &middot; Demo &mdash; GitHub Actions &middot; ~45s</div>
+            <div class="slide-heading">7b. CI/CD &mdash; Trois vraies erreurs attrapees</div>
+            <div class="speech-text">
+                <strong>Scenario 1</strong> : un import inutilise.
+                Un commit ajoute <span class="tech">import os</span> sans l'utiliser.
+                Le code tourne, mais flake8 detecte <span class="tech">F401</span>. Rouge immediatement.
+                <br><br>
+                <strong>Scenario 2</strong> : un contrat API casse.
+                On renomme le status du health check de <span class="tech">'ok'</span> en
+                <span class="tech">'healthy'</span>. Ca semble logique, mais nos tests et
+                le healthcheck Docker assertent sur <span class="tech">"ok"</span>.
+                Pytest attrape ca &mdash; <strong>les tests protegent le contrat entre services</strong>.
+                <br><br>
+                <strong>Scenario 3</strong> : une variable non importee.
+                On utilise <span class="tech">statistics.median()</span> sans l'import.
+                Python ne le voit qu'a l'execution, mais flake8 detecte <span class="tech">F821</span>
+                avant meme que le code tourne. <strong>Sans CI, ca aurait crashe l'API en prod.</strong>
+                <br><br>
+                A chaque fois : <strong>commit &rarr; rouge &rarr; fix &rarr; vert</strong>.
+            </div>
+            <div class="demo-note">
+                <div class="demo-title">Action</div>
+                Dans le log du run rouge ouvert, zoomer sur le message d'erreur flake8 ou pytest.
             </div>
         </div>
 
