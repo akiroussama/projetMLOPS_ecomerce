@@ -640,8 +640,8 @@
         </div>
 
         <!-- ==================== SLIDE 18 : DEMO PREDICTION 1 ==================== -->
-        <div class="speech-slide" data-speaker="oussama" data-time="~1min">
-            <div class="slide-label">Slide 18 &middot; Demo &mdash; Prediction 1 &middot; ~1min</div>
+        <div class="speech-slide" data-speaker="oussama" data-time="~1min30">
+            <div class="slide-label">Slide 18 &middot; Demo &mdash; Prediction &middot; ~1min30</div>
             <div class="slide-heading">2. Prediction en direct &mdash; FIFA 24</div>
             <div class="speech-text">
                 La page Predictions. Je vais utiliser un exemple pre-rempli &mdash; FIFA 24 sur PS5. On clique... On
@@ -659,31 +659,20 @@
                     class="num">3.7%</span>. Notre modele est <strong>dix fois meilleur que le hasard</strong> sur cette
                 prediction. Avec 27 classes, un modele lineaire n'aura jamais 95% de confiance comme un modele binaire.
                 <br><br>
-                Et le temps de reponse. C'est <strong>Prometheus</strong> qui mesure, pas nous : <span class="num">5
-                    millisecondes</span> en moyenne par prediction. C'est un choix delibere &mdash; un BERT prendrait
-                <span class="num">200ms</span> sur CPU. On a privilegie la latence.
-            </div>
-        </div>
-
-        <!-- ==================== SLIDE 19 : DEMO PREDICTION 2 ==================== -->
-        <div class="speech-slide" data-speaker="oussama" data-time="~45s">
-            <div class="slide-label">Slide 19 &middot; Demo &mdash; Prediction 2 &middot; ~45s</div>
-            <div class="slide-heading">2b. Harry Potter &mdash; domaine different</div>
-            <div class="speech-text">
-                Maintenant, quelque chose de completement different. Un livre &mdash; Harry Potter. On lance...
+                Et le temps de reponse : <span class="num">5 millisecondes</span> en moyenne. C'est
+                <strong>Prometheus</strong> qui mesure, pas nous. Un BERT prendrait <span class="num">200ms</span>
+                sur CPU &mdash; on a fait le choix de la vitesse.
+                <br><br>
+                En bas de la page, vous voyez l'<strong>historique de session</strong>. Chaque prediction
+                est tracee &mdash; la categorie predite, la confiance, le temps de reponse.
+                Si je fais une deuxieme prediction maintenant, elle s'ajoute a la liste.
+                C'est utile pour un operateur qui veut verifier que le modele se comporte
+                correctement au fil des requetes, <strong>sans avoir besoin d'ouvrir Grafana</strong>.
             </div>
             <div class="demo-note">
                 <div class="demo-title">Action</div>
-                Cliquer bouton <strong>Livre</strong> dans exemples rapides, puis Predire.
-            </div>
-            <div class="speech-text" style="margin-top: 1rem;">
-                Categorie predite : <strong>Livres</strong>. Deux domaines completement differents &mdash; jeux video et
-                livres &mdash; et le modele gere les deux. C'est le benefice du TF-IDF sur des textes courts : le
-                vocabulaire de <em>&laquo; FIFA PlayStation manette &raquo;</em> et celui de <em>&laquo; Harry Potter
-                    edition poche &raquo;</em> sont suffisamment distincts pour que meme un modele lineaire les separe.
-                <br><br>
-                En bas, l'<strong>historique de session</strong> &mdash; les deux predictions tracees avec confiance et
-                temps de reponse.
+                Faire defiler vers le bas pour montrer le tableau historique. Si vide, faire une 2e prediction
+                avec l'exemple <strong>Livre</strong> pour avoir 2 lignes dans le tableau.
             </div>
         </div>
 
