@@ -12,7 +12,7 @@
 | 1 | **Hery** | 0 → 4 | ~4 min | Cover, Sommaire, Contexte Rakuten, Modele Baseline, API FastAPI |
 | 2 | **Johan** | 5 → 8 | ~4 min | Docker, Architecture Microservices, MLflow, Securite |
 | 3 | **Liviu** | 9 → 13 | ~4.5 min | Airflow, Airflow DAG, CI/CD, Prometheus, Grafana |
-| 4 | **Oussama** | 14 → 17 + demo | ~7.5 min | Streamlit (2 min) + Demo live (4 min) + Conclusion (1.5 min) |
+| 4 | **Oussama** | 14 → 25 + demo live | ~9-10 min | Transition + Demo Streamlit/Swagger/Grafana/MLflow/Airflow + CI/CD + Conclusion |
 
 > **Regle Q&A** : pendant les 10 min de questions, celui qui a *code* la fonctionnalite repond, meme s'il ne l'a pas presentee. Exemple : question sur MLflow/sweep → Johan repond. Question sur Airflow/DAG → Liviu repond. Question sur /stats ou drift → Oussama. Voir le fichier `docs/QUESTIONS_JURY.md` pour les reponses detaillees prepares.
 

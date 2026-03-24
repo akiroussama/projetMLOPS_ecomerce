@@ -110,81 +110,117 @@ Le dashboard et le datasource sont provisiones automatiquement au demarrage — 
 
 ---
 
-## OUSSAMA — slides 14 a 17 + demo (~7.5 min)
+## OUSSAMA — slides 14 a 25 + demo live (~9-10 min)
 
-### Slide 14 — Streamlit
+### SLIDE 14 — Transition Demo (~30s)
 
-Merci Liviu. La phase 5, l'application Streamlit. C'est l'interface utilisateur. Elle communique uniquement avec l'API deployee — pas d'acces direct aux donnees ou au modele.
+Merci Liviu. Plutot que de vous montrer des slides sur Streamlit, je vais vous montrer le vrai systeme. Tout ce que vous allez voir tourne en direct sur un VPS Hetzner — quatre vCPU, huit giga de RAM, huit conteneurs Docker.
 
-Quatre pages : Accueil avec la vue d'ensemble, Contexte qui montre le statut de l'API, Data Explorer pour les distributions des categories, et Predictions pour tester le modele.
+Mais d'abord, un mot sur pourquoi Streamlit. On avait le choix : Gradio, Dash, React. On a choisi Streamlit parce que c'est du Python pur. Pas de JavaScript, pas de HTML, pas de callbacks. Un data scientist peut construire une interface en une heure. Et surtout — Streamlit ne charge aucun modele. C'est un client HTTP pur. Tout passe par l'API. Si le modele change dans l'API, Streamlit n'a rien a modifier. Zero couplage.
 
-### Slide 15 — Streamlit Detail
+On y va.
 
-A gauche le Data Explorer — on voit les 27 categories et leur repartition. A droite le formulaire de prediction. L'utilisateur saisit un titre, une description, et il a la reponse en moins d'une seconde. Tout passe par l'API.
+### SLIDE 15 — Demo Streamlit Accueil (~40s)
 
-C'est ce que je vais vous montrer maintenant.
+<!-- OUVRIR ONGLET : http://rakuten-mlops.duckdns.org:8501 -->
 
-### Slide 16 — Demo
+Voila la page d'accueil. Premiere chose qu'on voit — ce bandeau vert en bas : "API connectee, modele SGDClassifier charge avec succes". C'est pas un texte statique. A chaque chargement de page, Streamlit fait un appel au endpoint /health de l'API. Si l'API tombe, le bandeau passe en orange ou en rouge. L'utilisateur sait immediatement si le systeme est operationnel. Pas de surprise au moment de predire.
 
-<!-- ============================================================
-     DEMO — ~4 min
-     PRE-REQUIS : docker compose up -d tourne deja
-     4 onglets ouverts : Streamlit, Grafana, MLflow, Airflow
-     ============================================================ -->
+On a trois pages : Contexte pour comprendre le projet, Data Explorer pour les donnees, et Predictions pour tester le modele. Je vais d'abord vous montrer le Contexte.
 
-Je vais vous montrer le systeme qui tourne.
+### SLIDE 16 — Demo Page Contexte (~40s)
 
-<!-- ---- ETAPE 1 : STREAMLIT (~1.5 min) ----
-     URL : http://localhost:8501
-     Aller sur la page "Predictions"
-     Saisir :
-       designation = "Console Sony PlayStation 5"
-       description = "PS5 edition standard 825GB SSD manette DualSense"
-     Cliquer sur Predict
-     Montrer : categorie predite, score de confiance, nom du modele
--->
+<!-- CLIC SUR : Page Contexte dans la sidebar -->
 
-D'abord Streamlit. Je vais classifier un produit — une PlayStation 5. Je mets le titre, la description... On lance la prediction... Et voila, le modele classe ca correctement avec un bon score de confiance. L'appel est passe par l'API en arriere-plan.
+Cette page resume le projet pour un nouveau venu — c'est de la documentation vivante. En haut, le schema d'architecture : Airflow orchestre, FastAPI sert, MLflow tracke, Grafana affiche. En dessous, quatre metriques en direct depuis l'API : le statut, le nom du modele charge, si le modele est operationnel, et le nombre de categories. Et tout en bas, les liens vers chaque service. Un developpeur qui decouvre le projet peut comprendre l'architecture et acceder a chaque outil en trente secondes.
 
-<!-- ---- ETAPE 2 : GRAFANA (~1 min) ----
-     URL : http://localhost:3000
-     Dashboard "FastAPI Monitoring"
-     Montrer que le compteur de requetes a bouge
-     Montrer la latence
--->
+On passe aux predictions.
 
-Si on passe sur Grafana, on voit que la requete qu'on vient de faire est tracee. Le compteur a monte, la latence est visible. C'est du temps reel, Prometheus scrape toutes les 15 secondes.
+### SLIDE 18 — Demo Prediction 1 : FIFA 24 (~1min)
 
-<!-- ---- ETAPE 3 : MLFLOW (~1 min) ----
-     URL : http://localhost:5000
-     Experiment "rakuten-text-baseline"
-     Montrer les 15+ runs
-     Cliquer sur le meilleur run — montrer accuracy 76.68%, f1 74.25%
-     Optionnel : montrer experiment "rakuten-data-drift"
--->
+<!-- CLIC SUR : Page Predictions → Bouton "Jeu PS5" dans les exemples rapides -->
 
-MLflow maintenant. Dans l'experiment rakuten-text-baseline, nos 15 runs du sweep. Le meilleur run la — accuracy 76.68%. On peut comparer les runs, voir quels parametres ont donne quoi.
+Je vais utiliser un exemple pre-rempli — FIFA 24 sur PS5. On clique... La designation et la description sont remplies automatiquement. On lance la prediction.
 
-<!-- ---- ETAPE 4 : AIRFLOW (~30s) ----
-     URL : http://localhost:8280 (login: airflow / airflow)
-     Montrer le DAG rakuten_weekly_retraining
-     Montrer un run avec les 6 taches vertes
-     Si manque de temps : SKIPPER, prioriser Streamlit + Grafana
--->
+<!-- CLIC SUR : Predire la categorie -->
 
-Et Airflow — notre DAG de re-entrainement. Les six taches, le dernier run tout vert.
+Et voila. Le modele classe ca en "Jeux video / Consoles", code 40. La jauge de confiance affiche environ 36%. Ca semble faible, mais reflechissez : on a 27 categories. La baseline aleatoire, c'est un sur vingt-sept — soit 3.7%. Notre modele est dix fois meilleur que le hasard sur cette prediction. Avec 27 classes, un modele lineaire n'aura jamais 95% de confiance comme un modele binaire. Le fait qu'il donne la bonne categorie a 36%, c'est en realite excellent.
 
-<!-- FIN DEMO — revenir sur la presentation -->
+Et le temps de reponse — regardez en bas. C'est Prometheus qui mesure, pas nous : 5 millisecondes en moyenne par prediction. C'est un choix delibere. Un BERT prendrait 200 millisecondes sur CPU. On a privilegie la latence.
 
-### Slide 17 — Conclusion
+### SLIDE 19 — Demo Prediction 2 : Harry Potter (~45s)
 
-Pour conclure. On a couvert les cinq phases du cahier des charges — les trois obligatoires et les deux optionnelles. Mais au-dela de la checklist, ce qu'on retient c'est ce qu'on a appris en le construisant.
+<!-- CLIC SUR : Bouton "Livre" dans les exemples rapides, OU saisir manuellement -->
+<!-- Designation : "Harry Potter a l'ecole des sorciers - JK Rowling"
+     Description : "Premier tome de la saga Harry Potter. Edition de poche." -->
 
-Gerer huit conteneurs Docker qui communiquent entre eux, c'est un vrai defi d'ingenierie. Les permissions entre conteneurs, les volumes partages, la compatibilite des librairies — on a eu des surprises. Par exemple, Evidently a change son API entre deux versions, on a du adapter notre script de drift pour utiliser scipy en fallback. C'est le genre de probleme qu'on rencontre pas dans un notebook.
+Maintenant, quelque chose de completement different. Un livre — Harry Potter. On lance...
 
-L'autre apprentissage c'est que le modele, au final, c'est le composant le plus simple du systeme. Tout ce qui est autour — l'API, le monitoring, l'orchestration, la CI — c'est la ou se trouve la complexite reelle d'un projet MLOps.
+<!-- CLIC SUR : Predire la categorie -->
 
-En perspectives : deploiement cloud, passage a un modele deep learning, et A/B testing pour comparer les modeles en production.
+Categorie predite : Livres. Deux domaines completement differents — jeux video et livres — et le modele gere les deux. C'est le benefice du TF-IDF sur des textes courts. Le vocabulaire de "FIFA PlayStation manette" et celui de "Harry Potter edition poche" sont suffisamment distincts pour que meme un modele lineaire les separe. Et en bas, on voit l'historique de session — les deux predictions sont tracees avec leur confiance et leur temps de reponse.
+
+### SLIDE 20 — Demo Swagger API (~40s)
+
+<!-- OUVRIR ONGLET : http://rakuten-mlops.duckdns.org:8200/docs -->
+
+Passons a l'API directement. Voila la documentation Swagger. Elle est auto-generee par FastAPI — zero effort de notre part. Quatre endpoints : /health public, /predict protege par un cadenas — vous le voyez la, c'est le Bearer token — /metrics pour Prometheus, et /stats pour les metriques metier.
+
+Un developpeur qui veut integrer notre API n'a meme pas besoin de nous contacter. Il ouvre cette page, il voit les schemas d'entree et de sortie, il peut tester directement. Integration en cinq minutes. C'est ca la force de FastAPI par rapport a Flask : la documentation est native, pas un ajout.
+
+### SLIDE 21 — Demo Grafana (~1min)
+
+<!-- OUVRIR ONGLET : http://rakuten-mlops.duckdns.org:3000/d/rakuten-api-monitoring -->
+
+Et maintenant le monitoring. Quatre panneaux Grafana. En haut a gauche, les requetes par seconde — on voit les pics quand j'ai fait les predictions. En haut a droite, la latence P95 — c'est sous 50 millisecondes. Ca veut dire que 95% des requetes sont plus rapides que ca. On utilise le percentile 95 plutot que la moyenne parce que la moyenne masque les outliers.
+
+En bas a gauche, la distribution des codes HTTP — 99% de 200, quelques 400 qui sont nos tentatives sans token. Ca prouve que la securite fonctionne. Et en bas a droite, le total des predictions.
+
+Quelques chiffres concrets. L'API tourne depuis 83 heures sans restart. 144 megaoctets de RAM pour servir 1396 predictions. C'est leger.
+
+Un detail technique : Prometheus utilise le pull — c'est lui qui va chercher les metriques toutes les 5 secondes. L'API n'a pas besoin de connaitre Prometheus. On pourrait ajouter dix services a monitorer sans modifier une seule ligne dans l'API. Ce dashboard est provisionne automatiquement — des fichiers YAML dans Git. Au premier docker compose up, Grafana a deja tout. Zero clic dans l'interface.
+
+### SLIDE 22 — Demo MLflow (~1min)
+
+<!-- OUVRIR ONGLET : http://rakuten-mlops.duckdns.org:5000/#/experiments/1 -->
+
+MLflow maintenant. Nos experiences d'entrainement. On voit ici 27 runs au total. 19 termines, 8 echecs. Les echecs ne sont pas des erreurs — c'est notre processus d'iteration. On a teste des configurations qui ne marchaient pas. MLflow garde tout, meme les runs qui ne marchent pas. C'est ca la reproductibilite : dans six mois, si on se demande "quel alpha avait donne 76%?", la reponse est ici, pas dans un notebook perdu.
+
+Le meilleur run — je clique dessus — alpha egal a un fois dix puissance moins six, 76.68% d'accuracy, 74.25% de F1 macro. Et si on descend dans les artefacts : quatre fichiers. Le modele a 1 megaoctet, le vectorizer TF-IDF a 190 kilooctets, le rapport de classification detaille par classe, et les metriques aggregees. Chaque run est atomique — parametres, metriques, artefacts. On peut revenir a n'importe quel run et recharger exactement ce modele.
+
+### SLIDE 23 — Demo Airflow (~45s)
+
+<!-- OUVRIR ONGLET : http://rakuten-mlops.duckdns.org:8280/dags/rakuten_weekly_retraining/grid -->
+
+Airflow — notre pipeline de re-entrainement. Le DAG rakuten_weekly_retraining, six taches. Telechargement S3, preparation du dataset, construction des features TF-IDF, entrainement avec log MLflow, verification des artefacts, et rapport de derive.
+
+Ce qu'on voit ici — le dernier run, tout vert. Six taches en succes. Le pipeline complet s'execute en 60 secondes. Le goulot c'est la vectorisation TF-IDF a 39 secondes sur 84 000 textes — c'est les deux tiers du temps total. Si on passe a BERT demain, ce sera le training qui domine, pas la vectorisation. Identifier le goulot, c'est la premiere etape pour optimiser. Et les quatre runs en echec au-dessus, c'etait des problemes de permissions entre conteneurs — Airflow ecrivait avec un UID, MLflow attendait un autre. C'est le genre de probleme qu'on ne rencontre jamais en local.
+
+### SLIDE 24 — GitHub Actions CI/CD (~1min30)
+
+<!-- Revenir sur les slides -->
+
+On quitte la demo pour parler d'integration continue. Notre pipeline GitHub Actions — trois etapes sequentielles : lint avec flake8, tests avec pytest, et build Docker. Si une etape echoue, la suivante ne se lance pas. Si ca casse, on ne merge pas.
+
+Et le CI a attrape de vraies erreurs. Je vais vous raconter trois scenarios.
+
+Premier scenario : un import inutilise. Un commit ajoute import os et import sys pour du logging structure. Le code compile, il tourne, mais flake8 detecte F401 — "imported but unused". Le CI passe au rouge. Le linter attrape le code mort avant meme que les tests ne se lancent. C'est de l'hygiene de code automatisee.
+
+Deuxieme scenario, plus subtil : un contrat API casse. Un commit renomme le statut du health check de "ok" vers "healthy". Ca parait logique. Mais nos tests assertent que le body contient status egal "ok". Et surtout, le healthcheck Docker aussi verifie cette valeur. Pytest attrape ca immediatement. Le CI nous force a revert. Les tests ne verifient pas juste le code — ils protegent le contrat entre les services.
+
+Troisieme scenario : une reference indefinie. Un commit ajoute le calcul de la latence mediane avec statistics.median, mais oublie le import statistics. Le code est syntaxiquement correct. Python ne le detecte qu'a l'execution. Mais flake8 detecte F821 — "undefined name statistics" — avant meme que le code ne soit execute. Le linter detecte une erreur de runtime avant l'execution. Sans CI, ca aurait crashe l'API en production.
+
+A chaque fois, le pattern est le meme : commit, CI rouge, fix, CI vert. C'est ca l'interet — transformer les erreurs en feedback rapide au lieu de bugs en production.
+
+### SLIDE 25 — Conclusion (~1min)
+
+Pour conclure. On a couvert les cinq phases du projet — les trois obligatoires et les deux optionnelles. Mais au-dela de la checklist, ce qu'on retient c'est ce qu'on a appris en le construisant.
+
+Gerer huit conteneurs qui communiquent, avec les permissions, les volumes partages, la compatibilite des librairies — c'est un vrai defi d'ingenierie. Evidently a change son API entre deux versions, on a du basculer sur scipy en fallback pour le drift. Le healthcheck Docker qui depend du format exact de la reponse JSON. Les UID Airflow qui bloquent MLflow. C'est le genre de probleme qu'on ne rencontre jamais dans un notebook.
+
+Si on avait plus de temps, quatre pistes. D'abord, deploiement cloud — l'architecture est cloud-agnostic, on pourrait migrer sur AWS ou GCP sans changer le code. Ensuite, passage a BERT — l'architecture est model-agnostic, on change une classe dans train_model.py, tout le reste — API, Airflow, MLflow, monitoring — ca reste pareil. Puis, A/B testing pour comparer les modeles en production, pas juste en validation. Et surtout, logger les inputs reels des utilisateurs pour detecter le drift sur des donnees de production, pas de validation. Parce que c'est la que le drift se produit vraiment.
+
+Le modele, c'est le composant le plus simple du systeme. Tout ce qui est autour — l'API, le monitoring, l'orchestration, la CI, le deploiement — c'est ca le MLOps. Et c'est ce qu'on a appris a construire.
 
 Merci pour votre attention. On est prets pour vos questions.
 
