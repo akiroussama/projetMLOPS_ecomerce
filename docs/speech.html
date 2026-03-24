@@ -750,12 +750,22 @@
                 <em>&laquo;&nbsp;comment on avait obtenu ce resultat ?&nbsp;&raquo;</em>,
                 la reponse est ici. Pas besoin de retrouver un notebook ou de se souvenir.
                 <strong>Tout est tracable, tout est comparable.</strong>
+                <br><br>
+                Et je clique sur l'onglet <strong>Artifacts</strong>. Quatre fichiers.
+                Le modele entraine &mdash; <span class="tech">baseline_model.pkl</span>.
+                Le vectorizer &mdash; <span class="tech">tfidf_vectorizer.pkl</span>.
+                Et deux fichiers JSON : le rapport de classification par categorie,
+                et les metriques agregees. Ce sont exactement les fichiers
+                que l'API charge au demarrage pour faire ses predictions.
+                <strong>Ce run est autosuffisant</strong> &mdash; on peut le rejouer,
+                le comparer, ou le deployer sans toucher au code.
             </div>
             <div class="demo-note">
                 <div class="demo-title">Action</div>
                 Onglet MLflow &rarr; experiment <strong>rakuten-text-baseline</strong>.
                 Cliquer sur le run <strong>alpha=1e-5 (baseline)</strong>.
-                Montrer les params a gauche, les metrics a droite (val_accuracy 76.2%, val_macro_f1 73.9%).
+                Montrer params + metrics, puis cliquer onglet <strong>Artifacts</strong>
+                &rarr; lister les 4 fichiers.
             </div>
         </div>
 
