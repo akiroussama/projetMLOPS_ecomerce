@@ -80,9 +80,11 @@ st.markdown('<hr style="border:none; height:1px; background:#e0e0e0; margin:2rem
 # ---------------------------------------------------------------------------
 st.markdown("## Architecture MLOps")
 
-st.markdown(
+import streamlit.components.v1 as components
+
+components.html(
     """
-    <div style="text-align: center; margin: 0.5rem 0;">
+    <div style="text-align: center; margin: 0.5rem 0; font-family: sans-serif;">
         <svg viewBox="0 0 900 300" style="max-width: 95%; height: auto;">
             <defs>
                 <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
@@ -170,24 +172,24 @@ st.markdown(
             <!-- Arrow Airflow to Postgres -->
             <line x1="775" y1="242" x2="780" y2="253" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)" />
         </svg>
-    </div>
 
-    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; margin-top:0.5rem;">
-        <div style="background:#eff6ff; border-left:4px solid #2563eb; border-radius:8px; padding:1rem;">
-            <div style="font-weight:700; color:#1e40af; margin-bottom:0.3rem;">🐳 Docker Compose</div>
-            <p style="font-size:0.88rem; color:#555; margin:0;">8+ services orchestres. Un seul <code>docker compose up</code> pour tout demarrer.</p>
-        </div>
-        <div style="background:#f0fdf4; border-left:4px solid #22c55e; border-radius:8px; padding:1rem;">
-            <div style="font-weight:700; color:#15803d; margin-bottom:0.3rem;">📦 Volumes partages</div>
-            <p style="font-size:0.88rem; color:#555; margin:0;">Artefacts modele accessibles par API, Trainer, et Airflow via le volume <code>./models</code>.</p>
-        </div>
-        <div style="background:#fffbeb; border-left:4px solid #f59e0b; border-radius:8px; padding:1rem;">
-            <div style="font-weight:700; color:#b45309; margin-bottom:0.3rem;">🔗 Integration fluide</div>
-            <p style="font-size:0.88rem; color:#555; margin:0;">Payload API hybride pour concatener a la volee <code>designation</code> et <code>description</code> de Streamlit.</p>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; margin-top:0.5rem; text-align:left;">
+            <div style="background:#eff6ff; border-left:4px solid #2563eb; border-radius:8px; padding:1rem;">
+                <div style="font-weight:700; color:#1e40af; margin-bottom:0.3rem;">🐳 Docker Compose</div>
+                <p style="font-size:0.88rem; color:#555; margin:0;">8+ services orchestres. Un seul <code>docker compose up</code> pour tout demarrer.</p>
+            </div>
+            <div style="background:#f0fdf4; border-left:4px solid #22c55e; border-radius:8px; padding:1rem;">
+                <div style="font-weight:700; color:#15803d; margin-bottom:0.3rem;">📦 Volumes partages</div>
+                <p style="font-size:0.88rem; color:#555; margin:0;">Artefacts modele accessibles par API, Trainer, et Airflow via le volume <code>./models</code>.</p>
+            </div>
+            <div style="background:#fffbeb; border-left:4px solid #f59e0b; border-radius:8px; padding:1rem;">
+                <div style="font-weight:700; color:#b45309; margin-bottom:0.3rem;">🔗 Integration fluide</div>
+                <p style="font-size:0.88rem; color:#555; margin:0;">Payload API hybride pour concatener a la volee <code>designation</code> et <code>description</code> de Streamlit.</p>
+            </div>
         </div>
     </div>
     """,
-    unsafe_allow_html=True,
+    height=430,
 )
 
 st.markdown('<hr style="border:none; height:1px; background:#e0e0e0; margin:2rem 0;">', unsafe_allow_html=True)
