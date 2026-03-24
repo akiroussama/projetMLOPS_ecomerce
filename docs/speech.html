@@ -523,7 +523,7 @@
             <br><br>
             En bas a gauche, la distribution des codes HTTP &mdash; <span class="num">99%</span> de <span class="num">200</span>, quelques <span class="num">400</span> qui sont nos tentatives sans token. Ca prouve que la securite fonctionne.
             <br><br>
-            Chiffres concrets. L'API tourne depuis <span class="num">83 heures</span> sans restart. <span class="num">144</span> megaoctets de RAM pour servir <span class="num">1396</span> predictions. C'est leger.
+            Chiffres concrets. L'API tourne depuis <span class="num">84 heures</span> sans restart. <span class="num">144.8</span> megaoctets de RAM pour servir <span class="num">1396</span> predictions. C'est leger.
             <br><br>
             Detail technique : Prometheus utilise le <strong>pull</strong> &mdash; c'est lui qui va chercher les metriques toutes les <span class="num">5</span> secondes. L'API n'a pas besoin de connaitre Prometheus. On pourrait ajouter dix services sans modifier une seule ligne dans l'API. Et ce dashboard est <strong>provisionne automatiquement</strong> &mdash; des fichiers YAML dans Git. Zero clic dans l'interface. Meme philosophie que Terraform.
         </div>
@@ -540,11 +540,13 @@
         <div class="speech-text">
             MLflow. Nos experiences d'entrainement. On voit <span class="num">27</span> runs au total. <span class="num">19</span> termines, <span class="num">8</span> echecs. <strong>Les echecs ne sont pas des erreurs</strong> &mdash; c'est notre processus d'iteration. On a teste des configs qui ne marchaient pas. MLflow garde tout, meme les runs qui ne marchent pas. C'est ca la reproductibilite : dans six mois, si on se demande <em>&laquo; quel alpha avait donne 76% ? &raquo;</em>, la reponse est ici, pas dans un notebook perdu.
             <br><br>
-            Le meilleur run &mdash; je clique dessus &mdash; alpha egal a <span class="num">1e-6</span>, <span class="num">76.68%</span> d'accuracy, <span class="num">74.25%</span> de F1 macro. Et dans les artefacts : <strong>quatre fichiers</strong>. Le modele a <span class="num">1</span> megaoctet, le vectorizer a <span class="num">190</span> kilooctets, le rapport de classification detaille par classe, et les metriques aggregees. Chaque run est <strong>atomique</strong> &mdash; parametres, metriques, artefacts. On peut revenir a n'importe quel run et recharger exactement ce modele.
+            Le meilleur run &mdash; le voila, il s'appelle <span class="tech">alpha=1e-6</span>, run ID <span class="tech">1be488</span>. Alpha egal a <span class="num">1e-6</span>, loss <span class="tech">log_loss</span>, max_iter <span class="num">1000</span>. Resultat : <span class="num">76.68%</span> d'accuracy, <span class="num">74.25%</span> de F1 macro. Le deuxieme meilleur, <span class="tech">no_class_weight</span>, est a <span class="num">76.67%</span> &mdash; un ecart de <span class="num">0.01%</span>. La difference est faible, ce qui montre que le modele est <strong>stable</strong>.
+            <br><br>
+            Dans les artefacts : <strong>quatre fichiers</strong>. Le modele a <span class="num">1.08</span> megaoctet, le vectorizer a <span class="num">190</span> kilooctets, le rapport de classification detaille par classe, et les metriques aggregees. Chaque run est <strong>atomique</strong> &mdash; parametres, metriques, artefacts. On peut revenir a n'importe quel run et recharger exactement ce modele.
         </div>
         <div class="demo-note">
             <div class="demo-title">Action</div>
-            Onglet MLflow. Montrer les 27 runs. Cliquer sur le meilleur run pour montrer les artefacts.
+            Onglet MLflow &rarr; experiment rakuten-text-baseline. Le meilleur run est <strong>alpha=1e-6</strong> (run ID 1be488). Cliquer dessus &rarr; montrer params, metrics, puis onglet Artifacts.
         </div>
     </div>
 
@@ -555,7 +557,7 @@
         <div class="speech-text">
             Airflow &mdash; notre pipeline de re-entrainement. Six taches, le dernier run tout vert.
             <br><br>
-            Le pipeline complet s'execute en <span class="num">60 secondes</span>. Le goulot c'est la vectorisation TF-IDF a <span class="num">39 secondes</span> sur <span class="num">84 000</span> textes &mdash; c'est les deux tiers du temps total. Si on passe a BERT demain, ce sera le training qui domine, pas la vectorisation. <strong>Identifier le goulot, c'est la premiere etape pour optimiser.</strong>
+            Le pipeline complet s'execute en <span class="num">59.9 secondes</span>. Voici le detail : download <span class="num">0.8s</span>, prepare <span class="num">4.8s</span>, build_features <span class="num">39.5s</span> &mdash; c'est le <strong>goulot</strong>, la vectorisation TF-IDF sur <span class="num">84 000</span> textes, deux tiers du temps &mdash; train <span class="num">11.3s</span>, verify <span class="num">0.5s</span>, drift <span class="num">3.0s</span>. Si on passe a BERT demain, ce sera le training qui domine, pas la vectorisation. <strong>Identifier le goulot, c'est la premiere etape pour optimiser.</strong>
             <br><br>
             Et les quatre runs en echec au-dessus &mdash; c'etait des problemes de <strong>permissions entre conteneurs</strong>. Airflow ecrivait avec un UID, MLflow attendait un autre. C'est le genre de probleme qu'on ne rencontre <strong>jamais en local</strong>.
         </div>
