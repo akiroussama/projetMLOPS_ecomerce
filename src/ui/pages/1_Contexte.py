@@ -189,7 +189,7 @@ components.html(
         </div>
     </div>
     """,
-    height=430,
+    height=580,
 )
 
 st.markdown('<hr style="border:none; height:1px; background:#e0e0e0; margin:2rem 0;">', unsafe_allow_html=True)
