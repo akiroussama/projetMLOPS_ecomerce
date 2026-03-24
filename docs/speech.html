@@ -583,20 +583,20 @@
             <div class="slide-label">Slide 14 &middot; Transition vers la Demo &middot; ~30s</div>
             <div class="slide-heading">Phase 5 + Demo en direct</div>
             <div class="speech-text">
-                Merci Liviu. Plutot que de vous montrer des slides sur Streamlit, je vais vous montrer <strong>le vrai
-                    systeme</strong>. Tout ce que vous allez voir tourne en direct sur un VPS Hetzner &mdash; <span
+                Merci Liviu. Plutôt que de vous montrer des slides sur Streamlit, je vais vous montrer <strong>le vrai
+                    système</strong>. Tout ce que vous allez voir tourne en direct sur un VPS Hetzner &mdash; <span
                     class="num">4</span> vCPU, <span class="num">8</span> Go de RAM, <strong>huit conteneurs
                     Docker</strong>.
                 <br><br>
                 Mais d'abord, un mot sur pourquoi Streamlit. On avait le choix : Gradio, Dash, React. On a choisi
                 Streamlit parce que c'est du <strong>Python pur</strong>. Pas de JavaScript, pas de HTML, pas de
-                callbacks. Et surtout &mdash; <strong>Streamlit ne charge aucun modele</strong>. C'est un client HTTP
-                pur. Tout passe par l'API. Si le modele change, Streamlit n'a rien a modifier. <strong>Zero
+                callbacks. Et surtout &mdash; <strong>Streamlit ne charge aucun modèle</strong>. C'est un client HTTP
+                pur. Tout passe par l'API. Si le modèle change, Streamlit n'a rien à modifier. <strong>Zéro
                     couplage.</strong>
             </div>
             <div class="demo-note">
                 <div class="demo-title">Action</div>
-                Basculer sur le navigateur. Onglets deja ouverts : Streamlit, Grafana, MLflow, Airflow, Swagger, GitHub
+                Basculer sur le navigateur. Onglets déjà ouverts : Streamlit, Grafana, MLflow, Airflow, Swagger, GitHub
                 Actions.
             </div>
         </div>
@@ -606,13 +606,13 @@
             <div class="slide-label">Slide 15 &middot; Demo &mdash; Streamlit Accueil &middot; ~40s</div>
             <div class="slide-heading">1. Streamlit &mdash; Vue d'ensemble</div>
             <div class="speech-text">
-                Voila la page d'accueil. Premiere chose &mdash; ce bandeau vert en bas : <strong>&laquo; API connectee,
-                    modele SGDClassifier charge avec succes &raquo;</strong>. C'est pas un texte statique. A chaque
+                Voilà la page d'accueil. Première chose &mdash; ce bandeau vert en bas : <strong>&laquo; API connectée,
+                    modèle SGDClassifier chargé avec succès &raquo;</strong>. C'est pas un texte statique. À chaque
                 chargement de page, Streamlit fait un appel au endpoint <span class="tech">/health</span> de l'API. Si
-                l'API tombe, le bandeau passe en orange. <strong>L'utilisateur sait immediatement si le systeme est
-                    operationnel.</strong> Pas de surprise au moment de predire.
+                l'API tombe, le bandeau passe en orange. <strong>L'utilisateur sait immédiatement si le système est
+                    opérationnel.</strong> Pas de surprise au moment de prédire.
                 <br><br>
-                Trois pages : Contexte, Data Explorer, Predictions. On va d'abord voir le Contexte.
+                Trois pages : Contexte, Data Explorer, Prédictions. On va d'abord voir le Contexte.
             </div>
             <div class="demo-note">
                 <div class="demo-title">Action</div>
@@ -626,52 +626,59 @@
             <div class="slide-label">Slide 16 &middot; Demo &mdash; Contexte &middot; ~40s</div>
             <div class="slide-heading">1b. Streamlit &mdash; Documentation vivante</div>
             <div class="speech-text">
-                Cette page resume le projet pour un nouveau venu &mdash; c'est de la <strong>documentation
-                    vivante</strong>. En haut, le schema d'architecture : Airflow orchestre, FastAPI sert, MLflow
-                tracke, Grafana affiche. En dessous, <strong>quatre metriques en direct</strong> depuis l'API. Et tout
-                en bas, les liens vers chaque service. Un developpeur qui decouvre le projet peut comprendre
-                l'architecture et acceder a chaque outil en <strong>trente secondes</strong>.
+                Cette page résume le projet pour un nouveau venu &mdash; c'est de la <strong>documentation
+                    vivante</strong>. En haut, le schéma d'architecture : Airflow orchestre, FastAPI sert, MLflow
+                tracke, Grafana affiche. En dessous, <strong>quatre métriques en direct</strong> depuis l'API. Et tout
+                en bas, les liens vers chaque service. Un développeur qui découvre le projet peut comprendre
+                l'architecture et accéder à chaque outil en <strong>trente secondes</strong>.
             </div>
             <div class="demo-note">
                 <div class="demo-title">Action</div>
-                Scroller lentement pour montrer l'archi + les 4 metriques vertes. Puis cliquer
-                <strong>Predictions</strong>.
+                Scroller lentement pour montrer l'archi + les 4 métriques vertes. Puis cliquer
+                <strong>Prédictions</strong>.
             </div>
         </div>
 
         <!-- ==================== SLIDE 18 : DEMO PREDICTION 1 ==================== -->
-        <div class="speech-slide" data-speaker="oussama" data-time="~1min30">
-            <div class="slide-label">Slide 18 &middot; Demo &mdash; Prediction &middot; ~1min30</div>
-            <div class="slide-heading">2. Prediction en direct &mdash; FIFA 24</div>
+        <div class="speech-slide" data-speaker="oussama" data-time="~45s">
+            <div class="slide-label">Slide 18 &middot; Demo &mdash; Prédiction &middot; ~45s</div>
+            <div class="slide-heading">2. Prédiction en direct &mdash; FIFA 24</div>
             <div class="speech-text">
-                La page Predictions. Je vais utiliser un exemple pre-rempli &mdash; FIFA 24 sur PS5. On clique... On
-                lance la prediction.
+                La page Prédictions. Je vais utiliser un exemple pré-rempli &mdash; FIFA 24 sur PS5. On clique... On
+                lance la prédiction.
             </div>
             <div class="demo-note">
                 <div class="demo-title">Action</div>
-                Cliquer bouton <strong>Jeu PS5</strong> dans exemples rapides. Puis <strong>Predire la
-                    categorie</strong>.
+                Cliquer bouton <strong>Jeu PS5</strong> dans exemples rapides. Puis <strong>Prédire la
+                    catégorie</strong>.
             </div>
             <div class="speech-text" style="margin-top: 1rem;">
-                <strong>&laquo; Jeux video / Consoles &raquo;</strong>, code <span class="num">40</span>. La jauge de
-                confiance affiche environ <span class="num">36%</span>. Ca semble faible, mais reflechissez : on a <span
-                    class="num">27</span> categories. La baseline aleatoire, c'est un sur vingt-sept &mdash; soit <span
-                    class="num">3.7%</span>. Notre modele est <strong>dix fois meilleur que le hasard</strong> sur cette
-                prediction. Avec 27 classes, un modele lineaire n'aura jamais 95% de confiance comme un modele binaire.
+                <strong>&laquo; Jeux vidéo / Consoles &raquo;</strong>, code <span class="num">40</span>. La jauge de
+                confiance affiche environ <span class="num">36%</span>. Ça semble faible, mais réfléchissez : on a <span
+                    class="num">27</span> catégories. La baseline aléatoire, c'est un sur vingt-sept &mdash; soit <span
+                    class="num">3.7%</span>. Notre modèle est <strong>dix fois meilleur que le hasard</strong> sur cette
+                prédiction. Avec 27 classes, un modèle linéaire n'aura jamais 95% de confiance comme un modèle binaire.
                 <br><br>
-                Et le temps de reponse : <span class="num">5 millisecondes</span> en moyenne. C'est
+                Et le temps de réponse : <span class="num">5 millisecondes</span> en moyenne. C'est
                 <strong>Prometheus</strong> qui mesure, pas nous. Un BERT prendrait <span class="num">200ms</span>
                 sur CPU &mdash; on a fait le choix de la vitesse.
-                <br><br>
-                En bas de la page, vous voyez l'<strong>historique de session</strong>. Chaque prediction
-                est tracee &mdash; la categorie predite, la confiance, le temps de reponse.
-                Si je fais une deuxieme prediction maintenant, elle s'ajoute a la liste.
-                C'est utile pour un operateur qui veut verifier que le modele se comporte
-                correctement au fil des requetes, <strong>sans avoir besoin d'ouvrir Grafana</strong>.
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 18b : DEMO PREDICTION — HISTORIQUE ==================== -->
+        <div class="speech-slide" data-speaker="oussama" data-time="~45s">
+            <div class="slide-label">Slide 18b &middot; Demo &mdash; Prédiction &middot; ~45s</div>
+            <div class="slide-heading">2b. Historique de session</div>
+            <div class="speech-text">
+                En bas de la page, vous voyez l'<strong>historique de session</strong>. Chaque prédiction
+                est tracée &mdash; la catégorie prédite, la confiance, le temps de réponse.
+                Si je fais une deuxième prédiction maintenant, elle s'ajoute à la liste.
+                C'est utile pour un opérateur qui veut vérifier que le modèle se comporte
+                correctement au fil des requêtes, <strong>sans avoir besoin d'ouvrir Grafana</strong>.
             </div>
             <div class="demo-note">
                 <div class="demo-title">Action</div>
-                Faire defiler vers le bas pour montrer le tableau historique. Si vide, faire une 2e prediction
+                Faire défiler vers le bas pour montrer le tableau historique. Si vide, faire une 2e prédiction
                 avec l'exemple <strong>Livre</strong> pour avoir 2 lignes dans le tableau.
             </div>
         </div>
@@ -681,139 +688,154 @@
             <div class="slide-label">Slide 20 &middot; Demo &mdash; Swagger &middot; ~40s</div>
             <div class="slide-heading">3. Swagger &mdash; L'API sous le capot</div>
             <div class="speech-text">
-                Voila la documentation Swagger. Elle est <strong>auto-generee par FastAPI</strong> &mdash; zero effort
+                Voilà la documentation Swagger. Elle est <strong>auto-générée par FastAPI</strong> &mdash; zéro effort
                 de notre part. Quatre endpoints : <span class="tech">/health</span> public, <span
-                    class="tech">/predict</span> protege par un cadenas &mdash; vous le voyez la, c'est le Bearer token
+                    class="tech">/predict</span> protégé par un cadenas &mdash; vous le voyez là, c'est le Bearer token
                 &mdash; <span class="tech">/metrics</span> pour Prometheus, et <span class="tech">/stats</span> pour les
-                metriques metier.
+                métriques métier.
                 <br><br>
-                Un developpeur qui veut integrer notre API n'a meme pas besoin de nous contacter. Il ouvre cette page,
-                il voit les schemas d'entree et de sortie, il peut tester directement. <strong>Integration en cinq
-                    minutes.</strong> C'est ca la force de FastAPI par rapport a Flask : la documentation est native,
+                Un développeur qui veut intégrer notre API n'a même pas besoin de nous contacter. Il ouvre cette page,
+                il voit les schémas d'entrée et de sortie, il peut tester directement. <strong>Intégration en cinq
+                    minutes.</strong> C'est ça la force de FastAPI par rapport à Flask : la documentation est native,
                 pas un ajout.
             </div>
             <div class="demo-note">
                 <div class="demo-title">Action</div>
-                Onglet Swagger. Pointer le cadenas sur /predict. Ne pas executer de requete.
+                Onglet Swagger. Pointer le cadenas sur /predict. Ne pas exécuter de requête.
             </div>
         </div>
 
         <!-- ==================== SLIDE 21 : DEMO GRAFANA ==================== -->
-        <div class="speech-slide" data-speaker="oussama" data-time="~1min">
-            <div class="slide-label">Slide 21 &middot; Demo &mdash; Grafana &middot; ~1min</div>
-            <div class="slide-heading">4. Grafana &mdash; Monitoring temps reel</div>
+        <div class="speech-slide" data-speaker="oussama" data-time="~30s">
+            <div class="slide-label">Slide 21 &middot; Demo &mdash; Grafana &middot; ~30s</div>
+            <div class="slide-heading">4. Grafana &mdash; Monitoring temps réel</div>
             <div class="speech-text">
-                Quatre panneaux Grafana. En haut a gauche, les requetes par seconde &mdash; on voit les pics quand j'ai
-                fait les predictions. En haut a droite, la <strong>latence P95</strong> sous <span
-                    class="num">50ms</span>. Ca veut dire que <span class="num">95%</span> des requetes sont plus
-                rapides que ca..
-                <br><br>
-                En bas a gauche, la distribution des codes HTTP &mdash; <span class="num">99%</span> de <span
-                    class="num">200</span>, quelques <span class="num">400</span> qui sont nos tentatives sans token. Ca
-                prouve que la securite fonctionne.
-                <br><br>
-                Chiffres concrets. L'API tourne depuis <span class="num">84 heures</span> sans restart. <span
-                    class="num">144.8</span> megaoctets de RAM pour servir <span class="num">1396</span> predictions.
-                C'est leger.
-                <br><br>
-                Detail technique : Prometheus utilise le <strong>pull</strong> &mdash; c'est lui qui va chercher les
-                metriques toutes les <span class="num">5</span> secondes. L'API n'a pas besoin de connaitre Prometheus.
-                On pourrait ajouter dix services sans modifier une seule ligne dans l'API. Et ce dashboard est
-                <strong>provisionne automatiquement</strong> &mdash; des fichiers YAML dans Git. Zero clic dans
-                l'interface. Meme philosophie que Terraform.
+                Quatre panneaux Grafana. En haut à gauche, les requêtes par seconde &mdash; on voit les pics quand j'ai
+                fait les prédictions. En haut à droite, la <strong>latence P95</strong> sous <span
+                    class="num">50ms</span>. Ça veut dire que <span class="num">95%</span> des requêtes sont plus
+                rapides que ça.
             </div>
             <div class="demo-note">
                 <div class="demo-title">Action</div>
-                Onglet Grafana. Pointer chaque panneau. Laisser le jury voir les courbes bouger.
+                Onglet Grafana. Pointer les deux panneaux du haut.
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 21b : DEMO GRAFANA — CHIFFRES ==================== -->
+        <div class="speech-slide" data-speaker="oussama" data-time="~30s">
+            <div class="slide-label">Slide 21b &middot; Demo &mdash; Grafana &middot; ~30s</div>
+            <div class="slide-heading">4b. Grafana &mdash; Chiffres concrets</div>
+            <div class="speech-text">
+                En bas à gauche, la distribution des codes HTTP &mdash; <span class="num">99%</span> de <span
+                    class="num">200</span>, quelques <span class="num">400</span> qui sont nos tentatives sans token. Ça
+                prouve que la sécurité fonctionne.
+                <br><br>
+                Chiffres concrets. L'API tourne depuis <span class="num">84 heures</span> sans restart. <span
+                    class="num">144.8</span> mégaoctets de RAM pour servir <span class="num">1396</span> prédictions.
+                C'est léger.
+            </div>
+            <div class="demo-note">
+                <div class="demo-title">Action</div>
+                Pointer les panneaux du bas. Laisser le jury voir les courbes bouger.
             </div>
         </div>
 
         <!-- ==================== SLIDE 21c : DEMO TESTS ==================== -->
         <div class="speech-slide" data-speaker="oussama" data-time="~30s">
             <div class="slide-label">Slide 21c &middot; Demo &mdash; Tests &middot; ~30s</div>
-            <div class="slide-heading">4c. Tests &mdash; Le filet de securite du code</div>
+            <div class="slide-heading">4c. Tests &mdash; Le filet de sécurité du code</div>
             <div class="speech-text">
                 Avant de parler CI/CD, un mot sur les tests. Dans GitHub, onglet Actions,
-                on voit nos tests pytest tourner a chaque commit. On a plus de
+                on voit nos tests pytest tourner à chaque commit. On a plus de
                 <span class="num">80%</span> de couverture sur l'API.
                 <br><br>
-                Concretement, on teste que <span class="tech">/health</span> repond bien,
-                que <span class="tech">/predict</span> refuse une requete sans token,
-                que le format de sortie est correct. Ce ne sont pas des tests academiques &mdash;
-                ce sont des <strong>gardes-fous sur le comportement reel de l'API</strong>.
-                Si quelqu'un modifie la reponse du health check, ou change le format de prediction,
-                les tests cassent immediatement &mdash; avant que ca arrive en production.
+                Concrètement, on teste que <span class="tech">/health</span> répond bien,
+                que <span class="tech">/predict</span> refuse une requête sans token,
+                que le format de sortie est correct. Ce ne sont pas des tests académiques &mdash;
+                ce sont des <strong>gardes-fous sur le comportement réel de l'API</strong>.
+                Si quelqu'un modifie la réponse du health check, ou change le format de prédiction,
+                les tests cassent immédiatement &mdash; avant que ça arrive en production.
             </div>
             <div class="demo-note">
                 <div class="demo-title">Action</div>
-                GitHub &rarr; Actions &rarr; cliquer sur un run vert &rarr; etape <strong>test</strong>
+                GitHub &rarr; Actions &rarr; cliquer sur un run vert &rarr; étape <strong>test</strong>
                 &rarr; montrer les lignes pytest passed et le pourcentage de couverture.
             </div>
         </div>
 
         <!-- ==================== SLIDE 22 : DEMO MLFLOW ==================== -->
-        <div class="speech-slide" data-speaker="oussama" data-time="~1min">
-            <div class="slide-label">Slide 22 &middot; Demo &mdash; MLflow &middot; ~1min</div>
-            <div class="slide-heading">5. MLflow &mdash; Reproductibilite</div>
+        <div class="speech-slide" data-speaker="oussama" data-time="~30s">
+            <div class="slide-label">Slide 22 &middot; Demo &mdash; MLflow &middot; ~30s</div>
+            <div class="slide-heading">5. MLflow &mdash; Reproductibilité</div>
             <div class="speech-text">
-                Voila MLflow. Chaque fois qu'on a entraine un modele, tout a ete enregistre ici
+                Voilà MLflow. Chaque fois qu'on a entraîné un modèle, tout a été enregistré ici
                 automatiquement &mdash; la liste que vous voyez, c'est chaque essai qu'on a fait.
-                Les verts sont les reussites, les rouges les echecs. <strong>Les echecs sont normaux</strong>,
-                c'est comme ca qu'on a trouve les bons reglages.
+                Les verts sont les réussites, les rouges les échecs. <strong>Les échecs sont normaux</strong>,
+                c'est comme ça qu'on a trouvé les bons réglages.
                 <br><br>
                 Je clique sur ce run &mdash; <span class="tech">alpha=1e-5 (baseline)</span>.
-                A gauche, les <strong>parametres</strong> : ce sont les reglages du modele qu'on a choisis.
-                Par exemple, <em>class_weight = balanced</em> veut dire qu'on a compense le fait
-                que certaines categories ont moins de produits que d'autres.
-                A droite, les <strong>metriques</strong> : <span class="num">76.2%</span> de bonnes
-                classifications sur les donnees de test, <span class="num">73.9%</span> de F1 macro
-                &mdash; ca veut dire que le modele performe bien <em>meme sur les categories rares</em>.
-                <br><br>
-                L'interet c'est simple : dans six mois, si quelqu'un se demande
-                <em>&laquo;&nbsp;comment on avait obtenu ce resultat ?&nbsp;&raquo;</em>,
-                la reponse est ici. Pas besoin de retrouver un notebook ou de se souvenir.
-                <strong>Tout est tracable, tout est comparable.</strong>
-                <br><br>
-                Et je clique sur l'onglet <strong>Artifacts</strong>. Quatre fichiers.
-                Le modele entraine &mdash; <span class="tech">baseline_model.pkl</span>.
-                Le vectorizer &mdash; <span class="tech">tfidf_vectorizer.pkl</span>.
-                Et deux fichiers JSON : le rapport de classification par categorie,
-                et les metriques agregees. Ce sont exactement les fichiers
-                que l'API charge au demarrage pour faire ses predictions.
-                <strong>Ce run est autosuffisant</strong> &mdash; on peut le rejouer,
-                le comparer, ou le deployer sans toucher au code.
+                À gauche, les <strong>paramètres</strong> : ce sont les réglages du modèle qu'on a choisis.
+                Par exemple, <em>class_weight = balanced</em> veut dire qu'on a compensé le fait
+                que certaines catégories ont moins de produits que d'autres.
+                À droite, les <strong>métriques</strong> : <span class="num">76.2%</span> de bonnes
+                classifications sur les données de test, <span class="num">73.9%</span> de F1 macro
+                &mdash; ça veut dire que le modèle performe bien <em>même sur les catégories rares</em>.
             </div>
             <div class="demo-note">
                 <div class="demo-title">Action</div>
                 Onglet MLflow &rarr; experiment <strong>rakuten-text-baseline</strong>.
                 Cliquer sur le run <strong>alpha=1e-5 (baseline)</strong>.
-                Montrer params + metrics, puis cliquer onglet <strong>Artifacts</strong>
-                &rarr; lister les 4 fichiers.
+                Montrer params + metrics.
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 22b : DEMO MLFLOW — ARTIFACTS ==================== -->
+        <div class="speech-slide" data-speaker="oussama" data-time="~30s">
+            <div class="slide-label">Slide 22b &middot; Demo &mdash; MLflow &middot; ~30s</div>
+            <div class="slide-heading">5b. MLflow &mdash; Traçabilité &amp; Artifacts</div>
+            <div class="speech-text">
+                L'intérêt c'est simple : dans six mois, si quelqu'un se demande
+                <em>&laquo;&nbsp;comment on avait obtenu ce résultat ?&nbsp;&raquo;</em>,
+                la réponse est ici. Pas besoin de retrouver un notebook ou de se souvenir.
+                <strong>Tout est traçable, tout est comparable.</strong>
+                <br><br>
+                Et je clique sur l'onglet <strong>Artifacts</strong>. Quatre fichiers.
+                Le modèle entraîné &mdash; <span class="tech">baseline_model.pkl</span>.
+                Le vectorizer &mdash; <span class="tech">tfidf_vectorizer.pkl</span>.
+                Et deux fichiers JSON : le rapport de classification par catégorie,
+                et les métriques agrégées. Ce sont exactement les fichiers
+                que l'API charge au démarrage pour faire ses prédictions.
+                <strong>Ce run est autosuffisant</strong> &mdash; on peut le rejouer,
+                le comparer, ou le déployer sans toucher au code.
+            </div>
+            <div class="demo-note">
+                <div class="demo-title">Action</div>
+                Cliquer onglet <strong>Artifacts</strong> &rarr; lister les 4 fichiers.
             </div>
         </div>
 
         <!-- ==================== SLIDE 23 : DEMO AIRFLOW ==================== -->
         <div class="speech-slide" data-speaker="oussama" data-time="~45s">
             <div class="slide-label">Slide 23 &middot; Demo &mdash; Airflow &middot; ~45s</div>
-            <div class="slide-heading">6. Airflow &mdash; Pipeline automatise</div>
+            <div class="slide-heading">6. Airflow &mdash; Pipeline automatisé</div>
             <div class="speech-text">
-                Airflow &mdash; notre pipeline de re-entrainement. Six taches, le dernier run tout vert.
+                Airflow &mdash; notre pipeline de ré-entraînement. Six tâches, le dernier run tout vert.
                 <br><br>
-                Le pipeline complet s'execute en <span class="num">59.9 secondes</span>. Voici le detail : download
-                <span class="num">0.8s</span>, prepare <span class="num">4.8s</span>, build_features <span
+                Le pipeline complet s'exécute en <span class="num">59.9 secondes</span>. Voici le détail : download
+                <span class="num">0.8s</span>, prépare <span class="num">4.8s</span>, build_features <span
                     class="num">39.5s</span> &mdash; c'est le <strong>goulot</strong>, la vectorisation TF-IDF sur <span
                     class="num">84 000</span> textes, deux tiers du temps &mdash; train <span class="num">11.3s</span>,
-                verify <span class="num">0.5s</span>, drift <span class="num">3.0s</span>. Si on passe a BERT demain, ce
-                sera le training qui domine, pas la vectorisation. <strong>Identifier le goulot, c'est la premiere etape
+                verify <span class="num">0.5s</span>, drift <span class="num">3.0s</span>. Si on passe à BERT demain, ce
+                sera le training qui domine, pas la vectorisation. <strong>Identifier le goulot, c'est la première étape
                     pour optimiser.</strong>
                 <br><br>
-                Et les quatre runs en echec au-dessus &mdash; c'etait des problemes de <strong>permissions entre
-                    conteneurs</strong>. Airflow ecrivait avec un UID, MLflow attendait un autre. C'est le genre de
-                probleme qu'on ne rencontre <strong>jamais en local</strong>.
+                Et les quatre runs en échec au-dessus &mdash; c'était des problèmes de <strong>permissions entre
+                    conteneurs</strong>. Airflow écrivait avec un UID, MLflow attendait un autre. C'est le genre de
+                problème qu'on ne rencontre <strong>jamais en local</strong>.
             </div>
             <div class="demo-note">
                 <div class="demo-title">Action</div>
-                Onglet Airflow. Montrer le DAG, les 6 taches vertes, et les 4 runs rouges au-dessus.
+                Onglet Airflow. Montrer le DAG, les 6 tâches vertes, et les 4 runs rouges au-dessus.
             </div>
             <div class="transition-note">
                 &rarr; Un dernier point avant de conclure.
@@ -823,16 +845,16 @@
         <!-- ==================== SLIDE 24 : DEMO GITHUB ACTIONS ==================== -->
         <div class="speech-slide" data-speaker="oussama" data-time="~45s">
             <div class="slide-label">Slide 24 &middot; Demo &mdash; GitHub Actions &middot; ~45s</div>
-            <div class="slide-heading">7. CI/CD &mdash; Le filet de securite</div>
+            <div class="slide-heading">7. CI/CD &mdash; Le filet de sécurité</div>
             <div class="speech-text">
                 Onglet GitHub Actions. Vous voyez l'historique des runs &mdash; des verts, des rouges.
-                Notre pipeline, c'est trois etapes <strong>sequentielles</strong> : lint avec flake8,
-                tests avec pytest, build Docker. Si une etape echoue, la suivante ne se lance pas.
-                C'est le principe du <strong>fail fast</strong> &mdash; on detecte le probleme
-                le plus tot possible, avant que ca atteigne la production.
+                Notre pipeline, c'est trois étapes <strong>séquentielles</strong> : lint avec flake8,
+                tests avec pytest, build Docker. Si une étape échoue, la suivante ne se lance pas.
+                C'est le principe du <strong>fail fast</strong> &mdash; on détecte le problème
+                le plus tôt possible, avant que ça atteigne la production.
                 <br><br>
                 Les runs rouges que vous voyez &mdash; ce ne sont pas des accidents.
-                Ce sont des erreurs reelles qu'on a commises, et que le CI a attrapees
+                Ce sont des erreurs réelles qu'on a commises, et que le CI a attrapées
                 <strong>avant qu'elles n'atteignent le VPS</strong>.
             </div>
             <div class="demo-note">
@@ -845,19 +867,19 @@
         <!-- ==================== SLIDE 24b : DEMO GITHUB ACTIONS — WHAT WE CATCH ==================== -->
         <div class="speech-slide" data-speaker="oussama" data-time="~30s">
             <div class="slide-label">Slide 24b &middot; Demo &mdash; GitHub Actions &middot; ~30s</div>
-            <div class="slide-heading">7b. CI/CD &mdash; Ce qu'on detecte</div>
+            <div class="slide-heading">7b. CI/CD &mdash; Ce qu'on détecte</div>
             <div class="speech-text">
-                Concretement, ce genre de pipeline attrape trois categories d'erreurs.
-                Le <strong>code mort</strong> &mdash; imports inutilises, variables non definies &mdash;
-                que le linter detecte avant meme l'execution.
-                Les <strong>regressions</strong> &mdash; une fonction qu'on modifie et qui casse
+                Concrètement, ce genre de pipeline attrape trois catégories d'erreurs.
+                Le <strong>code mort</strong> &mdash; imports inutilisés, variables non définies &mdash;
+                que le linter détecte avant même l'exécution.
+                Les <strong>régressions</strong> &mdash; une fonction qu'on modifie et qui casse
                 quelque chose ailleurs &mdash; que les tests capturent automatiquement.
-                Et les <strong>problemes de build</strong> &mdash; une image Docker qui ne compile plus
-                a cause d'une dependance manquante.
+                Et les <strong>problèmes de build</strong> &mdash; une image Docker qui ne compile plus
+                à cause d'une dépendance manquante.
                 <br><br>
-                Le principe : <strong>plus on detecte tot, moins ca coute.</strong>
-                Une erreur attrapee au commit, c'est cinq minutes de fix.
-                La meme erreur en production, c'est une coupure de service.
+                Le principe : <strong>plus on détecte tôt, moins ça coûte.</strong>
+                Une erreur attrapée au commit, c'est cinq minutes de fix.
+                La même erreur en production, c'est une coupure de service.
             </div>
             <div class="demo-note">
                 <div class="demo-title">Action</div>
@@ -871,14 +893,14 @@
             <div class="slide-heading">Conclusion &mdash; Ce qu'on a construit &amp; les limites</div>
             <div class="speech-text">
                 Pour conclure. Cinq phases couvertes &mdash; les trois obligatoires et les deux optionnelles.
-                Mais au-dela de la checklist, ce qu'on retient c'est ce qu'on a appris
-                <strong>en le construisant</strong> : gerer huit conteneurs qui communiquent,
-                les permissions, les volumes partages, les incompatibilites de librairies.
-                C'est le genre de probleme qu'on ne rencontre <strong>jamais dans un notebook</strong>.
+                Mais au-delà de la checklist, ce qu'on retient c'est ce qu'on a appris
+                <strong>en le construisant</strong> : gérer huit conteneurs qui communiquent,
+                les permissions, les volumes partagés, les incompatibilités de librairies.
+                C'est le genre de problème qu'on ne rencontre <strong>jamais dans un notebook</strong>.
                 <br><br>
-                En toute transparence, deux limites. Notre detection de drift compare
-                train et validation du <strong>meme dataset</strong> &mdash; evidemment pas de drift.
-                En production, on utiliserait les vrais inputs utilisateurs logges depuis l'API.
+                En toute transparence, deux limites. Notre détection de drift compare
+                train et validation du <strong>même dataset</strong> &mdash; évidemment pas de drift.
+                En production, on utiliserait les vrais inputs utilisateurs loggés depuis l'API.
                 Et on n'a pas de <strong>rollback automatique</strong> &mdash; ce serait le
                 MLflow Model Registry avec des stages Staging et Production.
             </div>
@@ -890,17 +912,156 @@
             <div class="slide-heading">Perspectives &amp; Mot de fin</div>
             <div class="speech-text">
                 Quatre pistes pour la suite.
-                <strong>Deploiement cloud</strong> &mdash; l'architecture est cloud-agnostic, on change juste la cible.
-                <strong>Passage a BERT</strong> &mdash; le pipeline est model-agnostic, on change une classe.
-                <strong>A/B testing</strong> en production pour comparer les modeles sur du trafic reel.
-                Et une <strong>feedback loop</strong> &mdash; logger les inputs reels pour re-entrainer
-                avec des donnees de production.
+                <strong>Déploiement cloud</strong> &mdash; l'architecture est cloud-agnostic, on change juste la cible.
+                <strong>Passage à BERT</strong> &mdash; le pipeline est model-agnostic, on change une classe.
+                <strong>A/B testing</strong> en production pour comparer les modèles sur du trafic réel.
+                Et une <strong>feedback loop</strong> &mdash; logger les inputs réels pour ré-entraîner
+                avec des données de production.
                 <br><br>
-                <strong>Le modele, c'est le composant le plus simple du systeme.
-                Tout ce qui est autour &mdash; c'est ca le MLOps.
-                Et c'est ce qu'on a appris a construire.</strong>
+                <strong>Le modèle, c'est le composant le plus simple du système.
+                Tout ce qui est autour &mdash; c'est ça le MLOps.
+                Et c'est ce qu'on a appris à construire.</strong>
                 <br><br>
-                Merci. On est prets pour vos questions.
+                Merci. On est prêts pour vos questions.
+            </div>
+        </div>
+
+        <!-- ==================== Q&A ==================== -->
+        <div class="speech-slide" data-speaker="oussama" data-time="Q&A">
+            <div class="slide-label">Q&amp;A &middot; Pourquoi pas BERT ?</div>
+            <div class="slide-heading">Pourquoi un modèle linéaire et pas BERT ?</div>
+            <div class="speech-text">
+                TF-IDF + SGD : <strong>76% de précision, 5ms de réponse</strong>.<br>
+                BERT sur CPU : ~200ms &mdash; 40 fois plus lent, pour +5 à 10% de gain.<br>
+                Sur une marketplace avec des millions de requêtes, la latence compte.<br><br>
+                Et notre architecture est <strong>model-agnostic</strong> : on change une classe Python,
+                le pipeline reste identique. Si on a un GPU demain, on switche.
+            </div>
+        </div>
+
+        <div class="speech-slide" data-speaker="oussama" data-time="Q&A">
+            <div class="slide-label">Q&amp;A &middot; Drift en production</div>
+            <div class="slide-heading">Votre détection de drift est-elle réelle ?</div>
+            <div class="speech-text">
+                Non, et on l'a dit en conclusion. On compare train vs validation du
+                <strong>même dataset</strong> &mdash; évidemment pas de drift.<br><br>
+                En production réelle : on loggerait les inputs utilisateurs depuis l'API,
+                et on comparerait leur distribution avec les données d'entraînement
+                via PSI ou KL-divergence. <strong>C'est le prochain pas.</strong>
+            </div>
+        </div>
+
+        <div class="speech-slide" data-speaker="oussama" data-time="Q&A">
+            <div class="slide-label">Q&amp;A &middot; Pourquoi pas Kubernetes ?</div>
+            <div class="slide-heading">Pourquoi Docker Compose et pas Kubernetes ?</div>
+            <div class="speech-text">
+                8 services, 1 serveur &mdash; Kubernetes est une surcharge injustifiée ici.<br>
+                Docker Compose suffit, et ça reste <strong>lisible et maintenable</strong>.<br><br>
+                Si on scale : les images Docker sont identiques, on change juste la cible de déploiement.
+                L'architecture est cloud-agnostic par construction.
+            </div>
+        </div>
+
+        <div class="speech-slide" data-speaker="oussama" data-time="Q&A">
+            <div class="slide-label">Q&amp;A &middot; 36% de confiance</div>
+            <div class="slide-heading">36% de confiance, c'est pas faible ?</div>
+            <div class="speech-text">
+                La baseline aléatoire sur 27 classes, c'est <strong>3.7%</strong>.<br>
+                On est <strong>10 fois au-dessus du hasard</strong> sur cette prédiction.<br><br>
+                Un modèle binaire peut donner 95% de confiance. Avec 27 classes et
+                un modèle linéaire sur texte court, c'est attendu.
+                Ce qui compte, c'est l'accuracy globale : <strong>76%</strong>.
+            </div>
+        </div>
+
+        <div class="speech-slide" data-speaker="oussama" data-time="Q&A">
+            <div class="slide-label">Q&amp;A &middot; C'est quoi le F1 macro ?</div>
+            <div class="slide-heading">C'est quoi le F1 macro à 73.9% ?</div>
+            <div class="speech-text">
+                Le F1 macro, c'est la moyenne du F1 sur <strong>chaque classe, sans pondération</strong>.<br>
+                Ça veut dire que les petites catégories (peu de produits) comptent autant
+                que les grandes.<br><br>
+                73.9% signifie que le modèle performe bien même sur les catégories rares &mdash;
+                pas seulement sur les plus fréquentes. C'est pour ça qu'on a utilisé
+                <em>class_weight = balanced</em>.
+            </div>
+        </div>
+
+        <div class="speech-slide" data-speaker="oussama" data-time="Q&A">
+            <div class="slide-label">Q&amp;A &middot; Sécurité API</div>
+            <div class="slide-heading">Comment sécurisez-vous l'API ?</div>
+            <div class="speech-text">
+                Bearer token sur <span class="tech">/predict</span>. Sans token : <strong>401</strong>, on l'a vu dans Grafana.<br>
+                <span class="tech">/health</span> et <span class="tech">/metrics</span> sont publics par design &mdash; Prometheus en a besoin.<br><br>
+                Le token est en variable d'environnement, jamais dans le code.
+                Le VPS a un reverse proxy pour le HTTPS.
+            </div>
+        </div>
+
+        <div class="speech-slide" data-speaker="oussama" data-time="Q&A">
+            <div class="slide-label">Q&amp;A &middot; Réentraînement auto</div>
+            <div class="slide-heading">Le modèle se réentraîne-t-il automatiquement ?</div>
+            <div class="speech-text">
+                Le DAG Airflow peut tourner sur schedule &mdash; le pipeline complet prend
+                <strong>60 secondes</strong>.<br><br>
+                Ce qu'on n'a pas encore : le <strong>hot-swap sans restart</strong> de l'API,
+                et le rollback automatique via MLflow Model Registry avec des stages
+                Staging / Production. C'est la prochaine étape.
+            </div>
+        </div>
+
+        <div class="speech-slide" data-speaker="oussama" data-time="Q&A">
+            <div class="slide-label">Q&amp;A &middot; Pourquoi SQLite pour MLflow ?</div>
+            <div class="slide-heading">Pourquoi SQLite et pas PostgreSQL pour MLflow ?</div>
+            <div class="speech-text">
+                SQLite suffit pour un contexte mono-serveur avec une équipe de 3 personnes.<br>
+                Pas de concurrence d'écriture, pas besoin d'un service géré.<br><br>
+                En production : on passe sur PostgreSQL ou un managed DB &mdash;
+                c'est <strong>un paramètre de configuration</strong> dans MLflow, pas un refactoring.
+            </div>
+        </div>
+
+        <div class="speech-slide" data-speaker="oussama" data-time="Q&A">
+            <div class="slide-label">Q&amp;A &middot; Variables d'environnement</div>
+            <div class="slide-heading">Comment vous gérez les variables d'environnement ?</div>
+            <div class="speech-text">
+                Trois niveaux.<br><br>
+                <strong>Développement</strong> : un fichier <span class="tech">.env</span> local,
+                jamais commité &mdash; il est dans le <span class="tech">.gitignore</span>.
+                C'est là qu'on met le token API, les mots de passe Airflow, les credentials.<br><br>
+                <strong>Docker Compose</strong> : les variables sont injectées via la directive
+                <span class="tech">env_file</span> ou <span class="tech">environment</span>
+                dans le <span class="tech">docker-compose.yml</span>. Chaque service reçoit
+                uniquement ce dont il a besoin &mdash; le principe du moindre privilège.<br><br>
+                <strong>CI/CD</strong> : les secrets sont stockés dans
+                <strong>GitHub Actions Secrets</strong>, jamais en clair dans le code.
+                Le pipeline les injecte au moment du build.
+            </div>
+        </div>
+
+        <div class="speech-slide" data-speaker="oussama" data-time="Q&A">
+            <div class="slide-label">Q&amp;A &middot; RGPD</div>
+            <div class="slide-heading">Votre API est-elle RGPD compliant ?</div>
+            <div class="speech-text">
+                Dans notre contexte : <strong>on ne stocke aucune donnée personnelle</strong>.
+                L'API reçoit un texte produit, retourne une catégorie, et ne conserve rien.
+                Pas de base utilisateurs, pas de logs nominatifs.<br><br>
+                Ce qu'on logge : des métriques agrégées &mdash; nombre de requêtes, latence, codes HTTP.
+                <strong>Aucune donnée permettant d'identifier un utilisateur.</strong><br><br>
+                En production Rakuten, le vrai sujet RGPD serait sur les données d'entraînement :
+                s'assurer que les descriptions produits ne contiennent pas de données personnelles
+                avant d'entraîner le modèle.
+            </div>
+        </div>
+
+        <div class="speech-slide" data-speaker="oussama" data-time="Q&A">
+            <div class="slide-label">Q&amp;A &middot; Qu'est-ce que vous changeriez ?</div>
+            <div class="slide-heading">Qu'est-ce que vous feriez différemment en prod ?</div>
+            <div class="speech-text">
+                Trois choses :<br><br>
+                1. <strong>Drift sur vrais inputs</strong> &mdash; logger les requêtes API et comparer avec les données d'entraînement.<br>
+                2. <strong>Rollback automatique</strong> &mdash; MLflow Model Registry avec stages Staging / Production.<br>
+                3. <strong>Monitoring des données</strong>, pas seulement des métriques HTTP &mdash; détecter quand les textes entrants changent de nature.
             </div>
         </div>
 
