@@ -80,157 +80,73 @@ st.markdown('<hr style="border:none; height:1px; background:#e0e0e0; margin:2rem
 # ---------------------------------------------------------------------------
 st.markdown("## Architecture MLOps")
 
-st.markdown(
-    """
-    <style>
-    .mlops-grid {
-        display: grid;
-        grid-template-columns: 1fr 40px 1fr 40px 1fr;
-        gap: 10px;
-        align-items: center;
-        justify-items: center;
-        background: #ffffff;
-        padding: 2rem;
-        border-radius: 12px;
-        border: 1px solid #e2e8f0;
-        font-family: 'Inter', sans-serif;
-        margin: 1rem 0;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-    }
+_card = """
+<div style="background:{bg}; border:2px solid {border}; border-radius:10px;
+            padding:1rem; text-align:center; height:100%;">
+    <div style="font-size:1.05rem; font-weight:700; color:#0f172a; margin-bottom:0.2rem;">{title}</div>
+    <div style="font-size:0.8rem; color:#64748b; margin-bottom:0.6rem;">{desc}</div>
+    {port_html}
+</div>
+"""
 
-    .mlops-card {
-        background: #f8fafc;
-        border: 2px solid #e2e8f0;
-        border-radius: 10px;
-        padding: 1rem;
-        width: 100%;
-        text-align: center;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        transition: all 0.3s ease;
-    }
+def _port(p):
+    return f'<span style="font-size:0.75rem; background:#fee2e2; color:#BF0000; padding:0.2rem 0.5rem; border-radius:12px; font-weight:600;">{p}</span>' if p else ""
 
-    .mlops-card:hover {
-        border-color: #BF0000;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(191,0,0,0.08);
-    }
+def _arrow(label=""):
+    lbl = f'<div style="font-size:0.6rem; color:#94a3b8; font-weight:700;">{label}</div>' if label else ""
+    return f'<div style="text-align:center; color:#cbd5e1; font-size:1.4rem; line-height:1;">{lbl}➔</div>'
 
-    .mlops-title {
-        font-size: 1.05rem;
-        font-weight: 700;
-        color: #0f172a;
-        margin-bottom: 0.2rem;
-    }
+def _card(title, desc, port="", bg="#f8fafc", border="#e2e8f0"):
+    p = _port(port)
+    return f"""<div style="background:{bg}; border:2px solid {border}; border-radius:10px;
+        padding:1rem; text-align:center;">
+        <div style="font-size:1.05rem; font-weight:700; color:#0f172a; margin-bottom:0.2rem;">{title}</div>
+        <div style="font-size:0.8rem; color:#64748b; margin-bottom:0.6rem;">{desc}</div>
+        {p}
+    </div>"""
 
-    .mlops-desc {
-        font-size: 0.8rem;
-        color: #64748b;
-        margin-bottom: 0.6rem;
-    }
+# Row 1 : Airflow → Preprocessing → Training
+r1a, r1b, r1c, r1d, r1e = st.columns([4, 1, 4, 1, 4])
+with r1a:
+    st.markdown(_card("🔄 Airflow", "Orchestration", ":8080"), unsafe_allow_html=True)
+with r1b:
+    st.markdown(_arrow(), unsafe_allow_html=True)
+with r1c:
+    st.markdown(_card("🧹 Preprocessing", "Nettoyage texte"), unsafe_allow_html=True)
+with r1d:
+    st.markdown(_arrow(), unsafe_allow_html=True)
+with r1e:
+    st.markdown(_card("⚙️ Training", "TF-IDF + SGD"), unsafe_allow_html=True)
 
-    .mlops-port {
-        font-family: 'Fira Code', monospace;
-        font-size: 0.75rem;
-        background: #fee2e2;
-        color: #BF0000;
-        padding: 0.2rem 0.5rem;
-        border-radius: 12px;
-        font-weight: 600;
-    }
+# Down arrow below Training
+_, _, _, _, col_down1 = st.columns([4, 1, 4, 1, 4])
+with col_down1:
+    st.markdown('<div style="text-align:center; color:#cbd5e1; font-size:1.4rem;">⬇</div>', unsafe_allow_html=True)
 
-    .mlops-arrow {
-        font-size: 1.5rem;
-        color: #cbd5e1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+# Row 2 : Streamlit → FastAPI ← MLflow
+r2a, r2b, r2c, r2d, r2e = st.columns([4, 1, 4, 1, 4])
+with r2a:
+    st.markdown(_card("🖥️ Streamlit", "Interface Utilisateur", ":8501"), unsafe_allow_html=True)
+with r2b:
+    st.markdown(_arrow("HTTP"), unsafe_allow_html=True)
+with r2c:
+    st.markdown(_card("🚀 FastAPI", "Serving API REST", ":8000", bg="#f0fdf4", border="#22c55e"), unsafe_allow_html=True)
+with r2d:
+    st.markdown('<div style="text-align:center; color:#cbd5e1; font-size:1.4rem;">⬅</div>', unsafe_allow_html=True)
+with r2e:
+    st.markdown(_card("📈 MLflow", "Experiment Tracking", ":5000"), unsafe_allow_html=True)
 
-    .mlops-arrow-text {
-        font-size: 0.6rem;
-        color: #94a3b8;
-        font-weight: 700;
-        margin-bottom: -4px;
-    }
+# Down arrow below FastAPI
+_, _, col_down2, _, _ = st.columns([4, 1, 4, 1, 4])
+with col_down2:
+    st.markdown('<div style="text-align:center; color:#cbd5e1; font-size:1.4rem;">⬇</div>', unsafe_allow_html=True)
 
-    .api-card {
-        border-color: #22c55e;
-        border-width: 2px;
-        background: #f0fdf4;
-    }
-    </style>
-
-    <div class="mlops-grid">
-        <!-- Row 1 -->
-        <div class="mlops-card">
-            <div class="mlops-title">🔄 Airflow</div>
-            <div class="mlops-desc">Orchestration</div>
-            <span class="mlops-port">:8080</span>
-        </div>
-        <div class="mlops-arrow">➔</div>
-        <div class="mlops-card">
-            <div class="mlops-title">🧹 Preprocessing</div>
-            <div class="mlops-desc">Nettoyage texte</div>
-        </div>
-        <div class="mlops-arrow">➔</div>
-        <div class="mlops-card">
-            <div class="mlops-title">⚙️ Training</div>
-            <div class="mlops-desc">TF-IDF + SGD</div>
-        </div>
-
-        <!-- Row 2 -->
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div class="mlops-arrow" style="margin: 5px 0;">⬇</div>
-
-        <!-- Row 3 -->
-        <div class="mlops-card">
-            <div class="mlops-title">🖥️ Streamlit</div>
-            <div class="mlops-desc">Interface Utilisateur</div>
-            <span class="mlops-port">:8501</span>
-        </div>
-        <div class="mlops-arrow">
-            <span class="mlops-arrow-text">HTTP</span>
-            ➔
-        </div>
-        <div class="mlops-card api-card">
-            <div class="mlops-title">🚀 FastAPI</div>
-            <div class="mlops-desc">Serving API REST</div>
-            <span class="mlops-port">:8000</span>
-        </div>
-        <div class="mlops-arrow">⬅</div>
-        <div class="mlops-card">
-            <div class="mlops-title">📈 MLflow</div>
-            <div class="mlops-desc">Experiment Tracking</div>
-            <span class="mlops-port">:5000</span>
-        </div>
-
-        <!-- Row 4 -->
-        <div></div>
-        <div></div>
-        <div class="mlops-arrow" style="margin: 5px 0;">⬇</div>
-        <div></div>
-        <div></div>
-
-        <!-- Row 5 -->
-        <div></div>
-        <div></div>
-        <div class="mlops-card">
-            <div class="mlops-title">📦 Artifacts</div>
-            <div class="mlops-desc">Volume /Models</div>
-        </div>
-        <div></div>
-        <div class="mlops-card">
-            <div class="mlops-title">📊 Grafana</div>
-            <div class="mlops-desc">Monitoring Métriques</div>
-            <span class="mlops-port">:3000</span>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+# Row 3 : Artifacts (center) + Grafana (right)
+r3a, r3b, r3c, r3d, r3e = st.columns([4, 1, 4, 1, 4])
+with r3c:
+    st.markdown(_card("📦 Artifacts", "Volume /Models"), unsafe_allow_html=True)
+with r3e:
+    st.markdown(_card("📊 Grafana", "Monitoring Métriques", ":3000"), unsafe_allow_html=True)
 
 st.markdown("")
 
