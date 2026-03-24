@@ -744,31 +744,29 @@
             <div class="slide-label">Slide 22 &middot; Demo &mdash; MLflow &middot; ~1min</div>
             <div class="slide-heading">5. MLflow &mdash; Reproductibilite</div>
             <div class="speech-text">
-                MLflow. Nos experiences d'entrainement. On voit <span class="num">27</span> runs au total. <span
-                    class="num">19</span> termines, <span class="num">8</span> echecs. <strong>Les echecs ne sont pas
-                    des erreurs</strong> &mdash; c'est notre processus d'iteration. On a teste des configs qui ne
-                marchaient pas. MLflow garde tout, meme les runs qui ne marchent pas. C'est ca la reproductibilite :
-                dans six mois, si on se demande <em>&laquo; quel alpha avait donne 76% ? &raquo;</em>, la reponse est
-                ici, pas dans un notebook perdu.
+                Voila MLflow. Chaque fois qu'on a entraine un modele, tout a ete enregistre ici
+                automatiquement &mdash; la liste que vous voyez, c'est chaque essai qu'on a fait.
+                Les verts sont les reussites, les rouges les echecs. <strong>Les echecs sont normaux</strong>,
+                c'est comme ca qu'on a trouve les bons reglages.
                 <br><br>
-                Le meilleur run &mdash; le voila, il s'appelle <span class="tech">alpha=1e-6</span>, run ID <span
-                    class="tech">1be488</span>. Alpha egal a <span class="num">1e-6</span>, loss <span
-                    class="tech">log_loss</span>, max_iter <span class="num">1000</span>. Resultat : <span
-                    class="num">76.68%</span> d'accuracy, <span class="num">74.25%</span> de F1 macro. Le deuxieme
-                meilleur, <span class="tech">no_class_weight</span>, est a <span class="num">76.67%</span> &mdash; un
-                ecart de <span class="num">0.01%</span>. La difference est faible, ce qui montre que le modele est
-                <strong>stable</strong>.
+                Je clique sur ce run &mdash; <span class="tech">alpha=1e-5 (baseline)</span>.
+                A gauche, les <strong>parametres</strong> : ce sont les reglages du modele qu'on a choisis.
+                Par exemple, <em>class_weight = balanced</em> veut dire qu'on a compense le fait
+                que certaines categories ont moins de produits que d'autres.
+                A droite, les <strong>metriques</strong> : <span class="num">76.2%</span> de bonnes
+                classifications sur les donnees de test, <span class="num">73.9%</span> de F1 macro
+                &mdash; ca veut dire que le modele performe bien <em>meme sur les categories rares</em>.
                 <br><br>
-                Dans les artefacts : <strong>quatre fichiers</strong>. Le modele a <span class="num">1.08</span>
-                megaoctet, le vectorizer a <span class="num">190</span> kilooctets, le rapport de classification
-                detaille par classe, et les metriques aggregees. Chaque run est <strong>atomique</strong> &mdash;
-                parametres, metriques, artefacts. On peut revenir a n'importe quel run et recharger exactement ce
-                modele.
+                L'interet c'est simple : dans six mois, si quelqu'un se demande
+                <em>&laquo;&nbsp;comment on avait obtenu ce resultat ?&nbsp;&raquo;</em>,
+                la reponse est ici. Pas besoin de retrouver un notebook ou de se souvenir.
+                <strong>Tout est tracable, tout est comparable.</strong>
             </div>
             <div class="demo-note">
                 <div class="demo-title">Action</div>
-                Onglet MLflow &rarr; experiment rakuten-text-baseline. Le meilleur run est <strong>alpha=1e-6</strong>
-                (run ID 1be488). Cliquer dessus &rarr; montrer params, metrics, puis onglet Artifacts.
+                Onglet MLflow &rarr; experiment <strong>rakuten-text-baseline</strong>.
+                Cliquer sur le run <strong>alpha=1e-5 (baseline)</strong>.
+                Montrer les params a gauche, les metrics a droite (val_accuracy 76.2%, val_macro_f1 73.9%).
             </div>
         </div>
 
