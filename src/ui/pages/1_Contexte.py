@@ -5,6 +5,7 @@ Project overview, MLOps architecture diagram, key metrics, service links.
 """
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 st.set_page_config(
     page_title="Contexte | Rakuten MLOps",
@@ -80,8 +81,6 @@ st.markdown('<hr style="border:none; height:1px; background:#e0e0e0; margin:2rem
 # ---------------------------------------------------------------------------
 st.markdown("## Architecture MLOps")
 
-import streamlit.components.v1 as components
-
 components.html(
     """
     <div style="text-align: center; margin: 0.5rem 0; font-family: sans-serif;">
@@ -123,7 +122,8 @@ components.html(
             <line x1="360" y1="192" x2="360" y2="235" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)" />
 
             <!-- Models Volume -->
-            <rect x="315" y="240" width="90" height="45" rx="6" fill="#e0e7ff" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="5,3" />
+            <rect x="315" y="240" width="90" height="45" rx="6"
+                fill="#e0e7ff" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="5,3" />
             <text x="360" y="260" text-anchor="middle" font-size="10" font-weight="600" fill="#4338ca">models/</text>
             <text x="360" y="275" text-anchor="middle" font-size="8" fill="#64748b">Volume partage</text>
 
@@ -176,15 +176,18 @@ components.html(
         <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; margin-top:0.5rem; text-align:left;">
             <div style="background:#eff6ff; border-left:4px solid #2563eb; border-radius:8px; padding:1rem;">
                 <div style="font-weight:700; color:#1e40af; margin-bottom:0.3rem;">🐳 Docker Compose</div>
-                <p style="font-size:0.88rem; color:#555; margin:0;">8+ services orchestres. Un seul <code>docker compose up</code> pour tout demarrer.</p>
+                <p style="font-size:0.88rem; color:#555; margin:0;">8+ services orchestres.
+                Un seul <code>docker compose up</code> pour tout demarrer.</p>
             </div>
             <div style="background:#f0fdf4; border-left:4px solid #22c55e; border-radius:8px; padding:1rem;">
                 <div style="font-weight:700; color:#15803d; margin-bottom:0.3rem;">📦 Volumes partages</div>
-                <p style="font-size:0.88rem; color:#555; margin:0;">Artefacts modele accessibles par API, Trainer, et Airflow via le volume <code>./models</code>.</p>
+                <p style="font-size:0.88rem; color:#555; margin:0;">Artefacts modele accessibles
+                par API, Trainer, et Airflow via le volume <code>./models</code>.</p>
             </div>
             <div style="background:#fffbeb; border-left:4px solid #f59e0b; border-radius:8px; padding:1rem;">
                 <div style="font-weight:700; color:#b45309; margin-bottom:0.3rem;">🔗 Integration fluide</div>
-                <p style="font-size:0.88rem; color:#555; margin:0;">Payload API hybride pour concatener a la volee <code>designation</code> et <code>description</code> de Streamlit.</p>
+                <p style="font-size:0.88rem; color:#555; margin:0;">Payload API hybride pour
+                concatener a la volee <code>designation</code> et <code>description</code>.</p>
             </div>
         </div>
     </div>
@@ -259,8 +262,8 @@ _SERVICES = [
     {"icon": "🚀", "name": "FastAPI",    "desc": "API de prediction",    "url": f"{_HOST}:8200/docs", "label": "Swagger UI"},
     {"icon": "📈", "name": "MLflow",     "desc": "Experiment tracking",  "url": f"{_HOST}:5000",      "label": "Tracking UI"},
     {"icon": "🔄", "name": "Airflow",    "desc": "Orchestration DAGs",   "url": f"{_HOST}:8280",      "label": "Webserver"},
-    {"icon": "📊", "name": "Grafana",    "desc": "Dashboards monitoring","url": f"{_HOST}:3000",      "label": "Dashboard"},
-    {"icon": "🔥", "name": "Prometheus", "desc": "Collecte de metriques","url": f"{_HOST}:9090",      "label": "Targets"},
+    {"icon": "📊", "name": "Grafana",    "desc": "Dashboards monitoring", "url": f"{_HOST}:3000",     "label": "Dashboard"},
+    {"icon": "🔥", "name": "Prometheus", "desc": "Collecte de metriques", "url": f"{_HOST}:9090",    "label": "Targets"},
 ]
 
 _cols = st.columns(len(_SERVICES))
