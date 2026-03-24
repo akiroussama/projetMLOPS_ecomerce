@@ -80,131 +80,115 @@ st.markdown('<hr style="border:none; height:1px; background:#e0e0e0; margin:2rem
 # ---------------------------------------------------------------------------
 st.markdown("## Architecture MLOps")
 
-_card = """
-<div style="background:{bg}; border:2px solid {border}; border-radius:10px;
-            padding:1rem; text-align:center; height:100%;">
-    <div style="font-size:1.05rem; font-weight:700; color:#0f172a; margin-bottom:0.2rem;">{title}</div>
-    <div style="font-size:0.8rem; color:#64748b; margin-bottom:0.6rem;">{desc}</div>
-    {port_html}
-</div>
-"""
+st.markdown(
+    """
+    <div style="text-align: center; margin: 0.5rem 0;">
+        <svg viewBox="0 0 900 300" style="max-width: 95%; height: auto;">
+            <defs>
+                <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+                    <path d="M0,0 L0,6 L7,3 z" fill="#64748b" />
+                </marker>
+                <marker id="arrRed" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+                    <path d="M0,0 L0,6 L7,3 z" fill="#bf0000" />
+                </marker>
+            </defs>
 
-def _port(p):
-    return f'<span style="font-size:0.75rem; background:#fee2e2; color:#BF0000; padding:0.2rem 0.5rem; border-radius:12px; font-weight:600;">{p}</span>' if p else ""
+            <!-- User -->
+            <rect x="10" y="110" width="90" height="60" rx="10" fill="#f3f4f6" stroke="#94a3b8" stroke-width="2" />
+            <text x="55" y="135" text-anchor="middle" font-size="22">&#128100;</text>
+            <text x="55" y="158" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b">Utilisateur</text>
 
-def _arrow(label=""):
-    lbl = f'<div style="font-size:0.6rem; color:#94a3b8; font-weight:700;">{label}</div>' if label else ""
-    return f'<div style="text-align:center; color:#cbd5e1; font-size:1.4rem; line-height:1;">{lbl}➔</div>'
+            <!-- Arrow to Streamlit -->
+            <line x1="102" y1="140" x2="140" y2="140" stroke="#64748b" stroke-width="2" marker-end="url(#arr)" />
 
-def _card(title, desc, port="", bg="#f8fafc", border="#e2e8f0"):
-    p = _port(port)
-    return f"""<div style="background:{bg}; border:2px solid {border}; border-radius:10px;
-        padding:1rem; text-align:center;">
-        <div style="font-size:1.05rem; font-weight:700; color:#0f172a; margin-bottom:0.2rem;">{title}</div>
-        <div style="font-size:0.8rem; color:#64748b; margin-bottom:0.6rem;">{desc}</div>
-        {p}
-    </div>"""
+            <!-- Streamlit -->
+            <rect x="145" y="100" width="110" height="80" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" />
+            <text x="200" y="130" text-anchor="middle" font-size="13" font-weight="700" fill="#d97706">Streamlit</text>
+            <text x="200" y="148" text-anchor="middle" font-size="10" fill="#92400e">:8501</text>
+            <text x="200" y="165" text-anchor="middle" font-size="9" fill="#64748b">UI + Predictions</text>
 
-# Row 1 : Airflow → Preprocessing → Training
-r1a, r1b, r1c, r1d, r1e = st.columns([4, 1, 4, 1, 4])
-with r1a:
-    st.markdown(_card("🔄 Airflow", "Orchestration", ":8280"), unsafe_allow_html=True)
-with r1b:
-    st.markdown(_arrow(), unsafe_allow_html=True)
-with r1c:
-    st.markdown(_card("🧹 Preprocessing", "Nettoyage texte"), unsafe_allow_html=True)
-with r1d:
-    st.markdown(_arrow(), unsafe_allow_html=True)
-with r1e:
-    st.markdown(_card("⚙️ Training", "TF-IDF + SGD"), unsafe_allow_html=True)
+            <!-- Arrow Streamlit to API -->
+            <line x1="257" y1="140" x2="295" y2="140" stroke="#bf0000" stroke-width="2.5" marker-end="url(#arrRed)" />
 
-# Down arrow below Training
-_, _, _, _, col_down1 = st.columns([4, 1, 4, 1, 4])
-with col_down1:
-    st.markdown('<div style="text-align:center; color:#cbd5e1; font-size:1.4rem;">⬇</div>', unsafe_allow_html=True)
+            <!-- API -->
+            <rect x="300" y="90" width="120" height="100" rx="10" fill="#fef2f2" stroke="#bf0000" stroke-width="2.5" />
+            <text x="360" y="118" text-anchor="middle" font-size="14" font-weight="800" fill="#bf0000">FastAPI</text>
+            <text x="360" y="138" text-anchor="middle" font-size="10" fill="#991b1b">:8000 (ext 8200)</text>
+            <text x="360" y="152" text-anchor="middle" font-size="9" fill="#64748b">/predict /health</text>
+            <text x="360" y="165" text-anchor="middle" font-size="9" fill="#64748b">/metrics /stats</text>
 
-# Row 2 : Streamlit → FastAPI ← MLflow
-r2a, r2b, r2c, r2d, r2e = st.columns([4, 1, 4, 1, 4])
-with r2a:
-    st.markdown(_card("🖥️ Streamlit", "Interface Utilisateur", ":8501"), unsafe_allow_html=True)
-with r2b:
-    st.markdown(_arrow("HTTP"), unsafe_allow_html=True)
-with r2c:
-    st.markdown(_card("🚀 FastAPI", "Serving API REST", ":8200", bg="#f0fdf4", border="#22c55e"), unsafe_allow_html=True)
-with r2d:
-    st.markdown('<div style="text-align:center; color:#cbd5e1; font-size:1.4rem;">⬅</div>', unsafe_allow_html=True)
-with r2e:
-    st.markdown(_card("📈 MLflow", "Experiment Tracking", ":5000"), unsafe_allow_html=True)
+            <!-- Arrow API to Models volume -->
+            <line x1="360" y1="192" x2="360" y2="235" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)" />
 
-# Down arrow below FastAPI
-_, _, col_down2, _, _ = st.columns([4, 1, 4, 1, 4])
-with col_down2:
-    st.markdown('<div style="text-align:center; color:#cbd5e1; font-size:1.4rem;">⬇</div>', unsafe_allow_html=True)
+            <!-- Models Volume -->
+            <rect x="315" y="240" width="90" height="45" rx="6" fill="#e0e7ff" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="5,3" />
+            <text x="360" y="260" text-anchor="middle" font-size="10" font-weight="600" fill="#4338ca">models/</text>
+            <text x="360" y="275" text-anchor="middle" font-size="8" fill="#64748b">Volume partage</text>
 
-# Row 3 : Prometheus → Artifacts ← Grafana
-r3a, r3b, r3c, r3d, r3e = st.columns([4, 1, 4, 1, 4])
-with r3a:
-    st.markdown(_card("🔥 Prometheus", "Collecte metriques", ":9090"), unsafe_allow_html=True)
-with r3b:
-    st.markdown(_arrow(), unsafe_allow_html=True)
-with r3c:
-    st.markdown(_card("📦 Artifacts", "Volume /Models"), unsafe_allow_html=True)
-with r3d:
-    st.markdown('<div style="text-align:center; color:#cbd5e1; font-size:1.4rem;">⬅</div>', unsafe_allow_html=True)
-with r3e:
-    st.markdown(_card("📊 Grafana", "Monitoring Dashboard", ":3000"), unsafe_allow_html=True)
+            <!-- Arrow API to Prometheus -->
+            <line x1="422" y1="115" x2="470" y2="65" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)" />
 
-st.markdown("")
+            <!-- Prometheus -->
+            <rect x="475" y="30" width="110" height="65" rx="10" fill="#fff7ed" stroke="#f97316" stroke-width="2" />
+            <text x="530" y="55" text-anchor="middle" font-size="13" font-weight="700" fill="#ea580c">Prometheus</text>
+            <text x="530" y="72" text-anchor="middle" font-size="10" fill="#9a3412">:9090</text>
+            <text x="530" y="86" text-anchor="middle" font-size="9" fill="#64748b">Scrape /metrics</text>
 
-# Architecture explanation columns
-c1, c2, c3 = st.columns(3)
+            <!-- Arrow Prometheus to Grafana -->
+            <line x1="587" y1="62" x2="630" y2="62" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)" />
 
-with c1:
-    st.markdown(
-        """
-        <div style="background:#fff; border-radius:10px; padding:1.2rem;
-                    border-left:4px solid #BF0000; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
-            <h4 style="margin:0 0 0.5rem 0;">🔄 Orchestration</h4>
-            <p style="font-size:0.88rem; color:#555; margin:0;">
-                <b>Apache Airflow</b> orchestre le pipeline complet :
-                ingestion, preprocessing, training et evaluation.
-                Les DAGs s'executent automatiquement.
-            </p>
+            <!-- Grafana -->
+            <rect x="635" y="30" width="100" height="65" rx="10" fill="#ecfdf5" stroke="#10b981" stroke-width="2" />
+            <text x="685" y="55" text-anchor="middle" font-size="13" font-weight="700" fill="#059669">Grafana</text>
+            <text x="685" y="72" text-anchor="middle" font-size="10" fill="#047857">:3000</text>
+            <text x="685" y="86" text-anchor="middle" font-size="9" fill="#64748b">Dashboards</text>
+
+            <!-- Arrow to MLflow -->
+            <line x1="422" y1="160" x2="470" y2="180" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)" />
+
+            <!-- MLflow -->
+            <rect x="475" y="155" width="110" height="65" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2" />
+            <text x="530" y="180" text-anchor="middle" font-size="13" font-weight="700" fill="#2563eb">MLflow</text>
+            <text x="530" y="197" text-anchor="middle" font-size="10" fill="#1e40af">:5000</text>
+            <text x="530" y="211" text-anchor="middle" font-size="9" fill="#64748b">Tracking Server</text>
+
+            <!-- Arrow Airflow to MLflow -->
+            <line x1="710" y1="190" x2="587" y2="190" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)" />
+
+            <!-- Airflow -->
+            <rect x="715" y="140" width="120" height="100" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2" />
+            <text x="775" y="170" text-anchor="middle" font-size="13" font-weight="700" fill="#6d28d9">Airflow</text>
+            <text x="775" y="188" text-anchor="middle" font-size="10" fill="#5b21b6">:8080 (ext 8280)</text>
+            <text x="775" y="205" text-anchor="middle" font-size="9" fill="#64748b">Scheduler</text>
+            <text x="775" y="220" text-anchor="middle" font-size="9" fill="#64748b">Webserver</text>
+
+            <!-- Postgres -->
+            <rect x="740" y="255" width="80" height="40" rx="6" fill="#e0e7ff" stroke="#6366f1" stroke-width="1.5" />
+            <text x="780" y="275" text-anchor="middle" font-size="10" font-weight="600" fill="#4338ca">Postgres</text>
+            <text x="780" y="288" text-anchor="middle" font-size="8" fill="#64748b">Airflow DB</text>
+
+            <!-- Arrow Airflow to Postgres -->
+            <line x1="775" y1="242" x2="780" y2="253" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)" />
+        </svg>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; margin-top:0.5rem;">
+        <div style="background:#eff6ff; border-left:4px solid #2563eb; border-radius:8px; padding:1rem;">
+            <div style="font-weight:700; color:#1e40af; margin-bottom:0.3rem;">🐳 Docker Compose</div>
+            <p style="font-size:0.88rem; color:#555; margin:0;">8+ services orchestres. Un seul <code>docker compose up</code> pour tout demarrer.</p>
         </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-with c2:
-    st.markdown(
-        """
-        <div style="background:#fff; border-radius:10px; padding:1.2rem;
-                    border-left:4px solid #BF0000; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
-            <h4 style="margin:0 0 0.5rem 0;">🚀 Serving</h4>
-            <p style="font-size:0.88rem; color:#555; margin:0;">
-                <b>FastAPI</b> sert le modele via une API REST securisee
-                (Bearer token). Endpoint POST /predict pour la classification
-                en temps reel.
-            </p>
+        <div style="background:#f0fdf4; border-left:4px solid #22c55e; border-radius:8px; padding:1rem;">
+            <div style="font-weight:700; color:#15803d; margin-bottom:0.3rem;">📦 Volumes partages</div>
+            <p style="font-size:0.88rem; color:#555; margin:0;">Artefacts modele accessibles par API, Trainer, et Airflow via le volume <code>./models</code>.</p>
         </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-with c3:
-    st.markdown(
-        """
-        <div style="background:#fff; border-radius:10px; padding:1.2rem;
-                    border-left:4px solid #BF0000; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
-            <h4 style="margin:0 0 0.5rem 0;">📈 Tracking & Monitoring</h4>
-            <p style="font-size:0.88rem; color:#555; margin:0;">
-                <b>MLflow</b> enregistre les experiences, metriques et artefacts.
-                <b>Grafana</b> fournit des dashboards de monitoring en temps reel.
-            </p>
+        <div style="background:#fffbeb; border-left:4px solid #f59e0b; border-radius:8px; padding:1rem;">
+            <div style="font-weight:700; color:#b45309; margin-bottom:0.3rem;">🔗 Integration fluide</div>
+            <p style="font-size:0.88rem; color:#555; margin:0;">Payload API hybride pour concatener a la volee <code>designation</code> et <code>description</code> de Streamlit.</p>
         </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 st.markdown('<hr style="border:none; height:1px; background:#e0e0e0; margin:2rem 0;">', unsafe_allow_html=True)
 
